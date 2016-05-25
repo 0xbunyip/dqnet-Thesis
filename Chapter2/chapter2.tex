@@ -1,10 +1,18 @@
 \chapter{Kiến thức nền tảng}
 \begin{quote}
-\textit{Trong chương này sẽ trình bày những kiến thức nền tảng của học tăng cường. Trong phần đầu tiên chúng em sẽ trình bày định nghĩa của các thành phần cơ bản trong học tăng cường. Tiếp đó sẽ đề cập đến mô hình Markov Decision Processes được áp dụng trong việc đánh giá lý thuyết một số thành phần của bài toán học tăng cường. Cùng với đó sẽ trình bày qui trình tổng quát để đánh giá và cải thiện chính sách trong bài toán. Cuối cùng chúng em sẽ trình bày một số phương pháp phổ biến thường được áp dụng để đánh giá cũng như cải thiện giúp hệ thông có cách giải tốt hơn cho bài toán trên.}
+\textit{Trong chương này sẽ trình bày những kiến thức nền tảng của học tăng cường. Trong phần đầu tiên chúng em sẽ trình bày định nghĩa của các thành phần cơ bản trong học tăng cường. Tiếp đó sẽ đề cập đến mô hình Markov Decision Processes được áp dụng trong việc đánh giá lý thuyết một số thành phần của bài toán học tăng cường. Cùng với đó sẽ trình bày qui trình tổng quát để đánh giá và cải thiện chính sách trong bài toán. Cuối cùng chúng em sẽ trình bày một số phương pháp phổ biến thường đượcAgent áp dụng để đánh giá cũng như cải thiện giúp hệ thông có cách giải tốt hơn cho bài toán trên.}
 \end{quote}
 
 \section{Các thành phần cơ bản của học tăng cường}
-
+	\subsection{Agent và môi trường}
+	Trong học tăng cường, đối tượng học và đưa ra quyết định được gọi chung là \textit{agent}. Nó tương tác trực tiếp tới một đối tượng được gọi là \textit{môi trường}. Sự tương tác này được diễn ra liên tục. Agent lựa chọn hành động dựa trên những gì nó nhận được từ môi trường. Môi trường cung cấp giá trị điểm thưởng (reward) cho hành động vừa được thực hiện và những quan sát (observation) tiếp theo cho agent. Từ những quan sát này, agent có thể xây dựng ra các \textit{trạng thái} (state) dựa vào đó để ra quyết định chọn hành động với mục tiêu cố gắng đạt được nhiều điểm thưởng nhất.
+	
+	Cụ thể hơn, agent và môi trường tương tác theo một chuỗi tuần tự các time-steps, $t = 0,1,2,...$. Tại mỗi time step $t$, agent nhận những mô tả trạng thái của môi trường, $\mathit{S_t} \in \mathcal{S}$, với $\mathcal{S}$ là tập các trạng thái có thể có. Dựa vào những mô tả trạng thái nhận được, agent chọn một hành động, $\mathit{A_t} \in \mathcal(\mathit{S_t})$, trong đó $\mathcal(\mathit{S_t})$ là tập các hành động có thể thực hiện tại trạng thái $\mathit{S_t}$. Tại time step sau đó, agent nhận được giá trị điểm thưởng, $\mathit{R_{t+1}} \in \mathbb{R}$, cùng với trạng thái tiếp theo $\mathit{S_{t+1}}$ Quá trình tương tác giữa agent và môi trường được mô tả trong hình []
+	
+	\subsection{Các thành phần của agent}
+	Để đạt được mục tiêu được nhiều điểm thưởng nhất, agent cần có một\textit{chính sách} chọn lựa hành động mỗi khi gặp một trạng thái. Hay nói cách khác, chính sách, $\pi$, xác định khả năng chọn một hành động khi agent nhận được một trạng thái $s$. Chính xác tại time step $t$ được xác định $\pi_t(a|s) = \mathbb{P}[\mathit{A_t} = a|\mathit{S_t} = s]$. Những phương pháp học tăng cường thường 
+	
+	
 \section{Mô hình Markov Decision Processes (MDP)}
 	\begin{itemize}
 			\item Các thành phần MDP
