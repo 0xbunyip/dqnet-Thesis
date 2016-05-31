@@ -64,8 +64,58 @@
 				\end{equation}				
 		\end{itemize}
 	
-	\textbf{Ví dụ: Mô hình MDP trong robot thu gom} Công việc của robot này là thu lượm những lon soda đã được uống hết trong văn phòng. Nó có những cảm biến để xác định những lon soda này, bánh xe và cánh tay để di chuyển và gắp nhặt những lon này bỏ vào thùng. Robot hoạt động bằng pin sạc. Hệ thống điều khiển của robot có chức năng tiếp nhận những thông tin từ cảm biến từ đó điểu khiển bánh xe và cánh tay. Trong ví dụ, chúng em chỉ xét dựa trên mức độ pin hiện tại robot nên quyết định tìm kiếm những lon soda như thế nào? Robot có thể có ba quyết định (1) thực hiện tìm kiếm một lon soda, (2) đứng yên và đợi người khác mang lon soda đến cho nó, (3) quay trở lại nơi sạc pin. Trạng thái của môi trường được xác định là trạng thái của pin hiện tại của robot. Cách tốt nhất để tìm kiếm những lon soda là robot thực hiện hành động tìm kiếm, nhưng việc này sẽ làm giảm dung lượng của pin.
-
+	\textbf{Ví dụ: Mô hình MDP trong robot thu gom} Công việc của robot này là thu lượm những lon soda đã được uống hết trong văn phòng. Nó có những cảm biến để xác định những lon soda này, bánh xe và cánh tay để di chuyển và gắp nhặt những lon này bỏ vào thùng. Robot hoạt động bằng pin sạc. Hệ thống điều khiển của robot có chức năng tiếp nhận những thông tin từ cảm biến từ đó điểu khiển bánh xe và cánh tay. Trong ví dụ, chúng em chỉ xét dựa trên mức độ pin hiện tại robot nên quyết định tìm kiếm những lon soda như thế nào? Robot có thể có ba quyết định (1) thực hiện tìm kiếm một lon soda, (2) đứng yên và đợi người khác mang lon soda đến cho nó, (3) quay trở lại nơi sạc pin. Trạng thái của môi trường được xác định là trạng thái của pin hiện tại của robot. Cách tốt nhất để tìm kiếm những lon soda là robot thực hiện hành động tìm kiếm, nhưng việc này sẽ làm giảm dung lượng của pin. Ngược lại nếu robot đứng yên và đợi thì dung lượng pin của nó không giảm. Mỗi khi dung lượng pin của robot ở mức thấp nó sẽ quay lại chỗ sạc pin. Trường hợp xấu nhất có thể xảy ra là robot không đủ dung lượng pin để quay lại nơi sạc khi đó nó sẽ đứng yên và đợi ai đó mang nó đến chỗ sạc. Do đó robot cần có một chiến lược phù hợp để đạt được hiệu năng cao nhất có thể.
+	Hệ thống đưa ra những quyết định của nó dựa trên mức năng lượng pin. Mức năng lượng này có thể được xác định hai mức \textit{cao} và \textit{thấp}. Khi đó tập trạng thái mà hệ thống có thể nhận được $\mathcal{S} = \left \{\text{cao}, \text{thấp} \right \}$. Những hành động của hệ thống trong ví dụ này được xét đơn giản gồm ba hành động \textit{đợi}, \textit{tìm kiếm}, và \textit{sạc pin}. Khi dung lượng pin ở trạng thái cao, hệ thống chỉ thực hiện hai hành động: tìm kiếm và đợi. Ngược lại khi ở trạng thái thấp, hệ thống có thể thực hiện ba hành động: tìm kiếm, đợi, và sạc pin.
+		$$\mathcal{A}(\text{cao}) =  \left \{\text{tìm kiếm}, \text{đợi} \right \}$$
+		$$\mathcal{A}(\text{thấp}) =  \left \{\text{tìm kiếm}, \text{đợi}, \text{sạc pin} \right \}$$
+	
+	Khi mức năng lượng pin ở mức cao, việc robot thực hiện tìm kiếm sẽ có xác suất $\alpha$ năng lượng pin vẫn ở mức cao, và $1 - \alpha$ năng lượng của pi sẽ chuyển về mức thấp. Mặt khác, khi mức năng lượng ở mức thấp, nếu robot thực hiện tìm kiếm sẽ có xác suất $\beta$ năng lượng pin ở mức thấp và $1 - \beta$ chuyển đến mức cao, trường hợp này xảy ra khi dung lượng pin cạn kiệt và cần ai đó mang nó đến chỗ sạc cho đến khi đạt mức năng lượng cao. Ngoài ra, mỗi lần robot thu gom được một lon soda nó sẽ nhận được $+1$ điểm thưởng và sẽ bị $-3$ điểm thưởng mỗi khi nó phải cần ai đó mang đến chỗ sạc. $r_{\text{đợi}}$, $r_{\text{tìm kiếm}}$ là số lượng lon soda kỳ vọng mà robot có thể thu gom được trong khi đợi và tìm kiếm. Đồ thị \ref{graphRobot} minh họa cho mô hình MDP trong robot thu gom.
+	
+	%% Hình vẽ
+	\begin{figure}
+		\centering
+		\begin{tikzpicture}[node distance=6.5cm,>=stealth',bend angle=45 ,auto]
+		
+		\tikzstyle{state}=[circle,thick,draw=blue!75,fill=blue!20,minimum size = 15mm]
+		\tikzstyle{action}=[circle,draw=black!75,
+		fill=black!75,minimum size=2mm]
+		
+		\tikzstyle{every label}=[red]
+		
+		\begin{scope}
+		% First net
+		\node [state] (high)                           {Cao};	
+		\node [state] (low) [right of=high]              {Thấp};
+		
+		\node [action] (w1) [above = 1.5cm of high, label=left:Đợi] {}
+		edge      					(high)
+		edge [post,bend right] node[left]{$1, r_{\text{đợi}}$}      (high);
+		
+		\node [action] (s1) [below = 1.5cm of high, label=right:Tìm kiếm] {}
+		edge        				(high)
+		edge [post,bend left] node[left]{$\alpha, r_{\text{tìm kiếm}}$}       (high)
+		edge [post,bend right] node[below=0.2]{$1 - \alpha, r_{\text{tìm kiếm}}$}       (low);
+		
+		\node [action] (s2) [above = 1.5cm of low, label=left:Tìm kiếm] {}
+		edge        				(low)
+		edge [post,bend left] node[right]{$\beta, r_{\text{tìm kiếm}}$}       (low)
+		edge [post,bend right] node[above=0.2]{$1 - \beta, -3$}       (high);
+		
+		\node [action] (w2) [below = 1.5cm of low, label=right:Đợi] {}
+		edge        				(low)
+		edge [post,bend right] node[right]{$1, r_{\text{đợi}}$}       (low);
+		
+		\node [action] (re) [left = 1.5cm of low, , label=above:Sạc pin] {}
+		edge						(low)
+		edge [post] node[above]{$1, 0$} (high);
+		\end{scope}		
+		\end{tikzpicture}
+		\caption[Đồ thị minh họa chuyển trạng thái cho robot thu gom]{Đồ thị minh họa chuyển trạng thái cho robot thu gom. Trong đồ thị có hai loại node: node trạng thái và node hành động. Node trạng thái minh họa những trạng thái có thể có mà hệ thống có thể nhận được, nó được ký hiệu một vòng tròn lớn với tên của trạng thái bên trong. Node hành động tường ứng với cặp (trạng thái, hành động). Việc thực hiện hành động $a$ tại trạng thái $s$ tương ứng trên đồ thị là một cạnh bắt đầu từ node trạng $s$ tới node hành động $a$. Khi đó môi trường sẽ trả ra trạng thái tiếp theo $s'$ ứng với đích của mũi tên đi từ node hành động $a$. Xác suất chuyển tới trạng thái $s'$ khi thực hiện hành động $a$ ở trạng thái $s$ $p(s'|s,a)$, và giá trị điểm thưởng kỳ vọng nhận được trong trường hợp này $r(s,a,s')$ tương ứng với ký hiệu trên mũi tên. Ví dụ: khi mức năng lượng pin đăng ở trạng thái \textit{thấp}, hệ thống quyết định thực hiện hành động \textit{sạc pin} khi đó trạng thái tiếp theo mà hệ thống nhận được sẽ là mức năng lượng pin ở trạng thái \textit{cao} và xác suất chuyển tới trạng thái \textit{cao} $p(\text{cao}|\text{thấp}, \text{sạc pin})$ là 1 và giá trị kỳ vọng điểm thưởng tương ứng $r(\text{thấp}, \text{sạc pin}, \text{cao})$ là 0.}
+		\label{graphRobot}
+	\end{figure}
+	
+	%% ----------------------------------------------------
+	
 \section{Những phương pháp đánh giá và cải thiện chính sách}
 	\begin{itemize}
 		\item Dẫn nhập: Trên thực tế ta không có thông tin về môi trường
