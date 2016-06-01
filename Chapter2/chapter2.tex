@@ -30,11 +30,15 @@
 	
 	\subsection{Returns}
 	Return $\mathit{G_t}$ xác định lượng điểm thưởng mà agent nhận được kể từ thời điểm time step $t$ đến tương lai. Return thường được xác định bằng nhiều hàm khác nhau, trong đó hàm đơn giản nhất xác định return bằng tổng các điểm thưởng có thể nhận được. Nó có dạng như sau:
-	$$\mathit{G_t} = \mathit{R_{t+1}} + \mathit{R_{t+2}} + ... + \mathit{R_{T}}$$
+	\begin{equation}
+	\mathit{G_t} = \mathit{R_{t+1}} + \mathit{R_{t+2}} + ... + \mathit{R_{T}}
+	\end{equation}	
 	ở đây $T$ là time step cuối cùng.
 	
 	Mặt khác, return cũng có thể được xác định bằng tổng điểm thưởng đã bị discount qua từng time step. Nó được định nghĩa như sau:
-	$$\mathit{G_t} = \mathit{R_{t+1}} + \gamma\mathit{R_{t+2}} + \gamma^{2}\mathit{R_{t+3}}... + \gamma^{T-1}\mathit{R_{T}} = \sum_{k=0}^{\infty}\gamma^{k}\mathit{R_{t+k+1}}$$
+	\begin{equation}
+	\mathit{G_t} = \mathit{R_{t+1}} + \gamma\mathit{R_{t+2}} + \gamma^{2}\mathit{R_{t+3}}... + \gamma^{T-1}\mathit{R_{T}} = \sum_{k=0}^{\infty}\gamma^{k}\mathit{R_{t+k+1}}
+	\end{equation}
 	Trong đó $\gamma$ là một hệ số với giá trị $0\leqslant \gamma \leqslant 1$. $\gamma$ cũng được gọi là tỉ lệ discount. Tỉ lệ này xác định độ tin tưởng của agent vào giá trị điểm thưởng ở tương lai. Khi $\gamma \to 1$, agent có su hướng quan tâm đến giá trị điểm thưởng tương lai càng nhiều. Đặc biệt với $\gamma = 0$, khi đó agent chỉ quan tâm giá trị điểm thưởng ở hiện tại mà bỏ qua những giá trị điểm thưởng ở tương lai.
 	
 	Trong thực nghiệm, việc tương tác giữa agent và môi trường có thể được phân chia thành những chuỗi con. Chúng được gọi là những \textit{episode}. [TODO]
@@ -74,7 +78,7 @@
 	%% Hình vẽ
 	\begin{figure}
 		\centering
-		\begin{tikzpicture}[node distance=6.5cm,>=stealth,bend angle=45 ,auto]
+		\begin{tikzpicture}[node distance=6.5cm,>=stealth',bend angle=45 ,auto]
 		
 		\tikzstyle{state}=[circle,thick,draw=blue!75,fill=blue!20,minimum size = 15mm]
 		\tikzstyle{action}=[circle,draw=black!75,
@@ -115,6 +119,23 @@
 	\end{figure}
 	
 	%% ----------------------------------------------------
+	
+	\subsection{Chính sách và hàm giá trị}
+	Một chính sách $\pi$ xác định xác suất mà hệ thông thực hiện hành động $a$ khi nó trong trạng thái $s$ được ký hiệu $\pi(a|s)$.
+	
+	Hàm giá trị cho biết những trạng thái hoặc những cặp hành động và trạng thái tốt như thế nào cho hệ thông khi nó trong những trạng thái hoặc thực hiện những cặp hành động và trạng thái đó. Khái niệm tốt ở đây nghĩa là giá trị điểm thưởng kỳ vọng mà hệ thông có thể nhận được ở tương lai. Hầu hết các thuật toán trong học tăng cường đều tập trung vào việc đánh giá những hàm giá trị. Điểm thưởng mà hệ thống có thể nhận được trong tương lai phụ thuộc vào những hành động mà nó thực hiện. Do đó hàm giá trị chịu ảnh hưởng rất nhiều vào chính sách. Giá trị của trạng thái $s$ dưới một chính sách $\pi$, ký hiệu $v_{\pi}(s)$, là giá trị kỳ vọng của return mà hệ thống nhận được bắt đầu từ trạng thái $s$ theo chính sách $\pi$ sau đó. Với mô hình MDP, $v_{\pi}(s)$ có thể được định nghĩa như sau:
+	\begin{equation}
+	v_{\pi}(s) = \mathbb{E}_{\pi}\left [\mathit{G}_t|\mathit{S}_{t} = s\right ] = \mathbb{E}_{\pi}\left [\sum_{k = 0}^{\infty}\gamma^{k}\mathit{R}_{t+k+1}|\mathit{S}_t= s\right ]
+	\end{equation}
+	$v_{\pi}$ được gọi là hàm giá trị trạng thái dưới chính sách $\pi$.
+	
+	Tương tự, chúng ta định nghĩa giá trị của việc thực hiện hành động $a$ trong trạng thái $s$ dưới chính sách $\pi$, được ký hiệu $q_{\pi}(s,a)$, là giá trị kỳ vọng của return mà hệ thống nhận được bắt đầu việc thực hiện hành động $a$ trong trạng thái $s$ theo chính sách $\pi$
+	\begin{equation}
+	q_{\pi}(s,a) = \mathbb{E}_{\pi}\left [\mathit{G}_t|\mathit{S}_{t} = s, \mathit{A}_{t} = a  \right ] = \mathbb{E}_{\pi}\left [\sum_{k = 0}^{\infty}\gamma^{k}\mathit{R}_{t+k+1}|\mathit{S}_t= s, \mathit{A}_{t} = a \right ]
+	\end{equation}
+	$q_{\pi}$ được gọi là hàm giá trị hành động dưới chính sách $\pi$.
+	
+	\subsection{Phương trình Bellman}
 	
 \section{Những phương pháp đánh giá và cải thiện chính sách}
 	\begin{itemize}
