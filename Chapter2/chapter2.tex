@@ -23,7 +23,7 @@
 	
 	Các thành phần của agent gồm có:
 	\begin{itemize}
-		\item \textbf{Chính sách}. Chính sách, $\pi$, xác định khả năng chọn một hành động khi agent nhận được một trạng thái $s$. Chính xác tại time step $t$ được xác định $\pi_t(a|s) = \mathbb{P}[\mathit{A_t} = a|\mathit{S_t} = s]$. Để đạt được mục tiêu được nhiều điểm thưởng nhất, agent cần có một\textit{chính sách} chọn lựa hành động phù hợp mỗi khi gặp một trạng thái. Những phương pháp học tăng cường thường tập trung thay đổi các chính sách của agent sao cho đạt được kết quả tốt trong thực nghiệm.
+		\item \textbf{Chính sách}. Chính sách, $\pi$, xác định khả năng chọn một hành động khi agent nhận được một trạng thái $s$. Chính xác tại time step $t$ được xác định $\pi_t(a \mid s) = \mathbb{P}[\mathit{A_t} = a \mid \mathit{S_t} = s]$. Để đạt được mục tiêu được nhiều điểm thưởng nhất, agent cần có một\textit{chính sách} chọn lựa hành động phù hợp mỗi khi gặp một trạng thái. Những phương pháp học tăng cường thường tập trung thay đổi các chính sách của agent sao cho đạt được kết quả tốt trong thực nghiệm.
 		\item \textbf{Hàm giá trị}. Hầu hết các thuật toán học tăng cường đầu tập trung đánh giá những \textit{hàm giá trị}, các hàm này đánh giá một trạng thái hoặc hành động là tốt như thế nào cho agent thông qua việc ước lượng điểm thưởng nhận được ở tương lai. Thông thường, giá trị của một trạng thái $s$, dưới một chính sách $\pi$  được ký hiệu $v_{\pi}(s)$ là lượng điểm thưởng kỳ vọng nhận được bắt đầu từ trạng thái $s$ về sau.
 		\item \textbf{Mô hình}. Agent xây dựng mô hình cho riêng mình để mô phỏng môi trường và dự doán các thông tin của môi trường trong tương lai.
 	\end{itemize}	
@@ -60,11 +60,11 @@
 			\item $\gamma$: Hệ số có giá trị thỏa $0\leqslant \gamma \leqslant 1$ thể hiện mức độ tin tưởng về giá trị điểm thưởng nhận được ở tương lai.
 			\item $\mathcal{P}$: ma trận xác suất chuyển trạng thái. Trong đó $\mathcal{P}_{ss'}^{a}$ là xác suất chuyển đến trạng thái $s'$ khi hệ thống đang ở trạng thái $s$ và thực hiện hành động $a$.
 				\begin{equation}
-					\mathcal{P}_{ss'}^{a} = \mathbb{P}[\mathit{S_{t+1}} = s' |\mathit{S_{t}} = s, \mathit{A_{t}} = a]
+					\mathcal{P}_{ss'}^{a} = \mathbb{P}[\mathit{S_{t+1}} = s' \mid \mathit{S_{t}} = s, \mathit{A_{t}} = a]
 				\end{equation}
 			\item $\mathcal{R}$: ma trận điểm thưởng theo từng bộ (trạng thái, hành động). $\mathcal{R}_{s}^a$ là kỳ vọng giá trị điểm thưởng nhận được khi hệ thống thực hiện hành động $a$ ở trạng thái $s$.
 				\begin{equation}
-					\mathcal{R}_{s}^a = \mathbb{E}[\mathit{R_{t}} | \mathit{S_{t}} = s, \mathit{A_{t}} = a]
+					\mathcal{R}_{s}^a = \mathbb{E}[\mathit{R_{t}} \mid \mathit{S_{t}} = s, \mathit{A_{t}} = a]
 				\end{equation}				
 		\end{itemize}
 	
@@ -114,28 +114,124 @@
 		edge [post] node[above]{$1, 0$} (high);
 		\end{scope}		
 		\end{tikzpicture}
-		\caption[Đồ thị minh họa chuyển trạng thái cho robot thu gom]{Đồ thị minh họa chuyển trạng thái cho robot thu gom. Trong đồ thị có hai loại node: node trạng thái và node hành động. Node trạng thái minh họa những trạng thái có thể có mà hệ thống có thể nhận được, nó được ký hiệu một vòng tròn lớn với tên của trạng thái bên trong. Node hành động tường ứng với cặp (trạng thái, hành động). Việc thực hiện hành động $a$ tại trạng thái $s$ tương ứng trên đồ thị là một cạnh bắt đầu từ node trạng $s$ tới node hành động $a$. Khi đó môi trường sẽ trả ra trạng thái tiếp theo $s'$ ứng với đích của mũi tên đi từ node hành động $a$. Xác suất chuyển tới trạng thái $s'$ khi thực hiện hành động $a$ ở trạng thái $s$ $p(s'|s,a)$, và giá trị điểm thưởng kỳ vọng nhận được trong trường hợp này $r(s,a,s')$ tương ứng với ký hiệu trên mũi tên. Ví dụ: khi mức năng lượng pin đăng ở trạng thái \textit{thấp}, hệ thống quyết định thực hiện hành động \textit{sạc pin} khi đó trạng thái tiếp theo mà hệ thống nhận được sẽ là mức năng lượng pin ở trạng thái \textit{cao} và xác suất chuyển tới trạng thái \textit{cao} $p(\text{cao}|\text{thấp}, \text{sạc pin})$ là 1 và giá trị kỳ vọng điểm thưởng tương ứng $r(\text{thấp}, \text{sạc pin}, \text{cao})$ là 0.}
+		\caption[Đồ thị minh họa chuyển trạng thái cho robot thu gom]{Đồ thị minh họa chuyển trạng thái cho robot thu gom. Trong đồ thị có hai loại node: node trạng thái và node hành động. Node trạng thái minh họa những trạng thái có thể có mà hệ thống có thể nhận được, nó được ký hiệu một vòng tròn lớn với tên của trạng thái bên trong. Node hành động tường ứng với cặp (trạng thái, hành động). Việc thực hiện hành động $a$ tại trạng thái $s$ tương ứng trên đồ thị là một cạnh bắt đầu từ node trạng $s$ tới node hành động $a$. Khi đó môi trường sẽ trả ra trạng thái tiếp theo $s'$ ứng với đích của mũi tên đi từ node hành động $a$. Xác suất chuyển tới trạng thái $s'$ khi thực hiện hành động $a$ ở trạng thái $s$ $p(s' \mid s,a)$, và giá trị điểm thưởng kỳ vọng nhận được trong trường hợp này $r(s,a,s')$ tương ứng với ký hiệu trên mũi tên. Ví dụ: khi mức năng lượng pin đăng ở trạng thái \textit{thấp}, hệ thống quyết định thực hiện hành động \textit{sạc pin} khi đó trạng thái tiếp theo mà hệ thống nhận được sẽ là mức năng lượng pin ở trạng thái \textit{cao} và xác suất chuyển tới trạng thái \textit{cao} $p(\text{cao} \mid \text{thấp}, \text{sạc pin})$ là 1 và giá trị kỳ vọng điểm thưởng tương ứng $r(\text{thấp}, \text{sạc pin}, \text{cao})$ là 0.}
 		\label{graphRobot}
 	\end{figure}
 	
 	%% ----------------------------------------------------
 	
 	\subsection{Chính sách và hàm giá trị}
-	Một chính sách $\pi$ xác định xác suất mà hệ thông thực hiện hành động $a$ khi nó trong trạng thái $s$ được ký hiệu $\pi(a|s)$.
-	
+	Một chính sách $\pi$ xác định xác suất mà hệ thông thực hiện hành động $a$ khi nó trong trạng thái $s$ được ký hiệu $\pi(a \mid s)$. Có thể nói chính sách như "bộ não" của hệ thống, nó quyết định cách thức mà hệ thống hành động trong những trạng thái cụ thể do đó một chính sách tốt cũng làm cho khả năng hệ thống ra quyết định trở nên tốt hơn.
+		
 	Hàm giá trị cho biết những trạng thái hoặc những cặp hành động và trạng thái tốt như thế nào cho hệ thông khi nó trong những trạng thái hoặc thực hiện những cặp hành động và trạng thái đó. Khái niệm tốt ở đây nghĩa là giá trị điểm thưởng kỳ vọng mà hệ thông có thể nhận được ở tương lai. Hầu hết các thuật toán trong học tăng cường đều tập trung vào việc đánh giá những hàm giá trị. Điểm thưởng mà hệ thống có thể nhận được trong tương lai phụ thuộc vào những hành động mà nó thực hiện. Do đó hàm giá trị chịu ảnh hưởng rất nhiều vào chính sách. Giá trị của trạng thái $s$ dưới một chính sách $\pi$, ký hiệu $v_{\pi}(s)$, là giá trị kỳ vọng của return mà hệ thống nhận được bắt đầu từ trạng thái $s$ theo chính sách $\pi$ sau đó. Với mô hình MDP, $v_{\pi}(s)$ có thể được định nghĩa như sau:
 	\begin{equation}
-	v_{\pi}(s) = \mathbb{E}_{\pi}\left [\mathit{G}_t|\mathit{S}_{t} = s\right ] = \mathbb{E}_{\pi}\left [\sum_{k = 0}^{\infty}\gamma^{k}\mathit{R}_{t+k+1}|\mathit{S}_t= s\right ]
+	v_{\pi}(s) = \mathbb{E}_{\pi}\left [\mathit{G}_t \mid \mathit{S}_{t} = s\right ] = \mathbb{E}_{\pi}\left [\sum_{k = 0}^{\infty}\gamma^{k}\mathit{R}_{t+k+1} \middle|\ \mathit{S}_t= s\right ]
 	\end{equation}
 	$v_{\pi}$ được gọi là hàm giá trị trạng thái dưới chính sách $\pi$.
 	
 	Tương tự, chúng ta định nghĩa giá trị của việc thực hiện hành động $a$ trong trạng thái $s$ dưới chính sách $\pi$, được ký hiệu $q_{\pi}(s,a)$, là giá trị kỳ vọng của return mà hệ thống nhận được bắt đầu việc thực hiện hành động $a$ trong trạng thái $s$ theo chính sách $\pi$
 	\begin{equation}
-	q_{\pi}(s,a) = \mathbb{E}_{\pi}\left [\mathit{G}_t|\mathit{S}_{t} = s, \mathit{A}_{t} = a  \right ] = \mathbb{E}_{\pi}\left [\sum_{k = 0}^{\infty}\gamma^{k}\mathit{R}_{t+k+1}|\mathit{S}_t= s, \mathit{A}_{t} = a \right ]
+	q_{\pi}(s,a) = \mathbb{E}_{\pi}\left [\mathit{G}_t \mid \mathit{S}_{t} = s, \mathit{A}_{t} = a  \right ] = \mathbb{E}_{\pi}\left [\sum_{k = 0}^{\infty}\gamma^{k}\mathit{R}_{t+k+1} \middle|\ \mathit{S}_t= s, \mathit{A}_{t} = a \right ]
 	\end{equation}
 	$q_{\pi}$ được gọi là hàm giá trị hành động dưới chính sách $\pi$.
 	
-	\subsection{Phương trình Bellman}
+	\begin{figure}
+		\centering
+		\begin{tikzpicture}[node distance=4.5cm,>=stealth',bend angle=45,auto]
+		
+		\tikzstyle{state}=[circle,thick,draw=blue!75,fill=white!20,minimum size = 5mm, inner sep=0pt]
+		\tikzstyle{action}=[circle,draw=black!75,
+		fill=black!75,minimum size=2mm]
+		
+		\tikzstyle{every label}=[red]
+		
+		\begin{scope}
+		% First net
+		\node [state, label=above:$s$] (s1)                           {};
+		
+		\node (label) [left = 2cm of s1] {(a)};
+		
+		\node [action] (a1) [below = 2cm of s1]              {}
+		edge (s1);
+		
+		\node [action] (a2) [left = 2cm of a1]              {}
+		edge (s1);
+		
+		\node [action] (a3) [right = 2cm of a1, label=right:$a$]              {}
+		edge (s1);
+		
+		\node [state] (s2) [below left = 2cm and 0.3cm of a1] {}
+		edge (a1);
+		
+		\node [state] (s3) [below right = 2cm and 0.3cm of a1] {}
+		edge (a1);
+		
+		\node [state] (s4) [below left = 2cm and 0.3cm of a2] {}
+		edge (a2);
+		
+		\node [state] (s5) [below right = 2cm and 0.3cm of a2] {}
+		edge (a2);
+		
+		\node [state] (s6) [below left = 2cm and 0.3cm of a3] {}
+		edge (a3);
+		
+		\node [state] (s7) [below right = 2cm and 0.3cm of a3, label=right:$s'$] {}
+		edge node[right]{$r$} (a3);	
+		\end{scope}
+		
+		\begin{scope}[xshift=8cm]
+		% Second net
+		
+		\node [action, label={[name=label node]above:$a,b$}] (a4)      {};
+		
+		\node (label) [left = 2cm of a4] {(b)};
+		
+		\node [state] (s8) [below right = 2 cm and 1 cm of a4, label=right:$s'$]    {}
+		edge node[right]{$r$} (a4);	
+		
+		\node [state] (s9) [below left  = 2 cm and 1 cm of a4]    {}
+		edge (a4);
+		
+		\node [action] (a5) [below left  = 2 cm and 0.3 cm of s8]    {}
+		edge (s8);
+		
+		\node [action] (a6) [below right  = 2 cm and 0.3 cm of s8, label=right:$a'$]    {}
+		edge (s8);
+		
+		\node [action] (a7) [below left  = 2 cm and 0.3 cm of s9]    {}
+		edge (s9);
+		
+		\node [action] (a8) [below right  = 2 cm and 0.3 cm of s9]    {}
+		edge (s9);	
+		
+		\end{scope}
+		
+		\end{tikzpicture}
+		\caption[Mô hình minh họa cho hàm giá trị]{Mô hình minh họa cho (a) $v_{\pi}$ và (b) $q_{\pi}$}
+		\label{backup_diagram}
+	\end{figure}
+	
+	Hàm giá trị có một tính chất cơ bản thường được áp dụng trong học tăng cường đó là mối quan hệ đệ quy. Cho bất kỳ chính sách $\pi$ với bất kỳ trạng thái $s$ ta có:
+	
+	\begin{align}
+		\label{bell_state}
+		%\begin{aligned}
+			v_{\pi}(s) = {}& \mathbb{E}_{\pi}\left [\mathit{G}_t \mid \mathit{S}_{t} = s\right ] \nonumber \\
+			= {}& \mathbb{E}_{\pi}\left [ \mathit{R}_{t+1} + \gamma \mathit{R}_{t+2} + \gamma^{2} \mathit{R}_{t+3} + ... \mid \mathit{S}_t = s  \right ] \nonumber \\
+			= {}& \mathbb{E}_{\pi}\left [ \mathit{R}_{t+1} + \gamma( {R}_{t+2} + \gamma \mathit{R}_{t+3} + ...) \mid \mathit{S}_t = s  \right ] \nonumber \\
+			= {}& \mathbb{E}_{\pi}\left [ \mathit{R}_{t+1} + \gamma\mathit{G}_{t + 1} \mid \mathit{S}_t = s  \right ] \nonumber \\
+			= {}& \mathbb{E}_{\pi}\left [ \mathit{R}_{t+1} + \gamma v(\mathit{S}_{t+1}) \mid \mathit{S}_t = s  \right ]
+		%\end{aligned}
+	\end{align}
+	
+	Phương trình \ref{bell_state} được gọi là phương trình Bellman cho $v_{\pi}$. Từ phương trình này ta thấy được mối liên quan giữa giá trị của một trạng $s$ bất kỳ và giá trị của những trạng thái tiếp theo đạt được từ trạng thái đó. Ý tưởng nhìn trước một bước, hay nói cách khác đánh giá trạng thái hiện tại bằng cách nhìn trước tất cả những trạng tái tiếp theo có thể đạt được từ trạng thái hiện tại, được minh họa trong hình (a) \ref{backup_diagram}. Từ một trạng thái, môi trường có thể trả ra nhiều điểm thưởng $r$ và trạng thái tiếp theo $s'$ khác nhau. Phương trình \ref{bell_state} sẽ trung bình tất cả các trường hợp có thể đó lại theo xác suất mà chúng xuất hiện. Phương trình này cũng cho thấy giá trị của một trạng thái phải bằng tổng giá trị kỳ vọng của những trạng thái tiếp sau đó và giá trị kỳ vọng điểm thưởng nhận được.
+	
+	\subsection{Hàm giá trị tối ưu}
+	Để giải quyết những vấn đề trong học tăng cường, chúng ta cần tìm một chính sách sao cho hệ thống có thể đạt được nhiều điểm thưởng nhất có thể. Một chính sách $\pi$ được xác định là tốt hơn hoặc bằng chính sách $\pi'$ khi giá trị kỳ vọng của return theo chính sách $\pi$ lớn hơn hoặc bằng giá trị đó theo chính sách $\pi'$. Hay có thể định nghĩa theo cách khác:
+	\begin{equation}
+		\pi \geq \pi' \Longleftrightarrow v_{\pi}(s) \geq v_{\pi'}(s), \forall s \in \mathcal{S}
+	\end{equation}
+	Luôn có ít nhất một chính sách tốt hơn hoặc bằng tất cả các chính sách còn lại \cite{sutton1998introduction}. Nó được gọi là chính \textit{sách tối ưu} và được ký hiệu $\pi_{*}$.
 	
 \section{Những phương pháp đánh giá và cải thiện chính sách}
 	\begin{itemize}
