@@ -131,6 +131,7 @@
 	
 	Tương tự, chúng ta định nghĩa giá trị của việc thực hiện hành động $a$ trong trạng thái $s$ dưới chính sách $\pi$, được ký hiệu $q_{\pi}(s,a)$, là giá trị kỳ vọng của return mà hệ thống nhận được bắt đầu việc thực hiện hành động $a$ trong trạng thái $s$ theo chính sách $\pi$
 	\begin{equation}
+	\label{action_value}
 	q_{\pi}(s,a) = \mathbb{E}_{\pi}\left [\mathit{G}_t \mid \mathit{S}_{t} = s, \mathit{A}_{t} = a  \right ] = \mathbb{E}_{\pi}\left [\sum_{k = 0}^{\infty}\gamma^{k}\mathit{R}_{t+k+1} \middle|\ \mathit{S}_t= s, \mathit{A}_{t} = a \right ]
 	\end{equation}
 	$q_{\pi}$ được gọi là hàm giá trị hành động dưới chính sách $\pi$.
@@ -147,6 +148,7 @@
 		
 		\begin{scope}
 		% First net
+		\label{fig_bellman_value}
 		\node [state, label=above:$s$] (s1)                           {};
 		
 		\node (label) [left = 2cm of s1] {(a)};
@@ -181,8 +183,8 @@
 		
 		\begin{scope}[xshift=8cm]
 		% Second net
-		
-		\node [action, label={[name=label node]above:$a,b$}] (a4)      {};
+		\label{fig_bellman_action}
+		\node [action, label={[name=label node]above:$s,a$}] (a4)      {};
 		
 		\node (label) [left = 2cm of a4] {(b)};
 		
@@ -211,7 +213,7 @@
 		\label{backup_diagram}
 	\end{figure}
 	
-	Hàm giá trị có một tính chất cơ bản thường được áp dụng trong học tăng cường đó là mối quan hệ đệ quy. Cho bất kỳ chính sách $\pi$ với bất kỳ trạng thái $s$ ta có:
+	Hàm giá trị có một tính chất cơ bản thường được áp dụng trong học tăng cường đó là mối quan hệ đệ quy. Cho bất kỳ chính sách $\pi$ với bất kỳ trạng thái $s$, ta có hàm giá trị cho một trạng thái được xác định:
 	
 	\begin{align}
 		\label{bell_state}
@@ -224,14 +226,150 @@
 		%\end{aligned}
 	\end{align}
 	
-	Phương trình \ref{bell_state} được gọi là phương trình Bellman cho $v_{\pi}$. Từ phương trình này ta thấy được mối liên quan giữa giá trị của một trạng $s$ bất kỳ và giá trị của những trạng thái tiếp theo đạt được từ trạng thái đó. Ý tưởng nhìn trước một bước, hay nói cách khác đánh giá trạng thái hiện tại bằng cách nhìn trước tất cả những trạng tái tiếp theo có thể đạt được từ trạng thái hiện tại, được minh họa trong hình (a) \ref{backup_diagram}. Từ một trạng thái, môi trường có thể trả ra nhiều điểm thưởng $r$ và trạng thái tiếp theo $s'$ khác nhau. Phương trình \ref{bell_state} sẽ trung bình tất cả các trường hợp có thể đó lại theo xác suất mà chúng xuất hiện. Phương trình này cũng cho thấy giá trị của một trạng thái phải bằng tổng giá trị kỳ vọng của những trạng thái tiếp sau đó và giá trị kỳ vọng điểm thưởng nhận được.
+	Phương trình \ref{bell_state} được gọi là phương trình Bellman cho $v_{\pi}$. Từ phương trình này ta thấy được mối liên quan giữa giá trị của một trạng $s$ bất kỳ và giá trị của những trạng thái tiếp theo đạt được từ trạng thái đó. Ý tưởng nhìn trước một bước, hay nói cách khác đánh giá trạng thái hiện tại bằng cách nhìn trước tất cả những trạng tái tiếp theo có thể đạt được từ trạng thái hiện tại, được minh họa trong hình \ref{backup_diagram}a. Từ một trạng thái, môi trường có thể trả ra nhiều điểm thưởng $r$ và trạng thái tiếp theo $s'$ khác nhau. Phương trình \ref{bell_state} sẽ trung bình tất cả các trường hợp có thể đó lại theo xác suất mà chúng xuất hiện. Phương trình này cũng cho thấy giá trị của một trạng thái phải bằng tổng giá trị kỳ vọng của những trạng thái tiếp sau đó và giá trị kỳ vọng điểm thưởng nhận được.
+	
+	\begin{equation}
+		\label{bell_action}
+		q_{\pi}(s,a) = \mathbb{E}_{\pi} \left[\mathit{R}_{t+1} + \gamma q_{\pi}(\mathit{S}_{t+1}, \mathit{A}_{t+1}) \mid \mathit{S}_t = s, \mathit{A}_t = a \right]
+	\end{equation}
+	
+	Phân tích phương trình \ref{action_value} tương tự như đã làm đối với hàm giá trị hành động, ta có được phương trình \ref{bell_action}. Hình \ref{backup_diagram}b minh họa ý tưởng nhìn trước một đước để đánh giá giá trị của một hành động ở trạng thái hiện tại. Từ một hành động $a$ ở trạng thái $s$, môi trường có thể trả ra nhiều điểm thưởng $r$ và trạng thái $s'$ khác nhau. Trong mỗi trạng thái $s'$ lại có nhiều hành động $a'$ khác nhau có thể thực hiện.	Phương trình \ref{bell_action} sẽ trung bình tất cả các trường hợp có thể đó lại theo xác suất mà chúng được thực hiện. Hay nói cách khác, phương trình \ref{bell_action} cho thấy giá trị của một hành động $a$ tại trạng thái $s$, $q_{\pi}(a,s)$ cũng được xác định tổng bằng giá trị kỳ vọng điểm thưởng hệ thống nhận được nhận được ngay sau khi thực hiện thực hiện hành động đó và giá trị kỳ vọng của các hành động trong những trạng thái kế tiếp.
+	
+	[TODO] Thêm mối quan hê giữa hai loại hàm
 	
 	\subsection{Hàm giá trị tối ưu}
 	Để giải quyết những vấn đề trong học tăng cường, chúng ta cần tìm một chính sách sao cho hệ thống có thể đạt được nhiều điểm thưởng nhất có thể. Một chính sách $\pi$ được xác định là tốt hơn hoặc bằng chính sách $\pi'$ khi giá trị kỳ vọng của return theo chính sách $\pi$ lớn hơn hoặc bằng giá trị đó theo chính sách $\pi'$. Hay có thể định nghĩa theo cách khác:
 	\begin{equation}
 		\pi \geq \pi' \Longleftrightarrow v_{\pi}(s) \geq v_{\pi'}(s), \forall s \in \mathcal{S}
 	\end{equation}
-	Luôn có ít nhất một chính sách tốt hơn hoặc bằng tất cả các chính sách còn lại \cite{sutton1998introduction}. Nó được gọi là chính \textit{sách tối ưu} và được ký hiệu $\pi_{*}$.
+	Luôn có ít nhất một chính sách tốt hơn hoặc bằng tất cả các chính sách còn lại \cite{sutton1998introduction}. Chúng được gọi chung là \textit{chính sách tối ưu} và được ký hiệu $\pi_{*}$. Những chính sách tối ưu đều cùng có chung một hàm giá trị trạng thái và hàm giá trị hành động. Hai loại hàm giá trị này có thể được gọi chung là \textit{hàm giá trị tối ưu}. Chúng ta cũng có thể gọi tách biệt \textit{hàm giá trị trạng thái tối ưu} đối với hàm giá trị trạng thái và \textit{hàm giá trị hành động tối ưu} đối với hàm giá trị hành động. Phương trình \ref{eq:optimal_state} và \ref{eq:optimal_action} định nghĩa hình thức cho hai loại hàm này
+	\begin{align}
+		v_{*}(s) = {} & \max_{\pi}v_{\pi}(s), \forall s \in \mathcal{S} \label{eq:optimal_state} \\
+		q_{*}(s,a) = {} & \max_{\pi}q_{\pi}(s,a), \forall s \in \mathcal{S} \text{ và } \forall a \in \mathcal{A}(s) \label{eq:optimal_action}
+	\end{align}
+	Từ hai phương trình \ref{eq:optimal_state} và \ref{eq:optimal_action} thấy rằng để xác định hàm giá trị tối ưu của mỗi trạng thái $s$ hoặc cặp trạng thái và hành động ($s,a$), ta cần thử đánh giá giá trị của chúng theo tất cả các chính sách có thể có và chọn giá trị cao nhất là giá trị tối ưu cho trạng thái $s$ hoặc cặp trạng thái và hành động ($s,a$).
+	
+	Hình \ref{fig:relationship_optimal_functions} minh họa quan hệ giữa giá trị trạng thái tối ưu và hàm giá trị hành động tối ưu, khi có được hàm này ta dễ dàng có được hàm còn lại. Trong hình \ref{fig:relationship_optimal_functions}a, ta có thể xác định giá trị tối ưu cho trạng thái $s$ dựa trên hàm giá trị hành động tối ưu của các hành động có thể thực hiện tại trạng thái đó. Phương trình \ref{eq:optimal_state_action} xác định giá trị tối ưu cho trạng thái $s$ bằng cách chọn giá trị hành động tối ưu lớn nhất trong các hành động có thể thực hiện ở trọng thái đó. Tương tự trong hình \ref{fig:relationship_optimal_functions}b, ta có thể xác định giá trị tối ưu cho hành động $a$ ở trạng thái $s$, dựa trên hàm giá trị trạng thái tối ưu của các trạng thái kế tiếp đạt được từ hành động đó. Phương trình \ref{eq:optimal_action_state} xác định giá trị tối ưu của hành động $a$ tại trạng thái $s$ bằng tổng giá trị kỳ vọng điểm thưởng nhận được từ môi trường và giá trị tối ưu kỳ vọng của những trạng thái kế tiếp đã nhân với hệ số $\gamma$.
+	
+	\begin{figure}
+		\centering
+		\begin{tikzpicture}[node distance=4.5cm,>=stealth',bend angle=45,auto]
+		
+		\tikzstyle{state}=[circle,thick,draw=blue!75,fill=white!20,minimum size = 5mm, inner sep=0pt]
+		\tikzstyle{action}=[circle,draw=black!75,
+		fill=black!75,minimum size=2mm]
+		
+		\tikzstyle{every label}=[red]
+		
+		\begin{scope}
+			% First net
+			\node [state, label={[name=label node]right:$s \mapsto v_{*}(s)$}] (s1)      {};
+			
+			\node (label) [left = 2cm of s1] {(a)};
+			
+			\node [action, label={[name=label node]right:$a \mapsto q_{*}(s,a)$}] (a1) [below right = 2 cm and 1 cm of s1]    {}
+			edge node[right]{$r$} (s1);	
+			
+			\node [action] (a2) [below left  = 2 cm and 1 cm of s1]    {}
+			edge (s1)
+			pic[draw=black, -, angle eccentricity=1.2, angle radius=1cm]
+			{angle=a2--s1--a1};
+			
+		\end{scope}		
+		
+		\begin{scope}[xshift=8cm]
+			% Second net		
+			\node [action, label={[name=label node]right:$s,a \mapsto q_{*}(s,a)$}] (a4)      {};		
+			\node (label) [left = 2cm of a4] {(b)};		
+			\node [state] (s8) [below right = 2 cm and 1 cm of a4, label=right:$s' \mapsto v_{*}(s')$]    {}
+			edge node[right]{$r$} (a4);		
+			\node [state] (s9) [below left  = 2 cm and 1 cm of a4]    {}
+		edge (a4);		
+		\end{scope}		
+		\end{tikzpicture}		
+		\caption[Đồ thị minh họa quan hệ giữa những hàm giá trị tối ưu]{Đồ thị minh họa quan hệ giữa hàm giá trị trạng thái tối ưu và hàm giá trị hành động tối ưu}
+		\label{fig:relationship_optimal_functions}
+	\end{figure}	
+	\begin{align}
+%		q_{*}(s,a) = \mathbb{E} \left[ \mathit{R}_{t+1} + \gamma v_{*}(\mathit{S}_{t+1}) \mid \mathit{S}_{t} = s, \mathit{A}_{t} = a \right]
+		v_{*}(s) = {} & \max_{a \in \mathcal{A}(s)} q_{*}(s,a) \label{eq:optimal_state_action}\\
+		q_{*}(s,a) = {} & \mathit{R}_{s}^{a} + \gamma \sum_{s' \in \mathcal{S}}^{} \mathcal{P}_{ss'}^{a} v_{*}(s') \label{eq:optimal_action_state} \\
+		v_{*}(s) = {} & \max_{a \in \mathcal{A}(s)} \mathit{R}_{s}^{a} + \gamma \sum_{s' \in \mathcal{S}}^{} \mathcal{P}_{ss'}^{a} v_{*}(s') \label{eq:bellman_optimal_state}\\
+		q_{*}(s,a) = {} & \mathit{R}_{s}^{a} + \gamma \sum_{s' \in \mathcal{S}}^{} \mathcal{P}_{ss'}^{a} \max_{a' \in \mathcal{A}(s')} q_{*}(s',a') \label{eq:bellman_optimal_action}		
+	\end{align}
+	
+	\begin{figure}
+		\centering
+		\begin{tikzpicture}[node distance=4.5cm,>=stealth',bend angle=45,auto]
+		
+			\tikzstyle{state}=[circle,thick,draw=blue!75,fill=white!20,minimum size = 5mm, inner sep=0pt]
+			\tikzstyle{action}=[circle,draw=black!75,
+			fill=black!75,minimum size=2mm]
+			
+			\tikzstyle{every label}=[red]
+			
+			\begin{scope}
+			
+			\node [state, label={[name=label node]right:$s \mapsto v_{*}(s)$}] (s1)      {};
+			
+			\node (label) [left = 2cm of s1] {(a)};
+			
+			\node [action] (a1) [below right = 2 cm and 1 cm of s1, label=right:$a$]    {}
+			edge(s1);
+			
+			\node [action] (a2) [below left  = 2 cm and 1 cm of s1]    {}
+			edge (s1)
+			pic[draw=black, -, angle eccentricity=1.2, angle radius=1cm]
+			{angle=a2--s1--a1};
+			
+			\node [state] (s2) [below left  = 2 cm and 0.3 cm of a1]    {}
+			edge (a1);
+			
+			\node [state, label={[name=label node]right:$s' \mapsto v_{*}(s')$}] (s3) [below right  = 2 cm and 0.3 cm of a1]    {}
+			edge node[right]{$r$}	 (a1);
+			
+			\node [state] (s4) [below left  = 2 cm and 0.3 cm of a2]    {}
+			edge (a2);
+			
+			\node [state] (s5) [below right  = 2 cm and 0.3 cm of a2]    {}
+			edge (a2);	
+			\end{scope}
+			
+			\begin{scope}[xshift=8cm]
+			
+			\node [action, label={[name=label node]right:$(s,a) \mapsto q_{*}(s,a)$}] (a3)      {};
+			
+			\node (label) [left = 2cm of a3] {(b)};
+			
+			\node [state] (s6) [below right = 2 cm and 1 cm of a3, label=right:$s'$]    {}
+			edge node[right]{$r$} (a3);	
+			
+			\node [state] (s7) [below left  = 2 cm and 1 cm of a3]    {}
+			edge (a3);
+			
+			\node [action] (a4) [below left  = 2 cm and 0.3 cm of s6]    {}
+			edge (s6);
+			
+			\node [action, label={[name=label node]right:$a' \mapsto q_{*}(s',a')$}] (a5) [below right  = 2 cm and 0.3 cm of s6]    {}
+			edge (s6)
+			pic[draw=black, -, angle eccentricity=1.2, angle radius=1cm]
+			{angle=a4--s6--a5};
+			
+			\node [action] (a6) [below left  = 2 cm and 0.3 cm of s7]    {}
+			edge (s7);
+			
+			\node [action] (a7) [below right  = 2 cm and 0.3 cm of s7]    {}
+			edge (s7)
+			pic[draw=black, -, angle eccentricity=1.2, angle radius=1cm]
+			{angle=a6--s7--a7};
+			
+			\end{scope}		
+		\end{tikzpicture}
+		\caption[Đồ thị minh họa phương trình Bellman trong hàm giá trị tối ưu]{Mô hình minh họa phương trình Bellman trong (a) $v_{*}$} và (b) $q_{*}$
+		\label{fig:bellman_optimal_function}
+	\end{figure}
+	
+	Phương trình \ref{eq:bellman_optimal_state} và \ref{eq:bellman_optimal_action} dễ dàng có được bằng cách thay thế hai phương trình \ref{eq:optimal_state_action} và \ref{eq:optimal_action_state} qua lại lẫn nhau. Từ hai phương trình này, ta thấy được dạng phương trình Bellman trong hàm giá trị trạng thái tối ưu và hàm giá trị hành động tối ưu. Hình \ref{fig:bellman_optimal_function} minh họa ý tưởng nhìn trước một bước của phương trình Bellman trong hàm giá trị tối ưu. Trong đó hình \ref{fig:bellman_optimal_function}a minh họa cách thức xác định giá trị tối ưu cho một trạng thái ứng với phương trình \ref{eq:bellman_optimal_state}. Hình \ref{fig:bellman_optimal_function}b minh họa cách thức xác định giá trị tối ưu của một hành động ở một trạng thái ứng với phương trình \ref{eq:bellman_optimal_action}.
 	
 \section{Những phương pháp đánh giá và cải thiện chính sách}
 	\begin{itemize}
@@ -243,4 +381,5 @@
 			\end{itemize}
 		\item Qui trình cải thiện chính sách: Phương pháp greedy
 	\end{itemize}
+	
 	
