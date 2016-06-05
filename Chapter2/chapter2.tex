@@ -73,7 +73,7 @@
 		$$\mathcal{A}(\text{cao}) =  \left \{\text{tìm kiếm}, \text{đợi} \right \}$$
 		$$\mathcal{A}(\text{thấp}) =  \left \{\text{tìm kiếm}, \text{đợi}, \text{sạc pin} \right \}$$
 	
-	Khi mức năng lượng pin ở mức cao, việc robot thực hiện tìm kiếm sẽ có xác suất $\alpha$ năng lượng pin vẫn ở mức cao, và $1 - \alpha$ năng lượng của pi sẽ chuyển về mức thấp. Mặt khác, khi mức năng lượng ở mức thấp, nếu robot thực hiện tìm kiếm sẽ có xác suất $\beta$ năng lượng pin ở mức thấp và $1 - \beta$ chuyển đến mức cao, trường hợp này xảy ra khi dung lượng pin cạn kiệt và cần ai đó mang nó đến chỗ sạc cho đến khi đạt mức năng lượng cao. Ngoài ra, mỗi lần robot thu gom được một lon soda nó sẽ nhận được $+1$ điểm thưởng và sẽ bị $-3$ điểm thưởng mỗi khi nó phải cần ai đó mang đến chỗ sạc. $r_{\text{đợi}}$, $r_{\text{tìm kiếm}}$ là số lượng lon soda kỳ vọng mà robot có thể thu gom được trong khi đợi và tìm kiếm. Đồ thị \ref{graphRobot} minh họa cho mô hình MDP trong robot thu gom.
+	Khi mức năng lượng pin ở mức cao, việc robot thực hiện tìm kiếm sẽ có xác suất $\alpha$ năng lượng pin vẫn ở mức cao, và $1 - \alpha$ năng lượng của pi sẽ chuyển về mức thấp. Mặt khác, khi mức năng lượng ở mức thấp, nếu robot thực hiện tìm kiếm sẽ có xác suất $\beta$ năng lượng pin ở mức thấp và $1 - \beta$ chuyển đến mức cao, trường hợp này xảy ra khi dung lượng pin cạn kiệt và cần ai đó mang nó đến chỗ sạc cho đến khi đạt mức năng lượng cao. Ngoài ra, mỗi lần robot thu gom được một lon soda nó sẽ nhận được $+1$ điểm thưởng và sẽ bị $-3$ điểm thưởng mỗi khi nó phải cần ai đó mang đến chỗ sạc. $r_{\text{đợi}}$, $r_{\text{tìm kiếm}}$ là số lượng lon soda kỳ vọng mà robot có thể thu gom được trong khi đợi và tìm kiếm. ịị \ref{graphRobot} minh họa cho mô hình MDP trong robot thu gom.
 	
 	%% Hình vẽ
 	\begin{figure}
@@ -129,13 +129,58 @@
 	\end{equation}
 	$v_{\pi}$ được gọi là hàm giá trị trạng thái dưới chính sách $\pi$.
 	
-	Tương tự, chúng ta định nghĩa giá trị của việc thực hiện hành động $a$ trong trạng thái $s$ dưới chính sách $\pi$, được ký hiệu $q_{\pi}(s,a)$, là giá trị kỳ vọng của return mà hệ thống nhận được bắt đầu việc thực hiện hành động $a$ trong trạng thái $s$ theo chính sách $\pi$
+	Tương tự, chúng ta định nghĩa giá trị của việc thực hiện hành động $a$ trong trạng thái $s$ dưới chính sách $\pi$, được ký hiệu $q_{\pi}(s,a)$, là giá trị kỳ vọng của return mà hệ thống nhận được bắt đầu từ việc thực hiện hành động $a$ trong trạng thái $s$ theo chính sách $\pi$
 	\begin{equation}
 	\label{action_value}
 	q_{\pi}(s,a) = \mathbb{E}_{\pi}\left [\mathit{G}_t \mid \mathit{S}_{t} = s, \mathit{A}_{t} = a  \right ] = \mathbb{E}_{\pi}\left [\sum_{k = 0}^{\infty}\gamma^{k}\mathit{R}_{t+k+1} \middle|\ \mathit{S}_t= s, \mathit{A}_{t} = a \right ]
 	\end{equation}
 	$q_{\pi}$ được gọi là hàm giá trị hành động dưới chính sách $\pi$.
 	
+	Hình \ref{fig:relationship_value_functions} minh họa quan hệ giữa hàm giá trị trạng thái và hàm giá trị hành động, khi có được giá trị này ta có thể có được hàm còn lại. Phương trình \ref{eq:relation_value_action} xác hàm giá trị của một trạng thái bằng giá trị kỳ vọng giá trị của các hành động thực hiện tại trạng thái đó. Hình \ref{fig:relationship_value_functions}a minh họa cách thức xác định giá trị của một trạng thái $s$ từ giá trị của các hành động thực hiện tại trạng thái đó. Hình \ref{fig:relationship_value_functions}b cho thấy từ việc thực hiện hành động $a$ tại trạng thái $s$, môi trường có thể trả ra nhiều trạng thái tiếp theo $s'$ khác nhau. Do đó giá trị của hành động $s$ ở trạng thái $a$ có thể được xác định bằng tổng giá trị kỳ vọng điểm thưởng nhận được và giá trị kỳ vọng của trạng thái tiếp theo đó đã được nhân với hệ số $\gamma$. Cách xác định này được biểu diễn trong phương trình \ref{eq:relation_action_value}.
+	\begin{align}
+		v_{\pi} = {} & \sum_{a \in \mathcal{A}(s)}^{}\pi(a \mid s)q_{\pi}(s,a) \label{eq:relation_value_action}\\
+		q_{\pi}(s,a) = {} & \mathcal{R}_{s}^{a} + \gamma \sum_{s' \in \mathcal{S}}^{}\mathcal{P}_{ss'}^{a}v_{\pi}(s') \label{eq:relation_action_value}
+	\end{align}
+	%----------------------------------------	
+	\begin{figure}
+		\centering
+		\begin{tikzpicture}[node distance=4.5cm,>=stealth',bend angle=45,auto]
+		
+		\tikzstyle{state}=[circle,thick,draw=blue!75,fill=white!20,minimum size = 5mm, inner sep=0pt]
+		\tikzstyle{action}=[circle,draw=black!75,
+		fill=black!75,minimum size=2mm]
+		
+		\tikzstyle{every label}=[red]
+		
+		\begin{scope}
+		% First net
+		\node [state, label={[name=label node]right:$s \mapsto v_{\pi}(s)$}] (s1)      {};
+		
+		\node (label) [left = 2cm of s1] {(a)};
+		
+		\node [action, label={[name=label node]right:$a \mapsto q_{*}(s,a)$}] (a1) [below right = 2 cm and 1 cm of s1]    {}
+		edge node[right]{$r$} (s1);	
+		
+		\node [action] (a2) [below left  = 2 cm and 1 cm of s1]    {}
+		edge (s1);
+		
+		\end{scope}		
+		
+		\begin{scope}[xshift=8cm]
+		% Second net		
+		\node [action, label={[name=label node]right:$s,a \mapsto q_{\pi}(s,a)$}] (a4)      {};		
+		\node (label) [left = 2cm of a4] {(b)};		
+		\node [state] (s8) [below right = 2 cm and 1 cm of a4, label=right:$s' \mapsto v_{\pi}(s')$]    {}
+		edge node[right]{$r$} (a4);		
+		\node [state] (s9) [below left  = 2 cm and 1 cm of a4]    {}
+		edge (a4);		
+		\end{scope}		
+		\end{tikzpicture}		
+		\caption[Đồ thị minh họa quan hệ giữa những hàm giá trị]{Đồ thị minh họa quan hệ giữa hàm giá trị trạng thái và hàm giá trị hành động}
+		\label{fig:relationship_value_functions}
+	\end{figure}
+	
+	%----------------------------------------
 	\begin{figure}
 		\centering
 		\begin{tikzpicture}[node distance=4.5cm,>=stealth',bend angle=45,auto]
@@ -209,12 +254,11 @@
 		\end{scope}
 		
 		\end{tikzpicture}
-		\caption[Mô hình minh họa cho hàm giá trị]{Mô hình minh họa cho (a) $v_{\pi}$ và (b) $q_{\pi}$}
+		\caption[Đồ thị minh họa cho hàm giá trị]{Đồ thị minh họa cho (a) $v_{\pi}$ và (b) $q_{\pi}$}
 		\label{backup_diagram}
 	\end{figure}
 	
-	Hàm giá trị có một tính chất cơ bản thường được áp dụng trong học tăng cường đó là mối quan hệ đệ quy. Cho bất kỳ chính sách $\pi$ với bất kỳ trạng thái $s$, ta có hàm giá trị cho một trạng thái được xác định:
-	
+	Hàm giá trị có một tính chất cơ bản thường được áp dụng trong học tăng cường đó là mối quan hệ đệ quy. Cho bất kỳ chính sách $\pi$ với bất kỳ trạng thái $s$, ta có hàm giá trị cho một trạng thái được xác định:	
 	\begin{align}
 		\label{bell_state}
 		%\begin{aligned}
@@ -224,8 +268,7 @@
 			= {}& \mathbb{E}_{\pi}\left [ \mathit{R}_{t+1} + \gamma\mathit{G}_{t + 1} \mid \mathit{S}_t = s  \right ] \nonumber \\
 			= {}& \mathbb{E}_{\pi}\left [ \mathit{R}_{t+1} + \gamma v(\mathit{S}_{t+1}) \mid \mathit{S}_t = s  \right ]
 		%\end{aligned}
-	\end{align}
-	
+	\end{align}	
 	Phương trình \ref{bell_state} được gọi là phương trình Bellman cho $v_{\pi}$. Từ phương trình này ta thấy được mối liên quan giữa giá trị của một trạng $s$ bất kỳ và giá trị của những trạng thái tiếp theo đạt được từ trạng thái đó. Ý tưởng nhìn trước một bước, hay nói cách khác đánh giá trạng thái hiện tại bằng cách nhìn trước tất cả những trạng tái tiếp theo có thể đạt được từ trạng thái hiện tại, được minh họa trong hình \ref{backup_diagram}a. Từ một trạng thái, môi trường có thể trả ra nhiều điểm thưởng $r$ và trạng thái tiếp theo $s'$ khác nhau. Phương trình \ref{bell_state} sẽ trung bình tất cả các trường hợp có thể đó lại theo xác suất mà chúng xuất hiện. Phương trình này cũng cho thấy giá trị của một trạng thái phải bằng tổng giá trị kỳ vọng của những trạng thái tiếp sau đó và giá trị kỳ vọng điểm thưởng nhận được.
 	
 	\begin{equation}
@@ -234,9 +277,7 @@
 	\end{equation}
 	
 	Phân tích phương trình \ref{action_value} tương tự như đã làm đối với hàm giá trị hành động, ta có được phương trình \ref{bell_action}. Hình \ref{backup_diagram}b minh họa ý tưởng nhìn trước một đước để đánh giá giá trị của một hành động ở trạng thái hiện tại. Từ một hành động $a$ ở trạng thái $s$, môi trường có thể trả ra nhiều điểm thưởng $r$ và trạng thái $s'$ khác nhau. Trong mỗi trạng thái $s'$ lại có nhiều hành động $a'$ khác nhau có thể thực hiện.	Phương trình \ref{bell_action} sẽ trung bình tất cả các trường hợp có thể đó lại theo xác suất mà chúng được thực hiện. Hay nói cách khác, phương trình \ref{bell_action} cho thấy giá trị của một hành động $a$ tại trạng thái $s$, $q_{\pi}(a,s)$ cũng được xác định tổng bằng giá trị kỳ vọng điểm thưởng hệ thống nhận được nhận được ngay sau khi thực hiện thực hiện hành động đó và giá trị kỳ vọng của các hành động trong những trạng thái kế tiếp.
-	
-	[TODO] Thêm mối quan hê giữa hai loại hàm
-	
+		
 	\subsection{Hàm giá trị tối ưu}
 	Để giải quyết những vấn đề trong học tăng cường, chúng ta cần tìm một chính sách sao cho hệ thống có thể đạt được nhiều điểm thưởng nhất có thể. Một chính sách $\pi$ được xác định là tốt hơn hoặc bằng chính sách $\pi'$ khi giá trị kỳ vọng của return theo chính sách $\pi$ lớn hơn hoặc bằng giá trị đó theo chính sách $\pi'$. Hay có thể định nghĩa theo cách khác:
 	\begin{equation}
@@ -365,21 +406,114 @@
 			
 			\end{scope}		
 		\end{tikzpicture}
-		\caption[Đồ thị minh họa phương trình Bellman trong hàm giá trị tối ưu]{Mô hình minh họa phương trình Bellman trong (a) $v_{*}$} và (b) $q_{*}$
+		\caption[Đồ thị minh họa phương trình Bellman trong hàm giá trị tối ưu]{Đồ thị minh họa phương trình Bellman trong (a) $v_{*}$} và (b) $q_{*}$
 		\label{fig:bellman_optimal_function}
 	\end{figure}
 	
 	Phương trình \ref{eq:bellman_optimal_state} và \ref{eq:bellman_optimal_action} dễ dàng có được bằng cách thay thế hai phương trình \ref{eq:optimal_state_action} và \ref{eq:optimal_action_state} qua lại lẫn nhau. Từ hai phương trình này, ta thấy được dạng phương trình Bellman trong hàm giá trị trạng thái tối ưu và hàm giá trị hành động tối ưu. Hình \ref{fig:bellman_optimal_function} minh họa ý tưởng nhìn trước một bước của phương trình Bellman trong hàm giá trị tối ưu. Trong đó hình \ref{fig:bellman_optimal_function}a minh họa cách thức xác định giá trị tối ưu cho một trạng thái ứng với phương trình \ref{eq:bellman_optimal_state}. Hình \ref{fig:bellman_optimal_function}b minh họa cách thức xác định giá trị tối ưu của một hành động ở một trạng thái ứng với phương trình \ref{eq:bellman_optimal_action}.
 	
-\section{Những phương pháp đánh giá và cải thiện chính sách}
+\section{Quy trình lặp chính sách}
+
+%	\begin{itemize}
+%		\item Dẫn nhập: Trên thực tế ta không có thông tin về môi trường
+%		\item Qui trình đánh giá chính sách
+%			\begin{itemize}
+%				\item[+] Dựa trên hàm giá trị trạng thái: Monte-Carlo, TD(0), n-step TD, TD($\lambda$)
+%				\item[+] Dựa trên hàm giá trị hành động: Monte-Carlo, Sarsa(0), n-step Sarsa, Sarsa($\lambda$)
+%			\end{itemize}
+%		\item Qui trình cải thiện chính sách: Phương pháp greedy
+%	\end{itemize}
+
+%	Chúng ta vừa định nghĩa hàm giá trị và chính sách tối ưu. Một hệ thống khi có được chính sách tối ưu thì làm việc rất tốt. Nhưng trong thực thế điều này hiếm khi xảy ra, thông thường để có được hàm giá trị hoặc chính sách tối ưu yêu cầu chi phí tính toán là rất lớn. Thậm chí, dù ta biết được mô hình hoàn toàn của môi trường, chúng ta vẫn không thể đạt được chính sách tối ưu bằng cách giải phương trình Bellman của hàm giá trị tối ưu. Do đó ta chỉ có thể xấp xỉ chính sách hoặc hàm giá trí tối ưu bằng những phương pháp xấp xỉ với các mức độ khác nhau. Ví dụ cụ thể cho vấn đề này đó là cờ vây, mặc dù số trạng thái và hành động có thể đều có thể tính toán được, nhưng chi phí tính toán để tìm một chính sách đánh cờ tối ưu là rất lớn. Do đó người chơi chỉ có thể dựa trên kinh nghiệm có để đi nước cờ tốt nhất cho mình.	Một vấn đề khác mà chúng ta phải đối mặt đó là khả năng lưu trữ có hạn. Thông thường để lưu tất cả các trạng thái hoặc các cặp trạng thái và hành động trong các bài toán học tăng cường  yêu cầu bộ nhớ rất lớn. Mặt khác, trong thực tế, chúng ta thường không biết đầy đủ về môi trường như những trạng thái có thể có, điểm thưởng của một trạng thái bất kỳ, và ma trận chuyển trạng thái. Do đó, ta cần những phương pháp có thể học từ những
+	Trong các bài toán học tăng cường, mục tiêu chính của ta là tìm được chính sách tối ưu $\pi_{*}$ nhằm giúp cho hệ thông giải quyết bài toán tốt nhất có thể. Do đó ta cần có quy trình để thay đổi chính sách hiện tại trở nên tối ưu. Quy trình này được gọi là \textit{quy trình lặp chính sách}. Hình \ref{fig:policy_iteration} minh họa quy trình chung của lặp chính sách. Trong quy trình này được chia thành hai giai đoạn:
 	\begin{itemize}
-		\item Dẫn nhập: Trên thực tế ta không có thông tin về môi trường
-		\item Qui trình đánh giá chính sách
-			\begin{itemize}
-				\item[+] Dựa trên hàm giá trị trạng thái: Monte-Carlo, TD(0), n-step TD, TD($\lambda$)
-				\item[+] Dựa trên hàm giá trị hành động: Monte-Carlo, Sarsa(0), n-step Sarsa, Sarsa($\lambda$)
-			\end{itemize}
-		\item Qui trình cải thiện chính sách: Phương pháp greedy
+		\item \textbf{Đánh giá chính sách}: Việc đánh giá một chính sách $\pi$ được thực hiện bằng cách xác định hàm giá trị trạng thái của dưới chính sách đó.
+		\item \textbf{Cải thiện chính sách}: Sau khi có được hàm giá trị của một chính sách $\pi$, chính sách cải thiện mới $\pi'$ được tạo ra bằng cách thực hiện tham lam trên hàm giá trị của chính sách $\pi$, tức là chỉ chọn thực hiện hành động có giá trị cao nhất dựa trên hàm giá trị trạng thái; việc này có thể thực hiện được do mối quan hệ giữa hai loại hàm. 
 	\end{itemize}
+	\begin{figure}
+		\centering
+		\begin{tikzpicture}[node distance=5.5cm,>=stealth',bend angle=45,auto]
+		
+		\tikzstyle{state}=[circle,thick,draw=blue!75,fill=blue!20,minimum size = 15mm]
+		\tikzstyle{action}=[circle,draw=black!75,
+		fill=black!75,minimum size=2mm]
+		
+		\tikzstyle{every label}=[red]
+		
+		\begin{scope}
+		% First net
+		\node (policy)                           {\large $\pi$};	
+		
+		\node (value) [right of=policy]              {\large $\mathcal{V}$}
+		edge [post,bend left] node[below]{Cải thiện} node[above=0.1cm]{$\pi \to \text{greedy}(V)$}       (policy)
+		edge [pre,bend right] node[above]{Đánh giá}  node[below=0.1cm]{$V \to V^{\pi}$}     (policy);	
+		
+		\end{scope}			
+		\end{tikzpicture}
+		\caption[Quy trình lặp chính sách]{Quy trình chung trong lặp chính sách}
+		\label{fig:policy_iteration}
+	\end{figure}
+	Một chính $\pi_{1}$ được cải thiện từ chính sách $\pi_{0}$ dựa trên hàm giá trị trạng thái $v_{\pi_{0}}$. Khi có được chính sách $\pi_{1}$ ta có thể tính được hàm giá trị $v_{\pi_{1}}$ qua đó tiếp tục cải thiện để có được chính sách $\pi_{2}$. Quá trình này diễn ra cho đến khi đạt được chính sách tối ưu.
+	$$\pi_{0} \xrightarrow{\text{Đánh giá}} v_{\pi_{0}} \xrightarrow{\text{Cải thiện}} \pi_{1} \xrightarrow{\text{Đánh giá}} v_{\pi_{1}} \xrightarrow{\text{Cải thiện}} \pi_{2} \cdots \xrightarrow{\text{Cải thiện}} \pi_{*} \xrightarrow{\text{Đánh giá}} v_{\pi_{*}}$$
 	
+	\subsection{Phương pháp đánh giá chính sách}
+	Trong phần này, chúng em sẽ trình bày một số phương pháp được áp dụng để đánh giá chính sách.
+		\subsubsection*{Quy hoạch động (Dynamic Programming)}
+		Quy hoạch động thường được dùng để giải quyết các bài toán tối ưu mà dữ liệu có tính thứ tự, ví dụ như dữ liệu chuỗi hay dữ liệu thời gian. Một bài toán tối ưu có thể được giải quyết bằng quy hoạch động cần có hai đặc điểm:
+		\begin{itemize}
+			\item Quy tặc tối ưu (Principle of Optimality): các bài toán có thể phân rã thành các bài toán con, và kết quả của bài toán con này đóng góp vào lời giải của bài toán gốc.
+			\item Các bài toán con chồng lấn lên nhau và lặp lại nhiều lần: nhằm tận dụng lại kết quả của những bài toán con đã tính toán trước đó.
+		\end{itemize}
+		
+		Trong nhiều bài toán học tăng cường, kỹ thuật quy hoạch động được dùng để tìm chính sách tối ưu hoặc tối ưu hàm giá trị. Để có thể áp dụng kỹ thuật quy hoạch động, những bài toán này cũng cần phải thỏa yêu cầu là hệ thống có kiến thức đầy đủ về môi trường hay cách khác môi trường có mô hình MDP.
+		Quy hoạch động xác định hàm giá trị của một chính sách cập nhật hàm giá trị qua nhiều vòng lặp dựa vào phương trình Bellman. Ban đầu khởi tạo hàm giá trị $v_0$ bất kỳ cho tất cả các trạng thái, trừ trạng thái kết thúc được luôn có giá trị là 0. Tiến hành cập nhật hàm giá trị mới $v_1$ cho chính sách dựa trên hàm giá trị $v_0$ theo phương trình \ref{eq:DP_Value_Update}. Tương tự cập nhật hàm giá trị mới $v_2$ dựa trên $v_1$. Quá trình lặp cho đến khi độ khác biệt giữa hàm giá trị sau và giá trị trước đó nhỏ hơn một lượng cho trước. Quy trình cập nhật được minh họa trong hình \ref{fig:Update_Value_DP}, trong đó giá trị mới $v_{k+1}$ của trạng thái $s$ được xác định dựa trên giá trị kỳ vọng điểm thưởng nhận được theo chính sách hiện tại và giá trị cũ $v_{k}$ của các trạng thái $s'$ kế tiếp trạng thái $s'$. 
+		\begin{equation}
+			v_{k+1}(s) \leftarrow \sum_{a \in \mathcal{A}}^{}\pi(a \mid s)(\mathcal{R}_{s}^{a} + \gamma \sum_{s' \in \mathcal{S}}^{}\mathcal{P}_{ss'}^{a}v_{k}(s'))
+			\label{eq:DP_Value_Update}
+		\end{equation}
+		
+		\begin{figure}
+			\centering
+			\begin{tikzpicture}[node distance=4.5cm,>=stealth',bend angle=45,auto]
+			
+			\tikzstyle{state}=[circle,thick,draw=blue!75,fill=white!20,minimum size = 5mm, inner sep=0pt]
+			\tikzstyle{action}=[circle,draw=black!75,
+			fill=black!75,minimum size=2mm]
+			
+			\tikzstyle{every label}=[red]
+			
+			\begin{scope}
+			
+			\node [state, label={[name=label node]right:$s \mapsto v_{k+1}(s)$}] (s1)      {};
+			
+			\node [action] (a1) [below right = 2 cm and 2 cm of s1, label=right:$a$]    {}
+			edge(s1);
+			
+			\node [action] (a2) [below left  = 2 cm and 2 cm of s1]    {}
+			edge (s1);
+			
+			\node [state] (s2) [below left  = 2 cm and 1 cm of a1]    {}
+			edge (a1);
+			
+			\node [state, label={[name=label node]right:$s' \mapsto v_{k}(s')$}] (s3) [below right  = 2 cm and 1 cm of a1]    {}
+			edge node[right]{$r$}	 (a1);
+			
+			\node [state] (s4) [below left  = 2 cm and 1 cm of a2]    {}
+			edge (a2);
+			
+			\node [state] (s5) [below right  = 2 cm and 1 cm of a2]    {}
+			edge (a2);	
+			\end{scope}
+			
+			\end{tikzpicture}
+			\caption[Cập nhật hàm giá trị bằng quy hoạch động]{Đồ thị minh họa cập nhật hàm giá trị bằng quy hoạch động}
+			\label{fig:Update_Value_DP}
+		\end{figure}
+				
+		\subsubsection*{Monte Carlo (MC)}
+		
+		\subsubsection*{Temporal Difference (TD)}
+		
+		\subsubsection*{Sarsa}
 	
+	\subsection{Phương pháp cải thiện chính sách}
