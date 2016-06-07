@@ -10,9 +10,14 @@
 
 \section{Các thành phần cơ bản của học tăng cường}
 	\subsection{Agent và môi trường}
-	Trong học tăng cường, đối tượng học và đưa ra quyết định được gọi chung là \textit{agent}. Nó tương tác trực tiếp tới một đối tượng được gọi là \textit{môi trường}. Sự tương tác này được diễn ra liên tục. Agent lựa chọn hành động dựa trên những gì nó nhận được từ môi trường. Môi trường cung cấp giá trị điểm thưởng (reward) cho hành động vừa được thực hiện và những quan sát (observation) tiếp theo cho agent. Từ những quan sát này, agent có thể xây dựng ra các \textit{trạng thái} (state) dựa vào đó để ra quyết định chọn hành động với mục tiêu cố gắng đạt được nhiều điểm thưởng nhất.
+	Trong học tăng cường, đối tượng học và đưa ra quyết định được gọi chung là \textit{hệ thống}. Nó tương tác trực tiếp tới một đối tượng được gọi là \textit{môi trường}. Sự tương tác này được diễn ra liên tục. Agent lựa chọn hành động dựa trên những gì nó nhận được từ môi trường. Những thông tin này bao gồm:
+	\begin{itemize}
+		\item \textbf{Trạng thái} (state): Những thông tin hữu ích mà hệ thống có thể cảm nhận được từ môi trường. Ví dụ trong đánh cờ, trạng thái có thể là vị trí những quân cờ đang có trên bàn cờ. Thường được ký hiệu là $s$.
+		\item \textbf{Điểm thưởng} (reward): Giá trị mà môi trường trả ra tương ứng với trạng thái mà nó vừa đạt được hoặc hành động mà hệ thống vừa thực hiện. Thường được ký hiệu là $r$. Cũng với ví dụ đánh cờ, điểm thưởng mà hệ thống có thể nhận được từ môi trường trong ví dụ này là: +1 nếu hệ thống thắng, -1 nếu hệ thống thua, và trong quá trình đánh cờ điểm thưởng có thể là 0 cho mỗi trạng thái bàn cờ.
+	\end{itemize}
+	Từ trạng thái và điểm thưởng nhận được, hệ thống dựa vào đó để ra quyết định chọn hành động phù hợp sao cho cố gắng đạt được nhiều điểm thưởng nhất.
 	
-	Cụ thể hơn, agent và môi trường tương tác theo một chuỗi tuần tự các time-steps, $t = 0,1,2,...$. Tại mỗi time step $t$, agent nhận những mô tả trạng thái của môi trường, $\mathit{S_t} \in \mathcal{S}$, với $\mathcal{S}$ là tập các trạng thái có thể có. Dựa vào những mô tả trạng thái nhận được, agent chọn một hành động, $\mathit{A_t} \in \mathcal(\mathit{S_t})$, trong đó $\mathcal(\mathit{S_t})$ là tập các hành động có thể thực hiện tại trạng thái $\mathit{S_t}$. Tại time step sau đó, agent nhận được giá trị điểm thưởng, $\mathit{R_{t+1}} \in \mathbb{R}$, cùng với trạng thái tiếp theo $\mathit{S_{t+1}}$ Quá trình tương tác giữa agent và môi trường được mô tả trong hình \ref{AgentEnvironment}
+	Agent và môi trường tương tác theo một chuỗi tuần tự các time-steps, $t = 0,1,2,...$. Tại mỗi time step $t$, agent nhận những mô tả trạng thái của môi trường, $\mathit{S_t} \in \mathcal{S}$, với $\mathcal{S}$ là tập các trạng thái có thể có. Dựa vào những mô tả trạng thái nhận được, agent chọn một hành động, $\mathit{A_t} \in \mathcal(\mathit{S_t})$, trong đó $\mathcal(\mathit{S_t})$ là tập các hành động có thể thực hiện tại trạng thái $\mathit{S_t}$. Tại time step sau đó, agent nhận được giá trị điểm thưởng, $\mathit{R_{t+1}} \in \mathbb{R}$, cùng với trạng thái tiếp theo $\mathit{S_{t+1}}$ Quá trình tương tác giữa agent và môi trường được mô tả trong hình \ref{AgentEnvironment}
 		
 	\begin{figure}
 		\centering
@@ -23,9 +28,9 @@
 	
 	Các thành phần của agent gồm có:
 	\begin{itemize}
-		\item \textbf{Chính sách}. Chính sách, $\pi$, xác định khả năng chọn một hành động khi agent nhận được một trạng thái $s$. Chính xác tại time step $t$ được xác định $\pi_t(a \mid s) = \mathbb{P}[\mathit{A_t} = a \mid \mathit{S_t} = s]$. Để đạt được mục tiêu được nhiều điểm thưởng nhất, agent cần có một\textit{chính sách} chọn lựa hành động phù hợp mỗi khi gặp một trạng thái. Những phương pháp học tăng cường thường tập trung thay đổi các chính sách của agent sao cho đạt được kết quả tốt trong thực nghiệm.
-		\item \textbf{Hàm giá trị}. Hầu hết các thuật toán học tăng cường đầu tập trung đánh giá những \textit{hàm giá trị}, các hàm này đánh giá một trạng thái hoặc hành động là tốt như thế nào cho agent thông qua việc ước lượng điểm thưởng nhận được ở tương lai. Thông thường, giá trị của một trạng thái $s$, dưới một chính sách $\pi$  được ký hiệu $v_{\pi}(s)$ là lượng điểm thưởng kỳ vọng nhận được bắt đầu từ trạng thái $s$ về sau.
-		\item \textbf{Mô hình}. Agent xây dựng mô hình cho riêng mình để mô phỏng môi trường và dự doán các thông tin của môi trường trong tương lai.
+		\item \textbf{Chính sách}. Chính sách, $\pi$, xác định khả năng chọn một hành động khi hệ thống nhận được một trạng thái $s$. Chính xác tại time step $t$ được xác định $\pi_t(a \mid s) = \mathbb{P}[\mathit{A_t} = a \mid \mathit{S_t} = s]$. Để đạt được mục tiêu được nhiều điểm thưởng nhất, hệ thống cần có một chính sách chọn lựa hành động phù hợp mỗi khi gặp một trạng thái. Những phương pháp học tăng cường thường tập trung thay đổi các chính sách của hệ thống sao cho đạt được kết quả tốt trong thực nghiệm.
+		\item \textbf{Hàm giá trị}. Hầu hết các thuật toán học tăng cường đầu tập trung đánh giá những hàm giá trị, các hàm này đánh giá một trạng thái hoặc hành động là tốt như thế nào cho agent thông qua việc ước lượng điểm thưởng mà hệ thống có thể nhận được ở tương lai. Thông thường, giá trị của một trạng thái $s$, dưới một chính sách $\pi$  được ký hiệu $v_{\pi}(s)$ là lượng điểm thưởng kỳ vọng nhận được bắt đầu từ trạng thái $s$ về sau.
+		\item \textbf{Mô hình}. Trong một số bài toán học tăng cường, hệ thống có thể xây dựng mô hình cho riêng mình để mô phỏng lại môi trường. Qua đó cho phép hệ thống có thể suy luận hoặc dự đoán những thông tin mà nó có thể nhận được từ môi trường trong tương lai.
 	\end{itemize}	
 	
 	\subsection{Returns}
@@ -39,10 +44,7 @@
 	\begin{equation}
 	\mathit{G_t} = \mathit{R_{t+1}} + \gamma\mathit{R_{t+2}} + \gamma^{2}\mathit{R_{t+3}}... + \gamma^{T-1}\mathit{R_{T}} = \sum_{k=0}^{\infty}\gamma^{k}\mathit{R_{t+k+1}}
 	\end{equation}
-	Trong đó $\gamma$ là một hệ số với giá trị $0\leqslant \gamma \leqslant 1$. $\gamma$ cũng được gọi là tỉ lệ discount. Tỉ lệ này xác định độ tin tưởng của agent vào giá trị điểm thưởng ở tương lai. Khi $\gamma \to 1$, agent có su hướng quan tâm đến giá trị điểm thưởng tương lai càng nhiều. Đặc biệt với $\gamma = 0$, khi đó agent chỉ quan tâm giá trị điểm thưởng ở hiện tại mà bỏ qua những giá trị điểm thưởng ở tương lai.
-	
-	Trong thực nghiệm, việc tương tác giữa agent và môi trường có thể được phân chia thành những chuỗi con. Chúng được gọi là những \textit{episode}. [TODO]
-	
+	Trong đó $\gamma$ là một hệ số với giá trị $0\leqslant \gamma \leqslant 1$. $\gamma$ cũng được gọi là tỉ lệ discount. Tỉ lệ này xác định độ tin tưởng của agent vào giá trị điểm thưởng ở tương lai. Khi $\gamma \to 1$, agent có su hướng quan tâm đến giá trị điểm thưởng tương lai càng nhiều. Đặc biệt với $\gamma = 0$, khi đó agent chỉ quan tâm giá trị điểm thưởng ở hiện tại mà bỏ qua những giá trị điểm thưởng ở tương lai.	
 	
 \section{Mô hình Markov Decision Processes}
 %	\begin{itemize}
@@ -544,12 +546,119 @@
 		\subsubsection*{Monte Carlo (MC)}
 		Tương tự với quy hoạch động, Monte Carlo (MC) xác định hàm giá trị của một chính sách bằng cách cập nhật hàm giá trị khởi tạo qua nhiều vòng lặp. Điểm biệt khác với quy hoạch động của phương pháp MC là nó có thể áp dụng để đánh giá chính sách khi hệ thông không có kiến thức đầy đủ về môi trường. MC dựa trên những thông tin mà hệ thông có được qua việc tương tác với môi trường để xấp xỉ hàm giá trị. Thông thường những thông tin này được chia thành các \textit{episode}. Mỗi episode là một chuỗi bắt đầu từ một trạng thái bất kỳ cho đến khi đạt được một trong những trạng thái kết thúc. Khi đó MC chỉ thực hiện cập nhật hàm giá trị khi kết thúc một episode.
 		
-		Ý tưởng của MC để đánh giá giá trị của một trạng thái $s$ từ các mẫu thực nghiệm là trung bình những return mà hệ thông nhận được sau khi hệ thống quan sát được trạng thái $s$. Khi quan sát càng nhiều mẫu thực nghiệm xuất hiện trạng thái $s$, giá trị trung bình sẽ càng xấp xỉ tốt giá trị thực của trạng thái này theo chính sách $\pi$.
+		Ý tưởng của MC để đánh giá giá trị của một trạng thái $s$ dựa trên các mẫu thực nghiệm. MC xác định giá trị của trạng thái $s$ bằng cách trung bình những return mà hệ thông nhận được sau khi hệ thống quan sát được trạng thái $s$. Khi quan sát càng nhiều mẫu thực nghiệm xuất hiện trạng thái $s$, giá trị trung bình sẽ càng xấp xỉ tốt giá trị thực của trạng thái này theo chính sách $\pi$.
 		
-		Một episode đạt được bằng cách thực hiện theo chính sách $\pi$. Giá trị của trạng thái $s$ $v(s)$ được tính dựa trên những episode có trạng thái $s$ xuất hiện. Mỗi lần trạng thái $s$ xuất hiện trong một episode được gọi là một lần quan sát trạng thái đó. Một trạng thái $s$ có thể xuất hiện nhiều lần trong một episode.
-		 
+		Một episode đạt được bằng cách thực hiện theo chính sách $\pi$. Giá trị của trạng thái $s$ $v(s)$ được tính dựa trên những episode có trạng thái $s$ xuất hiện. Một trạng thái $s$ có thể xuất hiện nhiều lần trong một episode. Lần xuất hiện đầu tiên của trạng thái $s$ trong một episode được gọi là first-visit trạng thái đó. Phương pháp first-visit MC xác định giá trị trạng thái $s$ $v_{\pi}(s)$ bằng trung bình tất cả return mà hệ thống nhận sau lần first-visit của trạng thái $s$ trong các episode. Tổng thể của việc đánh giá chính sách bằng first-visit MC được trình bày ở thuật toán \ref{alg_MC}. Hình \ref{fig:first_visit_MC} minh họa cách thức cập nhật hàm giá trị trên một episode.
+		\begin{algorithm}
+			\newalgname{Thuật toán}
+			\caption{Đánh giá hàm giá trị trạng thái bằng phương pháp first-visit MC}
+			\label{alg_MC}
+			\begin{algorithmic}[1]
+				\renewcommand{\algorithmicrequire}{\textbf{Đầu vào:}}
+				\renewcommand{\algorithmicensure}{\textbf{Đầu ra:}}
+				\algnewcommand\algorithmicoperation{\textbf{Thao tác:}}
+				\algnewcommand\Operation{\item[\algorithmicoperation]}
+				
+				\Require Chính sách $\pi$ cần đánh giá
+				\Ensure Hàm giá trị $V$ xấp xỉ hàm giá trị $v_{\pi}$ của chính sách $\pi$
+				
+				\Operation
+				\State Khởi tạo ngẫu nhiên $V(s)$ cho tất cả trạng thái $s$ không phải trạng thái kết thúc. Nếu $s$ là trạng thái kết thúc, $V(s) = 0$
+				\State Khởi tạo danh sách rỗng \textbf{Returns($s$)} cho tất cả trạng thái $s \in \mathcal{S}$ \%\% Danh sách Returns($s$) chứa tất cả các return mà hệ thống nhận được sau lần first-visit của trạng thái $s$ trong các episode.
+				\Repeat
+				\State Tạo một episode $E$ bằng chính sách $\pi$
+				\For{mỗi trạng thái $s$ xuất hiện lần đầu trong $E$}
+				\State $G \leftarrow$ return nhận được sau lần xuất hiện đầu tiên của $s$
+				\State Thêm $G$ vào danh sách Returns(s)
+				\State $V(s) \leftarrow$ average(Returns(s))
+				\EndFor
+				\Until Thỏa điều kiện dừng
+			\end{algorithmic}
+		\end{algorithm}
+		\begin{figure}
+			\centering
+			\begin{tikzpicture}[node distance=4.5cm,>=stealth',bend angle=45,auto]
+			
+			\tikzstyle{state}=[circle,thick,draw=blue!75,fill=white!20,minimum size = 10mm, inner sep=0pt]
+			\tikzstyle{action}=[circle,draw=black!75,
+			fill=black!75,minimum size=2mm]
+			\tikzstyle{terminal}=[square,draw=black!60,
+			fill=black!75,minimum size=10mm]
+			
+			
+			\tikzstyle{every label}=[red]
+			
+			\begin{scope}
+			% First net
+			\node [state, label={[name=label node]below:$\mathit{S}_0$}] (s1)                           {};
+			
+			\node [action] (a1) [right = 0.7cm of s1]{}
+			edge (s1);
+			
+			\node[state, fill=green, label={[name=label node]below:$\mathit{S}_1$}] (s2)  [right = 0.7cm of a1]{}
+			edge node[above]{$r_1$} (a1);
+			
+			\node [action] (a2) [right = 0.7cm of s2]{}
+			edge (s2);
+			
+			\node[state, fill=red, label={[name=label node]below:$\mathit{S}_2$}] (s3)  [right = 0.7cm of a2]{}
+			edge node[above]{$r_2$} (a2);
+			
+			\node [action] (a3) [right = 0.7cm of s3]{}
+			edge (s3);
+			
+			\node (etc) [right = 0.7cm of a3] {\large $\dots$};
+			
+			\node [state, fill=green, label={[name=label node]below:$\mathit{S}_{T-1}$}] (s4) [right = 0.7cm of etc]{};
+			
+			\node [action] (a4) [right = 0.7cm of s4]{}
+			edge (s4);
+			
+			\node [state, fill = gray, label={[name=label node]below:Trạng thái kết thúc}] (t) [right = 0.7cm of a4]{}
+			edge node[above]{$r_{T}$} (a4)
+			edge [post,bend right] (s3)
+			edge [post,bend right] (s2)
+			edge [post,bend right] node[above]{Cập nhật giá trị} (s1);
+			
+			\end{scope}	
+			\end{tikzpicture}
+			\caption[Cập nhật hàm giá trị bằng phương pháp Monte Carlo]{Đồ thị minh họa cập nhật hàm giá trị trên một episode bằng phương pháp first-visit MC. Hình tròn lớn được ký cho trạng thái xuất hiện. Hình tròn nhỏ được ký cho hành động thực hiện. Màu xác khác nhau giữa các hình tròn biểu thị cho sự khác nhau giữa các trạng thái. Phương pháp first-visit MC chỉ cập nhật giá trị cho các trạng thái khi kết thúc một episode, và mỗi trạng thái chỉ được cập nhật một lần mặc dù trạng thái đó có thể xuất hiện nhiều lần trong một episode}
+			\label{fig:first_visit_MC}
+		\end{figure}
+		
+		Trong nhiều trường hợp, hệ thống không có được mô hình của môi trường, việc đánh giá hàm giá trị hành động trở nên khả thi hơn hàm giá trị trạng thái. Với việc có được mô hình của môi trường, hàm giá trị trạng thái là đủ để cải thiện một chính xách trở nên tốt hơn; nó đơn giản là nhìn trước trạng thái tiếp theo và chọn bất kỳ hành động nào dẫn đến trạng thái đó mà đạt được nhiều điểm thưởng nhất. Ngược lại, nếu không có được mô hình của môi trường, hàm giá trị trạng thái là không đủ do hệ thống không thể xác định được trạng thái tiếp theo là gì. Vì vậy, nó cần đánh giá giá trị của mỗi hành động trong mỗi trạng thái để xác định hành động nào nên thực hiện ở mỗi trạng thái qua đó cải thiện chính sách đang thực hiện.
+		Để hàm giá trị $q_{\pi}$ được thực hiện tương tự như đã hàm giá trị hành động $v_{\pi}$. Để đánh giá giá trị của hành động $a$ tại trạng thái $s$, nó thực hiện tính trung bình các return mà hệ thộng nhận được dựa vào các episode có sự xuất hiện của cặp trạng thái hành động $(s,a)$. Lẫn xuất hiện đầu tiên của cặp trạng thái và hành động $(s,a)$ trong một episode được gọi là first-visit cặp trạng thái và hành động đó. Phương pháp first-visit MC xác định giá trị của hành động $a$ ở trạng thái $s$, $q_{\pi}(s,a)$ bằng trung bình tất cả các return nhận được sau lần first-visit của cặp $(s,a)$ trong các episode. Thuật toán \ref{alg_MC_action} trình bày cách thức đánh giá hàm giá trị hành động bằng first-visit MC.
+		\begin{algorithm}
+			\newalgname{Thuật toán}
+			\caption{Đánh giá hàm giá trị hành động bằng phương pháp first-visit MC}
+			\label{alg_MC_action}
+			\begin{algorithmic}[1]
+				\renewcommand{\algorithmicrequire}{\textbf{Đầu vào:}}
+				\renewcommand{\algorithmicensure}{\textbf{Đầu ra:}}
+				\algnewcommand\algorithmicoperation{\textbf{Thao tác:}}
+				\algnewcommand\Operation{\item[\algorithmicoperation]}
+				
+				\Require Chính sách $\pi$ cần đánh giá
+				\Ensure Hàm giá trị $V$ xấp xỉ hàm giá trị $v_{\pi}$ của chính sách $\pi$
+				
+				\Operation
+				\State Khởi tạo ngẫu nhiên $Q(s,a)$ cho tất cả các cặp trạng thái, hành động $s,a$.
+				\State Khởi tạo danh sách rỗng \textbf{Returns($s,a$)} cho tất cả các cặp trạng thái, hành động ($s,a$). \%\% Danh sách Returns($s,a$) chứa tất cả các return mà hệ thống nhận được sau lần first-visit của cặp trạng thái, hành động ($s,a$) trong các episode.
+				\Repeat
+				\State Tạo một episode $E$ bằng chính sách $\pi$
+				\For{mỗi cặp trạng thái, hành động $(s,a)$ xuất hiện lần đầu trong $E$}
+				\State $G \leftarrow$ return nhận được sau lần xuất hiện đầu tiên của cặp trạng thái, hành động $(s,a)$
+				\State Thêm $G$ vào danh sách Returns($s,a$)
+				\State $Q(s,a) \leftarrow$ average(Returns($s$))
+				\EndFor
+				\Until Thỏa điều kiện dừng
+			\end{algorithmic}
+		\end{algorithm}
+		
 		\subsubsection*{Temporal Difference (TD)}
 		
 		\subsubsection*{Sarsa}
+		
+		\subsubsection*{Q-Learning}
 	
 	\subsection{Phương pháp cải thiện chính sách}
