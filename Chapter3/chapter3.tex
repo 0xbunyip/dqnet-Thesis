@@ -1,27 +1,60 @@
 \chapter{Kết hợp học sâu với học tăng cường}
+\ifpdf
+\graphicspath{{Chapter3/Chapter3Figs/PNG/}{Chapter3/Chapter3Figs/PDF/}{Chapter3/Chapter3Figs/}}
+\else
+\graphicspath{{Chapter3/Chapter3Figs/EPS/}{Chapter3/Chapter3Figs/}}
+\fi
 \begin{quote}
-\textit{Học sâu đạt được nhiều kết quả khả quan trong nhiều lĩnh vực như xử lý ngôn ngữ tự nhiên, nhận diện giọng nói, nhận dạng đối tượng ... Ưu điểm của học sâu là xấp xỉ hàm tốt, rút trích đặc trưng ở mức high-level. \\
-Trong chương này sẽ trình bày chi tiết những phương pháp mà chúng em áp dụng để giải quyết bài toán "tự động chơi game". Chúng em sử dụng phương pháp Q-Learning, một phương pháp đánh giá được sử dụng phổ biến trong nhiều công trình nghiên cứu về học tăng cường gần đây, để đánh giá hàm giá trị của hành động cho bài toán này. Ngoài ra, chúng em cũng thực hiện xấp xỉ hàm giá trị của bài toán bằng mạng nơ-ron và áp dụng hai kỹ thuật Experience Replay và Fixed Q-targets để tăng tính ổn định cho quá trình học.}
+\textit{Những thành công gần đây của học sâu (Deep learning) trong các bài toán như xử lý ngôn ngữ tự nhiên, nhận diện đối tượng trong ảnh... đặt ra vấn đề: liệu các kỹ thuật trong học sâu có thể áp dụng vào học tăng cường?
+Để trả lời câu hỏi đó, chương này trình bày về hướng tiếp cận kết hợp học sâu với học tăng cường để áp dụng vào bài toán ``Tự động chơi game''. 
+Hướng tiếp cận mới mẻ này của lĩnh vực học tăng cường này mang tên ``Học tăng cường sâu'' (Deep reinforcement learning)\\
+Chương này trình bày hai phần:
+\begin{itemize}
+	\item Nguyên nhân cần sử dụng học sâu và kiến thức cơ bản về học sâu
+	\item Áp dụng học tăng cường sâu vào bài toán ``Tự động chơi game''
+\end{itemize}}
 \end{quote}
-%
-%\section{Đánh giá chính sách bằng phương pháp Q-Learning}
+
+\section{Học sâu}
+\subsection{Khó khăn của bài toán tự động chơi game}
+	Những thuật toán học tăng cường được trình bày trong chương trước đều tìm chính sách tối ưu dựa vào hàm giá trị. 
+	Việc tính \textbf{đúng} và \textbf{nhanh} hàm giá trị ảnh hưởng rất nhiều đến kết quả của bài toán. 
+	Các thuật toán học tăng cường cổ điển như ``Monte Carlo'' (MC) hay ``Temporal-Difference'' (TD) đều đã được chính minh là luôn hội tụ trong những điều kiện nhất định \cite{sutton1998reinforcement}. 
+	Ngoài ra, khi áp dụng vào các bài toán kinh điển của học tăng cường thì các thuật toán này đều hội tụ khá nhanh.
+	
+	Tuy nhiên, với những bài toán thực tế với số trạng thái rất lớn thì việc lưu véc-tơ hàm giá trị trạng thái $v_{\pi}$ (hoặc ma trận hàm giá trị hành động $q_{\pi}$) là việc không thể. 
+	Ví dụ như ``frame hình'' của bài toán tự động chơi game có kích thước $210\times160\times3=100800$ điểm ảnh; mỗi điểm ảnh có giá trị trong khoảng $[0, 127]$ nên số trạng thái có thể có lên đến $128^{100800}$.
+	Vì vậy, việc lưu trữ hàm giá trị dưới dạng bảng là không khả thi về mặt bộ nhớ.
+	Còn về mặt tốc độ tính toán thì các thuật toán học tăng cường trên đều tính hàm giá trị \textit{rời rạc} cho từng trạng thái.
+	Với số trạng thái quá lớn như trên thì ta không thể duyệt lần lượt từng trạng thái để tính được.
+	
+	Những lý do trên dẫn đến việc sử dụng một phương pháp xấp xỉ hàm là bắt buộc cho các bài toán học tăng cường với số trạng thái lớn.
+	Một trong những tiếp cận rất tự nhiên đó là sử dụng các mô hình học có giám sát như là một phương pháp xấp xỉ hàm giá trị.
+	Đặc biệt, với những đột phá gần đây của học sâu trong lĩnh vực xử lý ảnh, video... thì việc áp dụng các mô hình học như mạng nơ-ron ``Neural networks'', ``Convolutional Neural Networks'' (CNN) vào bài toán tự động chơi game là rất khả quan.
+	
+	Mạng nơ-ron là một công cụ xấp xỉ hàm giá trị rất linh hoạt với khả năng xấp xỉ hàm đích bất kỳ.
+	Việc sử dụng mạng nơ-ron để xấp xỉ hàm giá trị giúp giảm đáng kể chi phí lưu trữ: ta chỉ cần lưu bộ trọng số của mạng nơ-ron (thông thường chỉ khoảng vài triệu đến vài trăm triệu tham số) thay vì giá trị của từng trạng thái.
+	Nhưng một trong những tính chất quan trọng nhất của mạng nơ-ron chính là \textbf{khả năng tổng quát hoá} (Generalization).
+	Nhờ đặc điểm này mà quá trình học tăng cường được tăng tốc rất đáng kể.
+	Thay vì phải duyệt qua từng trạng thái (thậm chí phải duyệt nhiều lần) để tính hàm giá trị tại đó, mạng nơ-ron có khả năng ``dự đoán'' rất tốt giá trị của một trạng thái chưa từng thấy dựa vào những trạng thái đã thấy.
+	Như trong bài toán tự động chơi game thì các ``frame hình'' liên tiếp thường rất giống nhau và các trạng thái này thường cũng có giá trị tương đương nhau.
+	 
+%\begin{itemize}
+%	\item Lý do kết hợp học sâu với học tăng cường
+%	\item Giới thiệu học sâu
+%	\item Phương pháp xấp xỉ hàm giá trị bằng mạng neuron
+%	\item Giới thiệu mạng ``Convolutional Neural Network''
+%\end{itemize}
+	
+\section{Học tăng cường sâu}
+%\begin{itemize}
+%	\item Cấu trúc mạng ``Deep Q-Networks'' cho bài toán tự động chơi game
+%	\item Kỹ thuật làm tăng tính ổn định cho quá trình học
 %	\begin{itemize}
-%		\item Phân biệt học trên chính sách và ngoài chính sách (On-policy/Off-policy)
-%		\item Thuật toán Q-Learning
+%		\item Học từ dữ liệu trong quá khứ ``Experience replay''
+%		\item Cố định hàm giá trị đích ``Fixed Q-targets''
 %	\end{itemize}
-%	
-%\section{Xấp xỉ hàm giá trị bằng mạng neuron}
-%	\begin{itemize}
-%		\item Vấn đề trong bài toán thực tế: tập trạng thái lớn hoặc vô hạn
-%		\item Phương pháp xấp xỉ hàm giá trị bằng mạng neuron
-%		\item Giới thiệu mạng Convolutional Neural Network
-%	\end{itemize}
-%	
-%\section{Kỹ thuật làm tăng tính ổn định cho quá trình học}
-%	\begin{itemize}
-%		\item Experience Replay
-%		\item Fixed Q-targets
-%	\end{itemize}
+%\end{itemize}
 %	
 %\section{Đề xuất phương pháp cải tiến (Nếu có)}
 	
