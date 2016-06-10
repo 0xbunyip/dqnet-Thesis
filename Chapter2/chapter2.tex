@@ -665,7 +665,7 @@ Giả sử ta có các trung bình $\mu_{1}$, $\mu_{2}$, ... của chuỗi $x_1,
 = {}& \frac{1}{k}(x_k + \left(k - 1\right)\mu_{k-1}) \notag \\
 = {}& \mu_{k - 1} + \frac{1}{k}(x_k - \mu_{k-1}) \label{eq:mean}
 \end{align}
-Phương pháp Monte Carlo phải đợi cho đến khi tính được return sau lần xuất hiện của một trạng thái để thực hiện cập nhật giá trị cho trạng thái đó. Giá trị của một trạng thái được cập nhật qua nhiều vòng lặp. Dựa vào phương trình \ref{eq:mean} giá trị của mỗi trạng thái có thể được cập nhật như sau:
+Phương pháp Monte Carlo phải đợi cho đến khi tính được return sau lần xuất hiện của một trạng thái để thực hiện cập nhật giá trị cho trạng thái đó, và giá trị của một trạng thái được cập nhật qua nhiều vòng lặp. Dựa vào phương trình \ref{eq:mean} giá trị của mỗi trạng thái có thể được cập nhật như sau:
 \begin{align}
 N(\mathit{S}_{t}) & \leftarrow N(\mathit{S}_{t}) + 1 \\
 V(\mathit{S}_t) & \leftarrow V(\mathit{S}_t) + \frac{1}{N(\mathit{S}_{t})}(\mathit{G_t} - V(\mathit{S}_t)) \label{eq:update_value_MC}
@@ -714,7 +714,175 @@ Qua đó, ta thấy rằng phương pháp MC sử dụng ước lượng của \
 	\end{algorithmic}
 \end{algorithm}
 
+Với bất kỳ chính sách $\pi$ cố định. Đánh giá hàm giá trị bằng phương pháp TD đã được chính minh hội tu về hàm giá trị $v_{\pi}$ theo luật số lớn. Trong thực nghiệm, phương pháp TD thường hội tụ về hàm giá trị $v_{\pi}$ nhanh hơn phương pháp MC.
+
+Phương pháp TD(0) xem giá trị của các trạng thái kế tiếp của một trạng thái $s$ là giá trị đại diện cho điểm thưởng mà trạng thái $s$ có thể nhận được ở tương lai; và dựa vào giá trị này và điểm thưởng nhận được tại trạng thái đó để xác định giá trị của chúng. Tổng quát cho phương pháp TD là n-step TD. Để đánh giá giá trị của một trạng thái $s$, n-step TD xem giá trị của trạng thái thứ $n$ sau đó là giá trị đại diện cho điểm thưởng mà hệ thống có thể nhận được từ bước thứ $n$ trở về sau; và đánh giá trị của trạng thái $s$ bằng tổng giá trị này cùng với điểm thưởng đã nhận được ở $n$ bước sáu đó. Hình \ref{fig:n_TD} minh họa xác định hàm giá trị trạng thái bằng phương pháp $n$-step TD. Phương pháp này thực hiện cập nhật cho một trạng thái ngay $n$ bước sau đó. 
+\begin{figure}
+	\centering
+	\begin{tikzpicture}[>=stealth,bend angle=45,auto]
+	
+	\tikzstyle{state}=[circle,thick,draw=blue!75,fill=white!20,minimum size = 5mm, inner sep=0pt]
+	\tikzstyle{action}=[circle,draw=black!75,
+	fill=black!75,minimum size=2mm]
+	
+	\tikzstyle{every label}=[red]
+	
+	\begin{scope}
+	% First net
+	\node (label1) [align=left]  {TD($1$-step)};
+	
+	\node [state, label=left:$V(\mathit{S}_t)$] (s1) [below = 0.3cm of label1] {};
+	
+	\node [action] (a1) [below = 0.5cm of s1] {}
+	edge  (s1);
+	
+	\node [state, label={[name=label node]below:$V(\mathit{S}_{t+1})$}] (s2) [below = 0.5 of a1] {}
+	edge node[left]{$\mathit{R}_{t+1}$} (a1);
+	
+	%--------------------------------
+	\node (label2) [right = 1cm of label1] {2-step};
+	
+	\node [state] (s3) [below = 0.3cm of label2] {};
+	
+	\node [action] (a2) [below = 0.5cm of s3] {}
+	edge (s3);
+	
+	\node [state] (s4) [below = 0.5 of a2] {}
+	edge node[left]{$\mathit{R}_{t+1}$} (a2);
+	
+	\node [action] (a3) [below = 0.5cm of s4] {}
+	edge (s4);
+	
+	\node [state] (s5) [below = 0.5 of a3, label=below:$V(\mathit{S}_{t+2})$] {}
+	edge node[left]{$\mathit{R}_{t+2}$} (a3);
+	
+	%--------------------------------
+	\node (label3) [right = 1cm of label2] {3-step};
+	
+	\node [state, label=left:$s$] (s6) [below = 0.3cm of label3] {};
+	
+	\node [action] (a4) [below = 0.5cm of s6] {}
+	edge (s6);
+	
+	\node [state] (s7) [below = 0.5 of a4] {}
+	edge  node[left]{$\mathit{R}_{t+1}$} (a4);
+	
+	\node [action] (a5) [below = 0.5cm of s7] {}
+	edge (s7);
+	
+	\node [state] (s8) [below = 0.5 of a5] {}
+	edge node[left]{$\mathit{R}_{t+2}$} (a5);
+	
+	\node [action] (a6) [below = 0.5cm of s8] {}
+	edge (s8);
+	
+	\node [state, label=below:$V(\mathit{S}_{t+3})$] (s9) [below = 0.5 of a6] {}
+	edge node[left]{$\mathit{R}_{t+3}$} (a6);
+	
+	%--------------------------------
+	\node (labeln) [right = 2cm of label3] {$n$-step};
+	
+	\node [state] (s10) [below = 0.3cm of labeln] {};
+	
+	\node [action] (a7) [below = 0.5cm of s10] {}
+	edge (s10);
+	
+	\node [state] (s11) [below = 0.5 of a7] {}
+	edge node[left]{$\mathit{R}_{t+1}$} (a7);
+	
+	\node (dot2) [left = 1 of s11] {\Huge \dots};
+	
+	\node [action] (a8) [below = 0.5cm of s11] {}
+	edge (s11);
+	
+	\node [state] (s12) [below = 0.5 of a8] {}
+	edge node[left]{$\mathit{R}_{t+2}$} (a8);	
+	
+	\node [action] (a9) [below = 0.5cm of s12] {}
+	edge (s12);
+	
+	\node (dot1) [below = 0.5 of a9] {\huge \vdots};
+	
+	\node [action] (a10) [below = 0.5cm of dot1] {};
+	
+	\node [state, label=below:$V(\mathit{S}_{t+n})$] (s12) [below = 0.5 of a10] {}
+	edge node[left]{$\mathit{R}_{t+n}$} (a10);
+	
+	%--------------------------------
+	\node (labelMC) [right = 2cm of labeln] {Monte Carlo};
+	
+	\node [state, label=left:$s$] (s13) [below = 0.3cm of labelMC] {};
+	
+	\node [action] (a11) [below = 0.5cm of s13] {}
+	edge (s13);
+	
+	\node [state] (s14) [below = 0.5 of a11] {}
+	edge node[left]{$\mathit{R}_{t+1}$} (a11);
+	
+	\node (dot3) [left = 1 of s14] {\Huge \dots};
+	
+	\node [action] (a12) [below = 0.5cm of s14] {}
+	edge (s14);
+	
+	\node [state] (s15) [below = 0.5 of a12] {}
+	edge node[left]{$\mathit{R}_{t+2}$} (a12);
+	
+	
+	\node [action] (a13) [below = 0.5cm of s15] {}
+	edge (s15);
+	
+	\node [state] (s16) [below = 0.5 of a13] {}
+	edge node[left]{$\mathit{R}_{t+3}$} (a13);
+	
+	\node [action] (a14) [below = 0.5cm of s16] {}
+	edge (s16);
+	
+	\node [state] (s17) [below = 0.5 of a14] {}
+	edge node[left]{$\mathit{R}_{t+4}$} (a14);
+	
+	\node [action] (a15) [below = 0.5cm of s17] {}
+	edge (s17);
+	
+	\node [state] (s18) [below = 0.5 of a15] {}
+	edge node[left]{$\mathit{R}_{t+5}$} (a15);
+	
+	\node [action] (a16) [below = 0.5cm of s18] {}
+	edge (s18);
+	
+	\node (dot4) [below = 0.5cm of a16] {\huge \vdots};
+	
+	\node [action] (a17) [below = 0.5 of dot4] {};
+	
+	\node [state, fill = gray, label={[name=label node]below:Trạng thái kết thúc}] (s19) [below = 0.5 of a17] {}
+	edge node[left]{$\mathit{R}_{T}$} (a17);
+	
+	\end{scope}	
+	\end{tikzpicture}
+	\caption[Minh họa phương pháp $n$-step TD]{Đồ thị bên trái ngoài cùng minh họa đánh giá hàm giá trị bằng phương pháp TD(0), trong khi đó đồ thị bên phải ngoài cùng minh họa cho phương pháp Monte Carlo. Các đồ thị ở giữa minh họa phương pháp $n$-step TD ứng với từng giá trị của $n$}
+	\label{fig:n_TD}
+\end{figure}
+
+Xét một chuỗi trạng thái, điểm thưởng $\mathit{S}_{t}, \mathit{R}_{t+1}, \mathit{S}_{t+1}, \mathit{R}_{t+2}, \dots, \mathit{S}_{T}$. Như chúng ta đã biết, Monte Carlo thực hiện cập nhật ước lượng giá trị của trạng thái $s$ chỉ khi tính được return của trạng thái đó:
+\begin{equation*}
+	G_{t} = \mathit{R}_{t+1} + \gamma \mathit{R}_{t+2} + \gamma^{2} \mathit{R}_{t+3} + \dots + \gamma^{T-t-1}\mathit{R}_T
+\end{equation*}
+trong đó T là thời điểm cuối cùng trong một episode. Ngược với MC, TD(0) thực hiện cập nhật cho một trạng thái dựa trên điểm thưởng vừa nhận được ở trạng thái đó và giá trị hiện tại của các trạng thái tiếp theo mà không cần đợi đến khi tính được return:
+\begin{equation*}
+G_{t}^{(1)} = \mathit{R}_{t+1} + \gamma V_{k}(\mathit{S}_{t+1}) 
+\end{equation*}
+với $V_k$ là giá trị hiện tại của trạng thái sau khi cập nhật $k$ lần.
+
+Tổng quát, phương pháp $n$-step TD thực hiện cập nhật cho một trạng thái ngay sau $n$ bước; và mục tiêu cập nhật được xác định:
+\begin{equation}
+G_{t}^{(n)} = \mathit{R}_{t+1} + \gamma \mathit{R}_{t+2} + \gamma^2 \mathit{R}_{t+3} + \dots + \gamma^{n-1}\mathit{R}_{t+n} + \gamma^{n}V_{k}(\mathit{S}_{t+n}), \forall n \geq 1
+\label{eq:n_TD_goal}
+\end{equation}
+Sau khi xác định mục tiêu cập nhật, việc thực hiện cập nhật cho lần lặp thứ $k + 1$ tương tự như đã thực hiện ở hai phương pháp trên:
+\begin{equation*}
+V(\mathit{S}_t) \leftarrow V(\mathit{S}_t) + \alpha \left[ G_{t}^{(n)} - V(\mathit{S}_t) \right]
+\end{equation*}
 \subsubsection*{Sarsa}
+
 \subsubsection*{Q-Learning}
 
 \subsection{Phương pháp cải thiện chính sách}
