@@ -1,4 +1,4 @@
-\chapter{Kết hợp học sâu với học tăng cường}
+\chapter{Kết hợp học tăng cường với học sâu}
 \ifpdf
 \graphicspath{{Chapter3/Chapter3Figs/PNG/}{Chapter3/Chapter3Figs/PDF/}{Chapter3/Chapter3Figs/}}
 \else
@@ -15,8 +15,12 @@ Chương này trình bày hai phần:
 \end{itemize}}
 \end{quote}
 
-\section{Học sâu}
-\subsection{Khó khăn của bài toán tự động chơi game}
+%-----------------------------------------------------------------------------
+%-----------------------------------------------------------------------------
+\section{Học tăng cường kết hợp với học sâu}
+
+%-----------------------------------------------------------------------------
+\subsection{Lý do cần áp dụng học sâu}
 	Những thuật toán học tăng cường được trình bày trong chương trước đều tìm chính sách tối ưu dựa vào hàm giá trị. 
 	Việc tính \textbf{đúng} và \textbf{nhanh} hàm giá trị ảnh hưởng rất nhiều đến kết quả của bài toán. 
 	Các thuật toán học tăng cường cổ điển như ``Monte Carlo'' (MC) hay ``Temporal-Difference'' (TD) đều đã được chính minh là luôn hội tụ trong những điều kiện nhất định \cite{sutton1998introduction}. 
@@ -32,6 +36,7 @@ Chương này trình bày hai phần:
 	Một trong những tiếp cận rất tự nhiên đó là sử dụng các mô hình học có giám sát như là một phương pháp xấp xỉ hàm giá trị.
 	Đặc biệt, với những đột phá gần đây của học sâu trong lĩnh vực xử lý ảnh, video... thì việc áp dụng các mô hình phổ biến của học sâu vào bài toán tự động chơi game là đầy hứa hẹn.
 	
+%-----------------------------------------------------------------------------
 \subsection{Giới thiệu học sâu}
 	Các mô hình truyền thống trong lĩnh vực máy học như ``Linear regression'', ``Bayesian learning''... thông thường đều hoạt động trên các đặc trưng được \textit{rút trích một cách thủ công} (hand-designed features).
 	Với dữ liệu thô thu thập được từ thực tế, các nhà khoa học xây dựng các phương pháp rút trích ra những ``thông tin hữu ích'' (thường được gọi là đặc trưng) để cung cấp cho các mô hình máy học.
@@ -70,12 +75,17 @@ Chương này trình bày hai phần:
 		\label{dlex}
 	\end{figure}
 	
-\subsection{Áp dụng học sâu để xấp xỉ hàm giá trị}
+%-----------------------------------------------------------------------------
+\subsection{Mạng nơ-ron tích chập}
 	Sức mạnh của các mô hình học sâu hoàn toàn có thể tận dụng vào bài toán học tăng cường.
 	Cụ thể với những thuật toán học tăng cường được đề cập ở chương 2, việc xấp xỉ hàm giá trị là rất quan trọng.
 	Chính vì vậy, một cách đơn giản nhất, ta có thể sử dụng các mô hình học sâu để xấp xỉ hàm giá trị.
-	Một trong những mô hình tiêu biểu của học sâu đó là mạng nơ-ron (Neural networks).
-	Việc sử dụng mạng nơ-ron để xấp xỉ hàm giá trị mang lại ba lợi ích quan trọng:
+	Một trong những mô hình tiêu biểu của học sâu đó là mạng nơ-ron tích chập (Convolutional Neural Networks).
+	
+
+%-----------------------------------------------------------------------------
+\subsection{Sử dụng mạng nơ-ron để xấp xỉ hàm}
+	Việc sử dụng mạng nơ-ron tích chập (hoặc mạng nơ-ron nói chung) để xấp xỉ hàm giá trị mang lại ba lợi ích quan trọng:
 	\begin{itemize}
 		\item Mạng nơ-ron có khả năng học được những đặc trưng phức tạp từ dữ liệu thô.
 		\item Mạng nơ-ron có thể xấp xỉ hàm giá trị phức tạp.
@@ -115,8 +125,9 @@ Chương này trình bày hai phần:
 	Để xét xem mạng nơ-ron có xấp xỉ tốt hàm đích hay chưa, ta có thể tính độ ``khác biệt'' của giá trị đích với giá trị xấp xỉ trên cả không gian đầu vào:
 	\begin{align}
 		J(\theta) &= \mathbb{E}_{s \sim \pi}[(v_{\pi}(s) - \hat{v}(s;\theta))^2]\\
+		\label{eq_ExpectedErrorV}
 		J(\theta) &= \mathbb{E}_{s,a \sim \pi}[(q_{\pi}(s,a) - \hat{q}(s,a;\theta))^2]
-		\label{eq_ExpectedError}
+		\label{eq_ExpectedErrorQ}
 	\end{align}
 	Kỳ vọng $\mathbb{E}_{s \sim \pi}$ ý chỉ kỳ vọng với biến ngẫu nhiên là trạng thái $s$ được lấy từ phân bố do chính sách $\pi$ tạo nên.
 	Ví dụ như ta cần xấp xỉ hàm giá trị của một chính sách chỉ luôn ``đi qua trái'' thì $s$ sẽ là những trạng thái mà khi đi theo chính sách này, ta có thể gặp được $s$.
@@ -128,45 +139,86 @@ Chương này trình bày hai phần:
 	Lưu ý là ở đây, hàm lỗi $J(\theta)$ là hàm theo $\theta$; tức là lúc này, ta cố định bộ trọng số $\theta$ để tìm ra ``sai số'' mà bộ trọng số này gây ra.
 	Nếu ta có hai bộ trọng số $\theta_1$ và $\theta_2$, ta có thể so sánh khả năng xấp xỉ hàm đích của chúng bằng cách so sánh giá trị $J(\theta_1)$ và $J(\theta)_2$ tương ứng.
 	
-	Tuy nhiên ta không thể tính độ lỗi trên mọi điểm dữ liệu đầu vào theo công thức (\ref{eq_ExpectedError}) được vì số lượng trạng thái là rất lớn.
+	Tuy nhiên ta không thể tính độ lỗi trên mọi điểm dữ liệu đầu vào theo công thức (\ref{eq_ExpectedErrorV}) và (\ref{eq_ExpectedErrorQ}) được vì số lượng trạng thái là rất lớn.
 	Vậy ta có thể xấp xỉ giá trị $J(\theta)$ bằng cách chỉ xét độ lỗi trên một ``tập huấn luyện'' (hay còn gọi là ``Batch'') các trạng thái mà ta biết được giá trị đích.
 	Khi đó, kỳ vọng $\mathbb{E}_{s \sim \pi}$ được thay thế bằng giá trị trung bình độ lỗi trên từng mẫu dữ liệu của ``batch'':
 	\begin{align}
 		J(\theta) &= \frac{1}{N} \sum_{i = 1}^{N}[(v_{\pi}(s_{i}) - \hat{v}(s_{i};\theta))^2]\\
+		\label{eq_BatchErrorV}
 		J(\theta) &= \frac{1}{N} \sum_{i = 1}^{N}[(q_{\pi}(s_i,a_i) - \hat{q}(s_i,a_i;\theta))^2]
-		\label{eq_BatchError}
+		\label{eq_BatchErrorQ}
 	\end{align}
 	Trong đó:
 	\begin{itemize}
 		\item N là số mẫu dữ liệu trong ``batch''.
 		\item $s_i$, $a_i$ tương ứng là trạng thái và hành động của mẫu dữ liệu thứ $i$ của ``batch''.
 	\end{itemize}
-	Với một tập huấn luyện bất kỳ (tức một ``batch''), ta mong muốn tìm được bộ trọng số giúp cho mạng nơ-ron xấp xỉ tốt hàm đích trên các mẫu dữ liệu thuộc tập huấn luyện này.
+	Với một tập huấn luyện, ta mong muốn tìm được bộ trọng số giúp cho mạng nơ-ron xấp xỉ tốt hàm đích trên các mẫu dữ liệu thuộc tập huấn luyện này.
 	Một thuật toán đơn giản và hay được sử dụng để tìm bộ trọng số này đó là ``Batch Gradient Descent'' (BGD).
 	Để cực tiểu hoá hàm $J(\theta)$, thuật toán BGD thực hiện lặp lại nhiều ``bước đi'' nhỏ để thay đổi bộ trọng số $\theta$ dần dần; mỗi bước đi sẽ giúp cho hàm $J(\theta)$ giảm đi một ít.
 	Để chọn ``hướng đi'' (tức cách cập nhật $\theta$) thì BGD sẽ ``nhìn'' xung quanh vị trí hiện tại và đi theo hướng nào giúp giảm $J(\theta)$ nhiều nhất có thể.
+	Hướng đi này chính là ngược hướng véc-tơ đạo hàm riêng (tức ``gradient'') của hàm $J(\theta)$ tại vị trí $\theta$.
+	Như vậy, thuật toán BGD thực hiện lặp lại nhiều lần việc cập nhật bộ trọng số $\theta$ theo công thức:
+	\begin{equation}
+		\theta_{t+1} \leftarrow \theta_{t} - \alpha \nabla_{\theta}J(\theta)
+	\end{equation}
+	Trong đó:
+	\begin{itemize}
+		\item $\theta_{t}$ là bộ trọng số tại bước thứ $t$.
+		\item $\alpha$ là hệ số học (learning rate); giá trị này dùng để điều khiển độ lớn của ``bước đi''.
+		\item $\nabla_{\theta}J(\theta)$ là véc-tơ đạo hàm riêng của hàm $J(\theta)$ tại vị trí $\theta$
+	\end{itemize}
+	Do ta chỉ ``nhìn'' cục bộ tại ví trí hiện tại nên nếu ta đi một bước quá dài (hệ số học $\alpha$ lớn) thì giá trị hàm lỗi $J$ tại điểm đến sẽ không chắc là sẽ giảm;
+	còn nếu bước đi quá ngắn thì mỗi bước chỉ giảm $J$ một ít, khi đó ta sẽ tốn rất nhiều thời gian để $J$ đạt giá trị cực tiểu.
 	
+	Một thuật toán cải tiến của BGD hay được sử dụng đó là ``Stochastic Gradient Descent'' (SGD).
+	Điểm yếu của thuật toán BGD là ta cần phải tính véc-tơ đạo hàm riêng cho \textbf{tất cả} các mẫu trong ``batch'' để cập nhật được một lần cho bộ trọng số.
+	Thuật toán SGD khắc phục điểm yếu này bằng cách chọn ngẫu nhiên một số mẫu dữ liệu trong ``batch'' (gọi là ``mini-batch''), tính véc-tơ đạo hàm riêng trung bình trên ``mini-batch'' này và thực hiện cập nhật bộ trọng số.
+	Lúc này, véc-tơ đạo hàm riêng trung bình trên ``mini-batch'' có thể coi là một xấp xỉ của véc-tơ đạo hàm riêng trung bình trên toàn bộ tập huấn luyện.
+	Do véc-tơ này chỉ tính trên ``mini-batch'' nên khi cập nhật, giá trị $J(\theta)$ có thể tăng.
+	Tuy nhiên, khi cập nhật nhiều lần thì xu hướng chung là hàm lỗi $J(\theta)$ sẽ giảm.
+	Khi tập huấn luyện càng lớn thì lợi thế của thuật toán SGD càng rõ.
+	Với tập huấn luyện gồm 1000 mẫu thì thuật toán BGD chỉ cập nhật trọng số được \textbf{một} lần sau khi duyệt qua hết dữ liệu; trong khi đó, thuật toán SGD với kích thước ``mini-batch'' là 10 có thể cập nhật được 100 lần.
+	Kích thước của ``mini-batch'' lúc này ảnh hưởng đến độ chính xác của véc-tơ đạo hàm riêng của $J(\theta)$.
+	Nếu kích thước quá nhỏ thì véc-tơ đạo hàm riêng trung bình trên ``mini-batch'' sẽ không xấp xỉ tốt véc-tơ đạo hàm riêng trung bình trên toàn bộ tập huấn luyện.
+	Nếu kích thước quá lớn thì lợi thế về tốc độ của SGD so với BGD sẽ không còn cao.
 	
+%-----------------------------------------------------------------------------
+\subsection{Học tăng cường kết hợp với xấp xỉ hàm}
+	Áp dụng thuật toán SGD để tối ưu hàm lỗi $J$ theo công thức (\ref{eq_BatchErrorV}) (hoặc (\ref{eq_BatchErrorQ})) thì ta sẽ cực tiểu hoá được độ khác biệt giữa hai hàm $v_{\pi}$ và $\hat{v}$ (hoặc giữa $q_{\pi}$ và $\hat{q}$).
 	Tuy nhiên, giá trị đích thực sự mà ta mong muốn là $v_{\pi}(s)$ (hoặc $q_{\pi}(s,a)$) ta không hề biết.
 	Các thuật toán học tăng cường chính là kỹ thuật giúp ta có được một ước lượng đơn giản của giá trị đích này.
+	Như ở chương 2, ta có hai nhóm thuật toán để ước lượng hàm giá trị.
+	Với nhóm thuật toán Monte-Carlo, ta chỉ việc thay thế $v_{\pi}(s)$ bằng một ước lượng không chệch của giá trị này.
+	Theo định nghĩa, $v_{\pi}(s) = \mathbb{E}_{\pi}\left [R_{t+1} + \gamma R_{t + 2} + ... + R_T\middle|\ \mathit{S}_t= s\right ]$.
+	Vậy ta có thể lấy $R_{t+1} + \gamma R_{t + 2} + ... + R_T$ làm một ước lượng cho $v_{\pi}(s)$.
+	Đây là một ước lượng không chệch do kỳ vọng bằng chính $v_{\pi}(s)$.
+	Vậy nếu ta kết hợp thuật toán SGD để cực tiểu hoá hàm lỗi 
 	
+%-----------------------------------------------------------------------------
+%-----------------------------------------------------------------------------
+\section{Kết hợp học tăng cường với học sâu vào bài toán tự động chơi game}
 
+%-----------------------------------------------------------------------------
+\subsection{Kỹ thuật làm tăng tính ổn định}
+
+%-----------------------------------------------------------------------------
+\subsection{Vấn đề ``overestimation'' của thuật toán Q-learning}
+
+%-----------------------------------------------------------------------------
 %\begin{itemize}
-%	\item Lý do kết hợp học sâu với học tăng cường
-%	\item Giới thiệu học sâu
-%	\item Áp dụng học sâu để xấp xỉ hàm giá trị
-%	\item Giới thiệu mạng ``Convolutional Neural Network''
+%	\item Học tăng cường kết hợp với học sâu
+%		\begin{itemize}
+%			\item Lý do cần áp dụng học sâu
+%			\item Giới thiệu học sâu
+%			\item Mạng nơ-ron tích chập
+%			\item Sử dụng mạng nơ-ron để xấp xỉ hàm
+% 			\item Học tăng cường kết hợp với xấp xỉ hàm
+%		\end{itemize}
+%
+%	\item Kết hợp học tăng cường với học sâu vào bài toán tự động chơi game
+%		\begin{itemize}
+%			\item Kỹ thuật làm tăng tính ổn định
+%			\item Vấn đề ``overestimation'' của thuật toán Q-learning
+%		\end{itemize}
 %\end{itemize}
-	
-\section{Học tăng cường sâu}
-%\begin{itemize}
-%	\item Cấu trúc mạng ``Deep Q-Networks'' cho bài toán tự động chơi game
-%	\item Kỹ thuật làm tăng tính ổn định cho quá trình học
-%	\begin{itemize}
-%		\item Học từ dữ liệu trong quá khứ ``Experience replay''
-%		\item Cố định hàm giá trị đích ``Fixed Q-targets''
-%	\end{itemize}
-%\end{itemize}
-%	
-%\section{Đề xuất phương pháp cải tiến (Nếu có)}
-	
