@@ -461,7 +461,7 @@ $$\pi_{0} \xrightarrow{\text{Đánh giá}} v_{\pi_{0}} \xrightarrow{\text{Cải 
 
 \subsection{Phương pháp đánh giá chính sách}
 Trong phần này, chúng em sẽ trình bày một số phương pháp được áp dụng để đánh giá chính sách.
-\subsubsection*{Quy hoạch động (Dynamic Programming)}
+\subsubsection{Phương pháp quy hoạch động (Dynamic Programming)}
 Quy hoạch động thường được dùng để giải quyết các bài toán tối ưu mà dữ liệu có tính thứ tự, ví dụ như dữ liệu chuỗi hay dữ liệu thời gian. Một bài toán tối ưu có thể được giải quyết bằng quy hoạch động cần có hai đặc điểm:
 \begin{itemize}
 	\item Quy tặc tối ưu (Principle of Optimality): các bài toán có thể phân rã thành các bài toán con, và kết quả của bài toán con này đóng góp vào lời giải của bài toán gốc.
@@ -469,7 +469,7 @@ Quy hoạch động thường được dùng để giải quyết các bài toá
 \end{itemize}
 
 Trong nhiều bài toán học tăng cường, kỹ thuật quy hoạch động được dùng để tìm chính sách tối ưu hoặc tối ưu hàm giá trị. Để có thể áp dụng kỹ thuật quy hoạch động, những bài toán này cũng cần phải thỏa yêu cầu là hệ thống có kiến thức đầy đủ về môi trường hay cách khác môi trường có mô hình MDP.
-Quy hoạch động xác định hàm giá trị của một chính sách bằng cách cập nhật hàm giá trị được khởi tạo bất kỳ ban đầu qua nhiều vòng lặp, dựa vào phương trình Bellman. Ý tưởng của cách xác định này như sau: Ban đầu khởi tạo hàm giá trị $v_0$ bất kỳ cho tất cả các trạng thái, trừ trạng thái kết thúc được luôn có giá trị là 0. Tiến hành cập nhật hàm giá trị mới $v_1$ cho chính sách dựa trên hàm giá trị $v_0$ theo phương trình \ref{eq:DP_Value_Update}. Tương tự cập nhật hàm giá trị mới $v_2$ dựa trên $v_1$. Quá trình lặp cho đến khi độ khác biệt giữa hàm giá trị sau và giá trị trước đó nhỏ hơn một lượng cho trước. Quy trình cập nhật được minh họa trong hình \ref{fig:Update_Value_DP}, trong đó giá trị mới $v_{k+1}$ của trạng thái $s$ được xác định dựa trên giá trị kỳ vọng điểm thưởng nhận được theo chính sách $\pi$, và giá trị hiện tại $v_{k}$ của các trạng thái $s'$ kế tiếp trạng thái $s'$. Tổng thể của việc đánh giá chính xác theo quy hoạch động được trình bày ở thuật toán \ref{alg_DP}
+Quy hoạch động xác định hàm giá trị của một chính sách bằng cách cập nhật hàm giá trị được khởi tạo bất kỳ ban đầu qua nhiều vòng lặp, dựa vào phương trình Bellman. Ý tưởng của cách xác định này như sau: Ban đầu khởi tạo hàm giá trị $v_0$ bất kỳ cho tất cả các trạng thái, trừ trạng thái kết thúc được luôn có giá trị là 0. Tiến hành cập nhật hàm giá trị mới $v_1$ cho chính sách dựa trên hàm giá trị $v_0$ theo phương trình \ref{eq:DP_Value_Update}. Tương tự cập nhật hàm giá trị mới $v_2$ dựa trên $v_1$. Quá trình lặp cho đến khi độ khác biệt giữa hàm giá trị sau và giá trị trước đó nhỏ hơn một lượng cho trước. Quy trình cập nhật được minh họa trong hình \ref{fig:Update_Value_DP}, trong đó giá trị mới $v_{k+1}$ của trạng thái $s$ được xác định dựa trên giá trị kỳ vọng điểm thưởng nhận được theo chính sách $\pi$, và giá trị hiện tại $v_{k}$ của các trạng thái $s'$ kế tiếp trạng thái $s'$. Tổng thể của việc đánh giá chính sách bằng quy hoạch động được trình bày ở thuật toán \ref{alg_DP}
 \begin{equation}
 v_{k+1}(s) \leftarrow \sum_{a \in \mathcal{A}}^{}\pi(a \mid s)(\mathcal{R}_{s}^{a} + \gamma \sum_{s' \in \mathcal{S}}^{}\mathcal{P}_{ss'}^{a}v_{k}(s'))
 \label{eq:DP_Value_Update}
@@ -514,7 +514,7 @@ v_{k+1}(s) \leftarrow \sum_{a \in \mathcal{A}}^{}\pi(a \mid s)(\mathcal{R}_{s}^{
 
 \begin{algorithm}
 	\newalgname{Thuật toán}
-	\caption{Đánh giá hàm giá trị theo quy hoạch động}
+	\caption{Xác định hàm giá trị bằng quy hoạch động}
 	\label{alg_DP}
 	\begin{algorithmic}[1]
 		\renewcommand{\algorithmicrequire}{\textbf{Đầu vào:}}
@@ -543,15 +543,15 @@ v_{k+1}(s) \leftarrow \sum_{a \in \mathcal{A}}^{}\pi(a \mid s)(\mathcal{R}_{s}^{
 Mặc dù đã quy hoạch động đã được chứng minh là xấp xỉ tốt hay thậm chí là tìm được hàm giá trị trạng thái của chính sách $\pi$ \cite{gordon1995stable}, nhưng trong các bài toán học thực tế của học tăng cường đặc biệt là những bài toán lớn thì quy hoạch động trở nên không khả thi do chi phí tính toán cao, trong trường hơp xấu nhất chi phí tính toán thuộc $O(k^{n})$ với $k$ là số hành động và $n$ là số trạng thái. Ngoài ra, trong nhiều bài toán thực tế thông thường chúng ta không có kiến thức đầy đủ về môi trường như ma trận chuyển trạng thái $\mathcal{P}$, ma trận điểm thưởng $\mathcal{R}$, tập các trạng thái $\mathcal{A}$. Do đó hệ thống phải có khả năng học từ những thông tin mà nó tiếp nhận được qua việc tương tác với môi trường. Các thông tin này thường ở dạng chuỗi (trạng thái, hành động, điểm thưởng)
 $\mathit{S}_1, \mathit{A}_1, \mathit{R}_2, \mathit{S}_2, \mathit{A}_2, \mathit{R}_3, \dots, \mathit{S}_T$. Với những đặc điểm đó, quy hoạch động không thể áp dụng để đánh giá chính sách trong các bài toán này.
 
-\subsubsection*{Monte Carlo (MC)}
+\subsubsection{Phương pháp Monte Carlo (MC)}
 Tương tự với quy hoạch động, Monte Carlo (MC) xác định hàm giá trị của một chính sách bằng cách cập nhật hàm giá trị khởi tạo qua nhiều vòng lặp. Điểm biệt khác với quy hoạch động của phương pháp MC là nó có thể áp dụng để đánh giá chính sách khi hệ thông không có kiến thức đầy đủ về môi trường. MC dựa trên những thông tin mà hệ thông có được qua việc tương tác với môi trường để xấp xỉ hàm giá trị. Thông thường những thông tin này được chia thành các \textit{episode}. Mỗi episode là một chuỗi bắt đầu từ một trạng thái bất kỳ cho đến khi đạt được một trong những trạng thái kết thúc. Khi đó MC chỉ thực hiện cập nhật hàm giá trị khi kết thúc một episode.
 
-Ý tưởng của MC để đánh giá giá trị của một trạng thái $s$ dựa trên các mẫu thực nghiệm. MC xác định giá trị của trạng thái $s$ bằng cách trung bình những return mà hệ thông nhận được sau khi hệ thống quan sát được trạng thái $s$. Khi quan sát càng nhiều mẫu thực nghiệm xuất hiện trạng thái $s$, giá trị trung bình sẽ càng xấp xỉ tốt giá trị thực của trạng thái này theo chính sách $\pi$.
+Ý tưởng của MC là xác định giá trị của một trạng thái $s$ qua các mẫu thực nghiệm. Phương pháp MC xác định giá trị của trạng thái $s$ bằng cách trung bình những return mà hệ thông nhận được sau khi quan sát được trạng thái $s$. Khi quan sát càng nhiều mẫu thực nghiệm có trạng thái $s$ xuất hiện, giá trị trung bình sẽ càng xấp xỉ tốt giá trị thực của trạng thái này theo chính sách $\pi$.
 
-Một episode đạt được bằng cách thực hiện theo chính sách $\pi$. Giá trị của trạng thái $s$ $v(s)$ được tính dựa trên những episode có trạng thái $s$ xuất hiện. Một trạng thái $s$ có thể xuất hiện nhiều lần trong một episode. Lần xuất hiện đầu tiên của trạng thái $s$ trong một episode được gọi là first-visit trạng thái đó. Phương pháp first-visit MC xác định giá trị trạng thái $s$ $v_{\pi}(s)$ bằng trung bình tất cả return mà hệ thống nhận sau lần first-visit của trạng thái $s$ trong các episode. Tổng thể của việc đánh giá chính sách bằng first-visit MC được trình bày ở thuật toán \ref{alg_MC}. Hình \ref{fig:first_visit_MC} minh họa cách thức cập nhật hàm giá trị trên một episode.
+Một mẫu thực nghiệm là những thông tin có được trong quá trình hệ thống tương tác với môi trường bằng chính sách $\pi$. Giá trị của trạng thái $s$, $v(s)$ được tính dựa trên những mẫu thực nghiệm có trạng thái $s$ xuất hiện. Một trạng thái $s$ có thể xuất hiện nhiều lần trong một mẫu thực nghiệm. Lần xuất hiện đầu tiên của trạng thái $s$ trong một mẫu thực nghiệm được gọi là first-visit trạng thái đó. Phương pháp first-visit MC xác định giá trị trạng thái $s$ $v_{\pi}(s)$ bằng trung bình tất cả return mà hệ thống nhận sau lần first-visit của trạng thái $s$ trong các mẫu thực nghiệm. Tổng thể của việc đánh giá chính sách bằng first-visit MC được trình bày ở thuật toán \ref{alg_MC}. Hình \ref{fig:first_visit_MC} minh họa cách thức cập nhật hàm giá trị trên một episode.
 \begin{algorithm}
 	\newalgname{Thuật toán}
-	\caption{Đánh giá hàm giá trị trạng thái bằng phương pháp first-visit MC}
+	\caption{Xác định hàm giá trị trạng thái bằng phương pháp first-visit MC}
 	\label{alg_MC}
 	\begin{algorithmic}[1]
 		\renewcommand{\algorithmicrequire}{\textbf{Đầu vào:}}
@@ -626,11 +626,11 @@ Một episode đạt được bằng cách thực hiện theo chính sách $\pi$
 	\label{fig:first_visit_MC}
 \end{figure}
 
-Trong nhiều trường hợp, hệ thống không có được mô hình của môi trường, việc đánh giá hàm giá trị hành động trở nên khả thi hơn hàm giá trị trạng thái. Với việc có được mô hình của môi trường, hàm giá trị trạng thái là đủ để cải thiện một chính xách trở nên tốt hơn; nó đơn giản là nhìn trước trạng thái tiếp theo và chọn bất kỳ hành động nào dẫn đến trạng thái đó mà đạt được nhiều điểm thưởng nhất. Ngược lại, nếu không có được mô hình của môi trường, hàm giá trị trạng thái là không đủ do hệ thống không thể xác định được trạng thái tiếp theo là gì. Vì vậy, nó cần đánh giá giá trị của mỗi hành động trong mỗi trạng thái để xác định hành động nào nên thực hiện ở mỗi trạng thái qua đó cải thiện chính sách đang thực hiện.
-Để hàm giá trị $q_{\pi}$ được thực hiện tương tự như đã hàm giá trị hành động $v_{\pi}$. Để đánh giá giá trị của hành động $a$ tại trạng thái $s$, nó thực hiện tính trung bình các return mà hệ thộng nhận được dựa vào các episode có sự xuất hiện của cặp trạng thái hành động $(s,a)$. Lẫn xuất hiện đầu tiên của cặp trạng thái và hành động $(s,a)$ trong một episode được gọi là first-visit cặp trạng thái và hành động đó. Phương pháp first-visit MC xác định giá trị của hành động $a$ ở trạng thái $s$, $q_{\pi}(s,a)$ bằng trung bình tất cả các return nhận được sau lần first-visit của cặp $(s,a)$ trong các episode. Thuật toán \ref{alg_MC_action} trình bày cách thức đánh giá hàm giá trị hành động bằng first-visit MC.
+Trong nhiều trường hợp, hệ thống không có được mô hình của môi trường, việc sử dụng hàm giá trị hành động trở nên khả thi hơn hàm giá trị trạng thái. Với việc có được mô hình của môi trường, hàm giá trị trạng thái là đủ để cải thiện một chính xách trở nên tốt hơn; nó đơn giản là nhìn trước trạng thái tiếp theo và chọn bất kỳ hành động nào dẫn đến trạng thái đó mà đạt được nhiều điểm thưởng nhất. Ngược lại, nếu không có được mô hình của môi trường, hàm giá trị trạng thái là không đủ do hệ thống không thể xác định được trạng thái tiếp theo là trạng thái gì. Vì vậy, nó cần đánh giá giá trị của mỗi hành động trong mỗi trạng thái để xác định hành động nào nên thực hiện ở mỗi trạng thái qua đó cải thiện chính sách đang thực hiện.
+Việc xác định hàm giá trị hành đọng $q_{\pi}$ được thực hiện tương tự như đã làm với hàm giá trị trạng thái $v_{\pi}$. Để xác định giá trị của hành động $a$ tại trạng thái $s$, nó thực hiện tính trung bình các return mà hệ thộng nhận được dựa vào các mẫu thực nghiệm có sự xuất hiện của cặp trạng thái hành động $(s,a)$. Lẫn xuất hiện đầu tiên của cặp trạng thái và hành động $(s,a)$ trong một mẫu thực nghiệm được gọi là first-visit của cặp trạng thái và hành động đó. Phương pháp first-visit MC xác định giá trị của hành động $a$ ở trạng thái $s$, $q_{\pi}(s,a)$ bằng trung bình tất cả các return nhận được sau lần first-visit của cặp $(s,a)$ trong các mẫu thực nghiệm. Thuật toán \ref{alg_MC_action} trình bày cách thức xác định hàm giá trị hành động bằng first-visit MC.
 \begin{algorithm}
 	\newalgname{Thuật toán}
-	\caption{Đánh giá hàm giá trị hành động bằng phương pháp first-visit MC}
+	\caption{Xác định hàm giá trị hành động bằng phương pháp first-visit MC}
 	\label{alg_MC_action}
 	\begin{algorithmic}[1]
 		\renewcommand{\algorithmicrequire}{\textbf{Đầu vào:}}
@@ -655,8 +655,8 @@ Trong nhiều trường hợp, hệ thống không có được mô hình của 
 	\end{algorithmic}
 \end{algorithm}
 
-\subsubsection*{Temporal Difference (TD)}
-Phương pháp Temporal Difference (TD) kết hợp ý tưởng giữa Monte Carlo và quy hoạch động. Giống như Monte Carlo, phương pháp TD có thể học trực tiếp từ các mẫu thực nghiệm có được qua việc tương tác của hệ thống với môi trường mà không cần có mô hình của môi trường. Mặt khác tương tự với quy hoạch động, phương pháp TD thựa hiện cập nhật đánh giá dựa trên những phần đã được đánh giá trước đó mà không phải đợi đến khi kết thúc một episode như MC.
+\subsubsection{Phương pháp Temporal Difference (TD)}
+Phương pháp Temporal Difference (TD) kết hợp ý tưởng giữa Monte Carlo và quy hoạch động. Giống như Monte Carlo, phương pháp TD có thể học trực tiếp từ các mẫu thực nghiệm có được qua việc tương tác của hệ thống với môi trường mà không cần có mô hình của môi trường. Mặt khác tương tự với quy hoạch động, phương pháp TD thựa hiện cập nhật giá trị dựa trên những phần đã được xác định trước đó mà không phải đợi đến khi kết thúc một episode như MC.
 
 Giả sử ta có các trung bình $\mu_{1}$, $\mu_{2}$, ... của chuỗi $x_1, x_2, ...$ có thể được tính như sau:
 \begin{align}
@@ -665,7 +665,7 @@ Giả sử ta có các trung bình $\mu_{1}$, $\mu_{2}$, ... của chuỗi $x_1,
 = {}& \frac{1}{k}(x_k + \left(k - 1\right)\mu_{k-1}) \notag \\
 = {}& \mu_{k - 1} + \frac{1}{k}(x_k - \mu_{k-1}) \label{eq:mean}
 \end{align}
-Phương pháp Monte Carlo phải đợi cho đến khi tính được return sau lần xuất hiện của một trạng thái để thực hiện cập nhật giá trị cho trạng thái đó. Giá trị của một trạng thái được cập nhật qua nhiều vòng lặp. Dựa vào phương trình \ref{eq:mean} giá trị của mỗi trạng thái có thể được cập nhật như sau:
+Phương pháp Monte Carlo phải đợi cho đến khi tính được return sau lần xuất hiện của một trạng thái để thực hiện cập nhật giá trị cho trạng thái đó, và giá trị của một trạng thái được cập nhật qua nhiều vòng lặp. Dựa vào phương trình \ref{eq:mean} giá trị của mỗi trạng thái có thể được cập nhật như sau:
 \begin{align}
 N(\mathit{S}_{t}) & \leftarrow N(\mathit{S}_{t}) + 1 \\
 V(\mathit{S}_t) & \leftarrow V(\mathit{S}_t) + \frac{1}{N(\mathit{S}_{t})}(\mathit{G_t} - V(\mathit{S}_t)) \label{eq:update_value_MC}
@@ -679,7 +679,7 @@ Khác với phương pháp MC, phương pháp TD chỉ cần đợi tới bướ
 V(\mathit{S}_t) \leftarrow 	V(\mathit{S}_t) + \alpha[\mathit{R}_{t+1} + \gamma V(\mathit{S}_{t+1}) - V(\mathit{S}_t)]
 \label{eq:update_value_TD}
 \end{equation}
-Trong \ref{eq:update_value_TD} ta thấy mục tiêu cập nhật cho $V(\mathit{S}_t)$ trong TD(0) là $\mathit{R}_{t+1} + \gamma V(\mathit{S}_{t+1})$. Vì phương pháp TD thực hiện cập nhật giá trị của một trạng thái dựa một phần vào các giá trị của những trạng thái tiếp theo nên phương pháp này là một phương pháp bootstapping, tương tự với quy hoạch động. Như đã định nghĩa trong \ref{sec:policy_value}, giá trị của trạng thái $s$ dưới chính sách $\pi$ được xác định:
+Trong \ref{eq:update_value_TD} ta thấy mục tiêu cập nhật cho $V(\mathit{S}_t)$ trong TD(0) là $\mathit{R}_{t+1} + \gamma V(\mathit{S}_{t+1})$. Vì phương pháp TD thực hiện cập nhật giá trị của một trạng thái dựa một phần vào các giá trị của những trạng thái tiếp theo nên phương pháp này là một phương pháp "bootstapping", tương tự với quy hoạch động. Như đã định nghĩa trong \ref{sec:policy_value}, giá trị của trạng thái $s$ dưới chính sách $\pi$ được xác định:
 \begin{align}
 v_{\pi}(s) = {} & \mathbb{E}_{\pi}\left [\mathit{G}_t \mid \mathit{S}_{t} = s\right ] \label{eq:value_base_return} \\
 ={} & \mathbb{E}_{\pi}\left [\sum_{k = 0}^{\infty}\gamma^{k}\mathit{R}_{t+k+1} \middle|\ \mathit{S}_t= s\right ] \notag \\
@@ -689,7 +689,7 @@ v_{\pi}(s) = {} & \mathbb{E}_{\pi}\left [\mathit{G}_t \mid \mathit{S}_{t} = s\ri
 Qua đó, ta thấy rằng phương pháp MC sử dụng ước lượng của \ref{eq:value_base_return} là mục tiêu cập nhật; trong khi đó phương pháp quy hoạch động sử dụng ước lượng của \ref{eq:value_base_bootstrap}. Mục tiêu cập nhật của MC là một ước lượng vì không biết giá trị kỳ vọng trong \ref{eq:value_base_return} do đó một mẫu return được sử dụng để thay thế cho giá trị kỳ vọng thực sự của nó. Mục tiêu cập nhật của quy hoạch động cũng là một ước lượng không phải vì giá trị kỳ vọng, do trong quy hoạch động chúng ta giả định hệ thống có mô hình của môi trường, nhưng là vì $v_{\pi}(\mathit{S}_{t+1})$ là không biết do hiện tại nó đang được đánh giá; do đó $V(\mathit{S}_{t+1})$ được sử dụng để thay thế. Mục tiêu cập nhất trong TD là một ước lượng do cả hai nguyên nhân trên nên TD ước lượng giá trị kỳ vọng trong \ref{eq:value_base_return} qua mẫu và sử dụng ước lượng của hàm giá trị hiện tại $V$ để thay thế cho hàm giá trị đúng $v_{\pi}$. Vì vậy, phương pháp TD được cho là phương pháp kết hợp cách lấy mẫu của MC và bootstrapping của quy hoạch động. Từng bước thực hiện cập nhật hàm giá trị bằng phương pháp TD(0) được trình bày trong thuật toán thuật toán \ref{alg_TD_Zero}.
 \begin{algorithm}
 	\newalgname{Thuật toán}
-	\caption{Đánh giá hàm giá trị trạng thái bằng TD(0)}
+	\caption{Xác định hàm giá trị trạng thái bằng TD(0)}
 	\label{alg_TD_Zero}
 	\begin{algorithmic}[1]
 		\renewcommand{\algorithmicrequire}{\textbf{Đầu vào:}}
@@ -702,7 +702,7 @@ Qua đó, ta thấy rằng phương pháp MC sử dụng ước lượng của \
 		
 		\Operation
 		\Repeat
-		\State Tạo một episode $E$ bằng chính sách $\pi$
+		\State Tạo một mẫu thực nghiệm $E$ bằng chính sách $\pi$
 		\State Khởi tạo trạng thái $s$
 		\For{mỗi bước trong $E$}
 		\State $A \leftarrow$ hành động được chọn theo chính $\pi$ tại $s$
@@ -714,7 +714,263 @@ Qua đó, ta thấy rằng phương pháp MC sử dụng ước lượng của \
 	\end{algorithmic}
 \end{algorithm}
 
-\subsubsection*{Sarsa}
-\subsubsection*{Q-Learning}
+Với bất kỳ chính sách $\pi$ cố định. Việc xác định hàm giá trị bằng phương pháp TD đã được chứng minh hội tu về hàm giá trị $v_{\pi}$ theo luật số lớn. Trong thực nghiệm, phương pháp TD thường hội tụ về hàm giá trị $v_{\pi}$ nhanh hơn phương pháp MC.
+
+Phương pháp TD(0) xem giá trị của các trạng thái kế tiếp từ một trạng thái $s$ là giá trị đại diện cho điểm thưởng mà trạng thái $s$ có thể nhận được ở tương lai; và dựa vào giá trị đại diện này và điểm thưởng nhận được ngay trạng thái $s$ để xác định giá trị của trạng thái đó. Tổng quát cho phương pháp TD là n-step TD. Để đánh xác định giá trị của một trạng thái $s$, phương pháp n-step TD xem giá trị của trạng thái thứ $n$ sau đó là giá trị đại diện cho điểm thưởng mà hệ thống có thể nhận được từ bước thứ $n$ trở về sau; và xác định giá trị của trạng thái $s$ dựa trên giá trị đại diện này cùng với điểm thưởng đã nhận được ở $n$ bước sáu đó. Hình \ref{fig:n_TD} minh họa xác định hàm giá trị trạng thái bằng phương pháp $n$-step TD. Phương pháp này thực hiện cập nhật cho một trạng thái ở bước thứ $n$ sau khi trạng thái $s$ xuất hiện trong mẫu thực nghiệm. 
+\begin{figure}
+	\centering
+	\begin{tikzpicture}[>=stealth,bend angle=45,auto]
+	
+	\tikzstyle{state}=[circle,thick,draw=blue!75,fill=white!20,minimum size = 5mm, inner sep=0pt]
+	\tikzstyle{action}=[circle,draw=black!75,
+	fill=black!75,minimum size=2mm]
+	
+	\tikzstyle{every label}=[red]
+	
+	\begin{scope}
+	% First net
+	\node (label1) [align=left]  {TD($1$-step)};
+	
+	\node [state, label=left:$V(\mathit{S}_t)$] (s1) [below = 0.3cm of label1] {};
+	
+	\node [action] (a1) [below = 0.5cm of s1] {}
+	edge  (s1);
+	
+	\node [state, label={[name=label node]below:$V(\mathit{S}_{t+1})$}] (s2) [below = 0.5 of a1] {}
+	edge node[left]{$\mathit{R}_{t+1}$} (a1);
+	
+	%--------------------------------
+	\node (label2) [right = 1cm of label1] {2-step};
+	
+	\node [state] (s3) [below = 0.3cm of label2] {};
+	
+	\node [action] (a2) [below = 0.5cm of s3] {}
+	edge (s3);
+	
+	\node [state] (s4) [below = 0.5 of a2] {}
+	edge node[left]{$\mathit{R}_{t+1}$} (a2);
+	
+	\node [action] (a3) [below = 0.5cm of s4] {}
+	edge (s4);
+	
+	\node [state] (s5) [below = 0.5 of a3, label=below:$V(\mathit{S}_{t+2})$] {}
+	edge node[left]{$\mathit{R}_{t+2}$} (a3);
+	
+	%--------------------------------
+	\node (label3) [right = 1cm of label2] {3-step};
+	
+	\node [state] (s6) [below = 0.3cm of label3] {};
+	
+	\node [action] (a4) [below = 0.5cm of s6] {}
+	edge (s6);
+	
+	\node [state] (s7) [below = 0.5 of a4] {}
+	edge  node[left]{$\mathit{R}_{t+1}$} (a4);
+	
+	\node [action] (a5) [below = 0.5cm of s7] {}
+	edge (s7);
+	
+	\node [state] (s8) [below = 0.5 of a5] {}
+	edge node[left]{$\mathit{R}_{t+2}$} (a5);
+	
+	\node [action] (a6) [below = 0.5cm of s8] {}
+	edge (s8);
+	
+	\node [state, label=below:$V(\mathit{S}_{t+3})$] (s9) [below = 0.5 of a6] {}
+	edge node[left]{$\mathit{R}_{t+3}$} (a6);
+	
+	%--------------------------------
+	\node (labeln) [right = 2cm of label3] {$n$-step};
+	
+	\node [state] (s10) [below = 0.3cm of labeln] {};
+	
+	\node [action] (a7) [below = 0.5cm of s10] {}
+	edge (s10);
+	
+	\node [state] (s11) [below = 0.5 of a7] {}
+	edge node[left]{$\mathit{R}_{t+1}$} (a7);
+	
+	\node (dot2) [left = 1 of s11] {\Huge \dots};
+	
+	\node [action] (a8) [below = 0.5cm of s11] {}
+	edge (s11);
+	
+	\node [state] (s12) [below = 0.5 of a8] {}
+	edge node[left]{$\mathit{R}_{t+2}$} (a8);	
+	
+	\node [action] (a9) [below = 0.5cm of s12] {}
+	edge (s12);
+	
+	\node (dot1) [below = 0.5 of a9] {\huge \vdots};
+	
+	\node [action] (a10) [below = 0.5cm of dot1] {};
+	
+	\node [state, label=below:$V(\mathit{S}_{t+n})$] (s12) [below = 0.5 of a10] {}
+	edge node[left]{$\mathit{R}_{t+n}$} (a10);
+	
+	%--------------------------------
+	\node (labelMC) [right = 2cm of labeln] {Monte Carlo};
+	
+	\node [state] (s13) [below = 0.3cm of labelMC] {};
+	
+	\node [action] (a11) [below = 0.5cm of s13] {}
+	edge (s13);
+	
+	\node [state] (s14) [below = 0.5 of a11] {}
+	edge node[left]{$\mathit{R}_{t+1}$} (a11);
+	
+	\node (dot3) [left = 1 of s14] {\Huge \dots};
+	
+	\node [action] (a12) [below = 0.5cm of s14] {}
+	edge (s14);
+	
+	\node [state] (s15) [below = 0.5 of a12] {}
+	edge node[left]{$\mathit{R}_{t+2}$} (a12);
+	
+	
+	\node [action] (a13) [below = 0.5cm of s15] {}
+	edge (s15);
+	
+	\node [state] (s16) [below = 0.5 of a13] {}
+	edge node[left]{$\mathit{R}_{t+3}$} (a13);
+	
+	\node [action] (a14) [below = 0.5cm of s16] {}
+	edge (s16);
+	
+	\node [state] (s17) [below = 0.5 of a14] {}
+	edge node[left]{$\mathit{R}_{t+4}$} (a14);
+	
+	\node [action] (a15) [below = 0.5cm of s17] {}
+	edge (s17);
+	
+	\node [state] (s18) [below = 0.5 of a15] {}
+	edge node[left]{$\mathit{R}_{t+5}$} (a15);
+	
+	\node [action] (a16) [below = 0.5cm of s18] {}
+	edge (s18);
+	
+	\node (dot4) [below = 0.5cm of a16] {\huge \vdots};
+	
+	\node [action] (a17) [below = 0.5 of dot4] {};
+	
+	\node [state, fill = gray, label={[name=label node]below:Trạng thái kết thúc}] (s19) [below = 0.5 of a17] {}
+	edge node[left]{$\mathit{R}_{T}$} (a17);
+	
+	\end{scope}	
+	\end{tikzpicture}
+	\caption[Minh họa phương pháp $n$-step TD]{Đồ thị bên trái ngoài cùng minh họa xác định hàm giá trị bằng phương pháp TD(0), trong khi đó đồ thị bên phải ngoài cùng minh họa cho phương pháp Monte Carlo. Các đồ thị ở giữa minh họa phương pháp $n$-step TD ứng với từng giá trị của $n$}
+	\label{fig:n_TD}
+\end{figure}
+
+Xét một chuỗi trạng thái, điểm thưởng $\mathit{S}_{t}, \mathit{R}_{t+1}, \mathit{S}_{t+1}, \mathit{R}_{t+2}, \dots, \mathit{S}_{T}$. Như chúng ta đã biết, Monte Carlo thực hiện cập nhật ước lượng giá trị của trạng thái $s$ chỉ khi tính được return của trạng thái đó:
+\begin{equation*}
+	G_{t} = \mathit{R}_{t+1} + \gamma \mathit{R}_{t+2} + \gamma^{2} \mathit{R}_{t+3} + \dots + \gamma^{T-t-1}\mathit{R}_T
+\end{equation*}
+trong đó T là thời điểm cuối cùng trong một mẫu thực nghiệm. Ngược với MC, TD(0) thực hiện cập nhật cho một trạng thái dựa trên điểm thưởng vừa nhận được ngay trạng thái đó và giá trị hiện tại của các trạng thái kế tiếp sau đó mà không cần đợi đến khi tính được return:
+\begin{equation*}
+G_{t}^{(1)} = \mathit{R}_{t+1} + \gamma V_{k}(\mathit{S}_{t+1}) 
+\end{equation*}
+với $V_k$ là giá trị hiện tại của trạng thái sau khi cập nhật $k$ lần.
+
+Tổng quát, phương pháp $n$-step TD thực hiện cập nhật giá trị ước lượng của một trạng thái $s$ sau $n$ bước kể từ lúc trạng thái $s$ xuất hiện trong mẫu thực nghiệm; và mục tiêu cập nhật được xác định:
+\begin{equation}
+G_{t}^{(n)} = \mathit{R}_{t+1} + \gamma \mathit{R}_{t+2} + \gamma^2 \mathit{R}_{t+3} + \dots + \gamma^{n-1}\mathit{R}_{t+n} + \gamma^{n}V_{k}(\mathit{S}_{t+n}), \forall n \geq 1
+\label{eq:n_TD_goal}
+\end{equation}
+Sau khi xác định mục tiêu cập nhật, việc thực hiện cập nhật giá trị ước lượng của một trạng thái tại lần lặp thứ $k + 1$ tương tự như đã thực hiện ở hai phương pháp trên:
+\begin{equation*}
+V(\mathit{S}_t) \leftarrow V(\mathit{S}_t) + \alpha \left[ G_{t}^{(n)} - V(\mathit{S}_t) \right]
+\end{equation*}
+
+\subsubsection{Phương pháp Sarsa}
+Phương pháp Sarsa được dùng để xác định hàm giá trị hành động $q_{\pi}$ thay vì giá trị trạng thái $v_{\pi}$ cho chính sách $\pi$. Trong Sarsa, chúng ta quan tâm chuyển từ cặp trạng thái, hành động này sang cặp trạng thái, hành động khác và học giá trị của những cặp trạng thái, hành động; thay vì chỉ quan tâm đến sự chuyển tiếp trạng thái, cũng như giá trị của chúng như trong TD. Tương tự với TD, Sarsa dựa trên phương pháp "boostrapping" để xác định giá trị điểm thưởng mà hệ thống có thể nhận được ở tương lai từ một thời điểm xác định, đồng thời xác định giá trị của một cặp trạng thái và hành động qua nhiều lần lặp cập nhật.
+
+Phương pháp đơn giản nhất trong Sarsa được gọi là Sarsa(0). Cách thức cập nhật giá trị của một cặp trạng thái và hành động bằng Sarsa(0) được thực hiện:
+\begin{align}
+Q(\mathit{S}_t, \mathit{A}_t) \leftarrow Q(\mathit{S}_t, \mathit{A}_t) + \alpha \left[\mathit{R}_{t+1} + \gamma Q_(\mathit{S}_{t+1}, \mathit{A}_{t+1}) -  Q(\mathit{S}_t, \mathit{A}_t) \right]
+\label{eq:Sarsa_action_update}
+\end{align}
+Giá trị của hành động $\mathit{A}_t$ tại trạng thái $\mathit{S}_t$ được cập nhật dựa trên điểm thưởng từ môi trường ứng với hành động đó và giá trị của hành động ở trạng thái kế tiếp sau đó. Nếu trạng thái tiếp theo $\mathit{S}_{t+1}$ là trạng thái kết thúc khi đó giá trị của các hành động tại trạng thái đó đều có giá trị là không; tức là $Q(\mathit{S}_{t+1}, \mathit{A}_{t+1}) = 0$
+Cách thức cập nhật của Sarsa(0) được minh họa trong hình \ref{fig:Sarsa_Zero}.
+Cập nhật này sử dụng một bộ gồm 5 phần tử cho cập nhật $(\mathit{S}_t, \mathit{A}_t, \mathit{R}_{t+1}, \mathit{S}_{t+1}, \mathit{A}_{t+1})$.
+
+\begin{algorithm}
+	\newalgname{Thuật toán}
+	\caption{Xác định hàm giá trị hành động bằng Sarsa(0)}
+	\label{alg_Sarsa_Zero}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmicrequire}{\textbf{Đầu vào:}}
+		\renewcommand{\algorithmicensure}{\textbf{Đầu ra:}}
+		\algnewcommand\algorithmicoperation{\textbf{Thao tác:}}
+		\algnewcommand\Operation{\item[\algorithmicoperation]}
+		
+		\Require Chính sách $\pi$ cần đánh giá
+		\Ensure Hàm giá trị $Q$ xấp xỉ hàm giá trị $q_{\pi}$ của chính sách $\pi$
+		
+		\Operation
+		\Repeat
+		\State Tạo một episode $E$ bằng chính sách $\pi$
+		\State Khởi tạo trạng thái $S$
+		\State Chọn một hành động $A$ tại trạng thái $S$ theo chính sách $\pi$
+		\For{mỗi bước trong $E$}
+		\State Thực hiện hành động $A$; quan sát điểm thưởng $R$ nhận được, và trạng thái tiếp theo $S'$
+		\State Chọn hành động $A'$ ở trạng thái $S'$ theo chính sách $\pi$
+		\State $Q(S,A) \leftarrow Q(S,A) + \alpha \left[R + \gamma Q(S',A') - Q(S,A)\right]$ \%\% Thực hiện cập nhật giá trị cho cặp trạng thái, hành động $S,A$
+		\State $S \leftarrow S'$
+		\State $A \leftarrow A'$
+		\EndFor
+		\Until thỏa điều kiện dừng
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{figure}
+	\centering
+	\begin{tikzpicture}[>=stealth,bend angle=45,auto]
+	
+	\tikzstyle{state}=[circle,thick,draw=blue!75,fill=white!20,minimum size = 5mm, inner sep=0pt]
+	\tikzstyle{action}=[circle,draw=black!75,
+	fill=black!75,minimum size=2mm]
+	
+	\tikzstyle{every label}=[red]
+	
+	\begin{scope}
+	% First net
+	\node (label1) [align=left]  {Sarsa(0)};
+	
+	\node [action, label={[name=label node]left:$Q(\mathit{S}_t, \mathit{A}_t)$}] (a1) [below = 0.3cm of label1] {};
+	
+	\node [state] (s1) [below = 1cm of a1] {}
+	edge  node[left]{$\mathit{R}_{t+1}$} (a1);
+	
+	\node [action, label={[name=label node]below:$Q(\mathit{S}_{t+1}, \mathit{A}_{t+1})$}] (a2) [below = 1cm of s1] {}
+	edge  (s1);
+	
+	\end{scope}	
+	\end{tikzpicture}
+	\caption[Minh họa phương pháp Sarsa(0)]{Đồ thị minh họa xác định hàm giá trị hành động bằng phương pháp Sarsa(0)}
+	\label{fig:Sarsa_Zero}
+\end{figure}
+
+Phương pháp $n$-step Sarsa là phương pháp tổng quát cho việc đánh giá chính sách bằng cách xác định hàm giá trị hành động. Mục tiêu cập nhật của $n$-step Sarsa cho một cặp trạng thái và hành động $(\mathit{S}_t, \mathit{A}_t)$ được xác định:
+\begin{equation}
+	G_{t}^{(n)} = \mathit{R}_{t+1} + \gamma \mathit{R}_{t+2} + \dots + \gamma^{n-1} \mathit{R}_{t+n} + \gamma^{n} Q(\mathit{S}_{t+n}, \mathit{A}_{t+1})
+\end{equation}
+Sau khi xác định được mục tiêu cập nhật, giá trị của một cặp trạng thái và hành đông được cập nhật tương tự như cách cập nhật trong \ref{eq:Sarsa_action_update} của Sarsa(0):
+\begin{equation}
+	Q(\mathit{S}_t, \mathit{A}_t) \leftarrow Q(\mathit{S}_t, \mathit{A}_t) + \alpha \left[G_{t}^{(n)} -  Q(\mathit{S}_t, \mathit{A}_t) \right]
+	\label{eq:n_Sarsa_update}
+\end{equation}
+
+\subsubsection{Phương pháp Q-learning}
+\paragraph*{On-policy và off-policy}
+Ý tưởng của on-policy là dựa trên những kinh nghiệm thực tế của chính hệ thống, nó có thể tự cải thiện trở nên tốt hơn. Những phương pháp thực hiện theo \textit{on-policy} là những phương pháp đánh giá và cải thiện chính sách $\pi$ dựa trên những mẫu dữ liệu có được qua việc tương tác với môi trường theo chính chính sách đó. Các phương pháp quy hoạch động, MC, TD, Sarsa là những phương pháp thực hiện theo on-policy.
+Ngược lại với on-policy, ý tưởng của off-policy là hệ thống có thể cải thiện chính sách của nó dựa trên những kinh nghiệm thực tế của một hệ thống có một chính sách thực hiện khác. Những phương pháp thực hiện theo \textit{off-policy} đánh giá và cải thiện chính sách $\pi$ dựa trên những mẫu dữ liệu có được qua việc tương tác với môi trường theo một chính sách $\pi^{'}$ khác. Ngoài ra, những phương pháp thực hiện theo off-policy có thể tận dụng lại những mẫu dữ liệu cũ để tiếp tục cải thiện chính sách.
+
+\paragraph*{Phương pháp off-policy Q-learning}
+ Một trong những đột phá quan trọng nhất trong học tăng cường được phát triển dựa trên phương pháp TD được biết đến chính là Q-learning \cite{sutton1998introduction}. Tương tự như những phương pháp ở trên, phương pháp Q-learning xác định giá trị của một cặp trạng thái và hành động bằng cách cập nhật giá trị ước lượng của nó qua nhiều lần lặp:
+ \begin{equation}
+	 Q(\mathit{S}_t, \mathit{A}_t) \leftarrow Q(\mathit{S}_t, \mathit{A}_t) + \alpha \left[\mathit{R}_{t+1} + \gamma\max_{a}Q(\mathit{S}_{t+1}, a) - Q(\mathit{S}_t, \mathit{A}_t)\right]
+ \end{equation}
+
 
 \subsection{Phương pháp cải thiện chính sách}
