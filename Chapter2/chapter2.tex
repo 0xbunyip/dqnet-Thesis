@@ -909,7 +909,7 @@ Cập nhật này sử dụng một bộ gồm 5 phần tử cho cập nhật $(
 		
 		\Operation
 		\Repeat
-		\State Tạo một episode $E$ bằng chính sách $\pi$
+		\State Tạo một mẫu thực nghiệm $E$ bằng chính sách $\pi$
 		\State Khởi tạo trạng thái $S$
 		\State Chọn một hành động $A$ tại trạng thái $S$ theo chính sách $\pi$
 		\For{mỗi bước trong $E$}
@@ -971,6 +971,87 @@ Ngược lại với on-policy, ý tưởng của off-policy là hệ thống c�
  \begin{equation}
 	 Q(\mathit{S}_t, \mathit{A}_t) \leftarrow Q(\mathit{S}_t, \mathit{A}_t) + \alpha \left[\mathit{R}_{t+1} + \gamma\max_{a}Q(\mathit{S}_{t+1}, a) - Q(\mathit{S}_t, \mathit{A}_t)\right]
  \end{equation}
+Mục tiêu cập nhật giá trị của cặp trạng thái, hành động $(\mathit{S}_{t}, \mathit{A}_{t})$ bằng phương pháp Q-learning dựa trên giá trị điểm thưởng nhận được $\mathit{R}_{t+1}$ và giá trị của hành động lớn nhất ở trạng thái kế tiếp $\mathit{S}_{t+1}$. Hình \ref{fig:Q_learning_Alg} minh họa cho cách thức xác định mục tiêu cập nhật của Q-learning. 
+Một điểm khác biệt của phương pháp Q-learning so với các phương pháp trên là nó xấp xỉ trực tiếp hàm giá trị hành động tối ưu $q_*$, mà không phải phụ thuộc quá nhiều vào chính sách mà nó đang theo. Ảnh hưởng của chính sách mà hệ thông đang theo đối với phương pháp này là: nó xác định cặp trạng thái và hành động nào được xuất hiện trong các mẫu thực nghiệm. Tuy nhiên để đảm bảo xác định được giá trị hành động tối ưu, một yêu cầu tối thiểu là các cặp trạng thái và hành động đều được xuất hiện trong quá trình đánh giá chính sách và giá trị các cặp trạng thái, hành động đều được cập nhật liên tục. Từng bước thực hiện của phương pháp Q-learning được trình bày trong thuật toán \ref{alg_Q_learning}.
+\begin{algorithm}
+	\newalgname{Thuật toán}
+	\caption{Xác định hàm giá trị hành động tối ưu bằng Q-learning}
+	\label{alg_Q_learning}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmicrequire}{\textbf{Đầu vào:}}
+		\renewcommand{\algorithmicensure}{\textbf{Đầu ra:}}
+		\algnewcommand\algorithmicoperation{\textbf{Thao tác:}}
+		\algnewcommand\Operation{\item[\algorithmicoperation]}
+		
+		\Require
+		\Ensure Hàm giá trị $Q$ xấp xỉ hàm giá trị $q_{*}$
+		
+		\Operation
+		\Repeat
+		\State Tạo một mẫu thực nghiệm $E$ bằng chính sách $\pi'$ (thực hiện $\epsilon$-greedy theo hàm giá trị $Q$ hiện tại)
+		\State Khởi tạo trạng thái $S$
+		\For{mỗi bước trong $E$}
+		\State Chọn một hành động $A$ tại trạng thái $S$ theo chính sách $\pi'$
+		\State Thực hiện hành động $A$; quan sát điểm thưởng $R$ nhận được, và trạng thái tiếp theo $S'$
+		\State $Q(S,A) \leftarrow Q(S,A) + \alpha \left[R + \gamma\max_{a}Q(S', a) - Q(S,A)\right]$ \%\% Thực hiện cập nhật giá trị cho cặp trạng thái, hành động $S,A$
+		\State $S \leftarrow S'$
+		\EndFor
+		\Until thỏa điều kiện dừng
+	\end{algorithmic}
+\end{algorithm}
 
+\begin{figure}
+	\centering
+	\begin{tikzpicture}[node distance=4.5cm,>=stealth',bend angle=45,auto]
+	
+	\tikzstyle{state}=[circle,thick,draw=blue!75,fill=white!20,minimum size = 5mm, inner sep=0pt]
+	\tikzstyle{action}=[circle,draw=black!75,
+	fill=black!75,minimum size=2mm]
+	
+	\tikzstyle{every label}=[red]
+	
+	\begin{scope}
+	\node [state, label={[name=label node]right:$\mathit{S}_{t}$}] (s0) {};
+	
+	\node [action, label={[name=label node]right:$\mathit{A}_{t}$}] (a0)  [below = 1 cm of s0] {}
+	edge (s0);
+	
+	\node [state, label={[name=label node]right:$\mathit{S}_{t+1}$}] (s1) [below = 1 cm of a0]     {}
+	edge node[right]{$\mathit{R}_{t+1}$} (a0);
+	
+	\node [action] (a1) [below right = 2 cm and 1 cm of s1, label=right:$a$]    {}
+	edge(s1);
+	
+	\node [action] (a2) [below left  = 2 cm and 1 cm of s1]    {}
+	edge (s1)
+	pic[draw=black, -, angle eccentricity=1.2, angle radius=1cm]
+	{angle=a2--s1--a1};
+	
+	\node [action] (a3) at ($(a1)!0.5!(a2)$) {}
+	edge (s1);	
+	\end{scope}
+	\end{tikzpicture}
+	\caption[Minh họa phương pháp Q-learning]{Đồ thị minh họa cập nhật hàm giá trị hành động bằng phương pháp Q-learning. Q-learning xác định mục tiêu cập nhật cho giá trị của cặp trạng thái, hành động $(\mathit{S}_{t}, \mathit{A}_t)$ bằng tổng giữa điểm thưởng $\mathit{R}_{t+1}$ nhận được khi thực hiện hành động $\mathit{A}_t$ tại trạng thái $\mathit{S}_{t}$ và giá trị hành động $a$ lớn nhất tại trạng thái kế tiếp $\mathit{S}_{t+1}$ đã nhân với hệ số $\gamma$.}
+	\label{fig:Q_learning_Alg}
+\end{figure}
 
 \subsection{Phương pháp cải thiện chính sách}
+\subsubsection{Phương pháp tham lam (greedy)}
+Mục tiêu chúng ta xác định hàm giá trị cho một chính sách là để tìm một chính sách tốt hơn chính sách hiện tại. Giả sử chúng ta có một chính sách $\pi$ cố định tức là với mỗi trạng thái $s$, chính sách này luôn chọn thực hiện một hành động cố định, $\pi(s) = a$. Và cũng đã xác định được một hàm giá trị $v_{\pi}$ cho một chính sách đó. Với một trạng thái $s$, câu hỏi đặt ra là chúng ta nên thay đổi một chính sách cố định khác chọn hành động $a' \neq \pi(s)$ không? Chúng ta biết giá trị của trạng thái $s$ theo chính sách hiện tại $\pi$, $v_{\pi}(s)$, tốt như thế nào nhưng liệu chính sách mới $\pi$ có tốt hơn hay trở nên tệ đi? Để trả lời những câu hỏi này, chúng ta xem xét việc chọn một hành động $a$ tại trạng thái $s$ theo chính sách $\pi$. Ta có thể cải thiện một chính sách bằng cách chọn những hành động có giá trị cao nhật tại mỗi trạng thái $s$.
+\begin{equation}
+\label{eq:update_policy}
+\pi'(s) = \underset{a \in \mathcal{A}}{\operatorname{argmax}}q_{\pi}(s,a)
+\end{equation}
+Với $\pi$ là chính sách cố định nên ta có hàm giá trị trạng thái cũng là hàm giá trị hành động do chính sách này chỉ sách định duy nhất một hành động tại một trạng thái $q_{\pi}(s, \pi(s)) = v_{\pi}(s)$. Cách cải thiện này cũng cho ta:
+\begin{equation}
+q_{\pi}(s, \pi'(s)) = \max_{a}q_{\pi}(s,a) \geq q_{\pi}(s,\pi(s)) = v_{\pi}(s)
+\end{equation}
+Ngoài ra với \ref{eq:improve_value_function} cho thấy rằng việc cải thiện chính sách bằng phương pháp tham lam này, ta đồng thời cũng cải thiện được hàm giá trị.
+\begin{align}
+v_{\pi}(s) \leqslant {} & q_{\pi}(s, \pi'(s)) = \mathbb{E}_{\pi'}\left[\mathit{R}_{t+1} + \gamma v_{\pi}(\mathit{S}_{t+1}) \mid \mathit{S}_t = s\right] \notag \\
+\leqslant {} & \mathbb{E}_{\pi'}\left[\mathit{R}_{t+1} + \gamma q_{\pi}(\mathit{S}_{t+1}, \pi'(\mathit{S_{t+1}})) \mid \mathit{S}_t = s\right] \notag \\
+\leqslant {} & \mathbb{E}_{\pi'}\left[\mathit{R}_{t+1} + \gamma \mathit{R}_{t+2} + \gamma^2 q_{\pi}(\mathit{S}_{t+2}, \pi'(\mathit{S}_{t+2})) \mid \mathit{S}_t = s\right] \notag \\
+\leqslant {} & \mathbb{E}_{\pi'}\left[\mathit{R}_{t+1} + \gamma \mathit{R}_{t+2} + \dots \mid \mathit{S}_t = s\right] = v_{\pi'}(s) \label{eq:improve_value_function}
+\end{align}
+
+\subsubsection{Phương pháp $\epsilon$-greedy}
