@@ -5,19 +5,19 @@
 \graphicspath{{Chapter2/Chapter2Figs/EPS/}{Chapter2/Chapter2Figs/}}
 \fi
 \begin{quote}
-	\textit{Trong chương này sẽ trình bày những kiến thức nền tảng của học tăng cường. Trong phần đầu tiên chúng em sẽ trình bày định nghĩa của các thành phần cơ bản trong học tăng cường. Tiếp đó sẽ đề cập đến mô hình Markov Decision Processes được áp dụng trong việc đánh giá lý thuyết một số thành phần của bài toán học tăng cường. Cùng với đó sẽ trình bày qui trình tổng quát để đánh giá và cải thiện chính sách trong bài toán. Cuối cùng chúng em sẽ trình bày một số phương pháp phổ biến thường đượcAgent áp dụng để đánh giá cũng như cải thiện giúp hệ thông có cách giải tốt hơn cho bài toán trên.}
+	\textit{Trong chương này sẽ trình bày những kiến thức nền tảng của học tăng cường. Trong phần đầu tiên chúng em sẽ trình bày định nghĩa của các thành phần cơ bản trong học tăng cường. Tiếp đó sẽ đề cập đến mô hình Markov Decision Processes được áp dụng trong việc đánh giá lý thuyết một số thành phần của bài toán học tăng cường. Cùng với đó sẽ trình bày qui trình tổng quát để đánh giá và cải thiện chính sách trong bài toán. Cuối cùng chúng em sẽ trình bày một số phương pháp phổ biến thường được áp dụng để đánh giá cũng như cải thiện giúp hệ thông có cách giải tốt hơn cho bài toán trên.}
 \end{quote}
 
 \section{Các thành phần cơ bản của học tăng cường}
-\subsection{Agent và môi trường}
-Trong học tăng cường, đối tượng học và đưa ra quyết định được gọi chung là \textit{hệ thống}. Nó tương tác trực tiếp tới một đối tượng được gọi là \textit{môi trường}. Sự tương tác này được diễn ra liên tục. Agent lựa chọn hành động dựa trên những gì nó nhận được từ môi trường. Những thông tin này bao gồm:
+\subsection{Hệ thống và môi trường}
+Trong học tăng cường, đối tượng học và đưa ra quyết định được gọi chung là \textit{hệ thống}. Nó tương tác trực tiếp tới một đối tượng được gọi là \textit{môi trường}. Sự tương tác này được diễn ra liên tục. Hệ thống lựa chọn hành động dựa trên những gì nó nhận được từ môi trường. Những thông tin này bao gồm:
 \begin{itemize}
 	\item \textbf{Trạng thái} (state): Những thông tin hữu ích mà hệ thống có thể cảm nhận được từ môi trường. Ví dụ trong đánh cờ, trạng thái có thể là vị trí những quân cờ đang có trên bàn cờ. Thường được ký hiệu là $s$.
 	\item \textbf{Điểm thưởng} (reward): Giá trị mà môi trường trả ra tương ứng với trạng thái mà nó vừa đạt được hoặc hành động mà hệ thống vừa thực hiện. Thường được ký hiệu là $r$. Cũng với ví dụ đánh cờ, điểm thưởng mà hệ thống có thể nhận được từ môi trường trong ví dụ này là: +1 nếu hệ thống thắng, -1 nếu hệ thống thua, và trong quá trình đánh cờ điểm thưởng có thể là 0 cho mỗi trạng thái bàn cờ.
 \end{itemize}
 Từ trạng thái và điểm thưởng nhận được, hệ thống dựa vào đó để ra quyết định chọn hành động phù hợp sao cho cố gắng đạt được nhiều điểm thưởng nhất.
 
-Agent và môi trường tương tác theo một chuỗi tuần tự các time-steps, $t = 0,1,2,...$. Tại mỗi time step $t$, agent nhận những mô tả trạng thái của môi trường, $\mathit{S_t} \in \mathcal{S}$, với $\mathcal{S}$ là tập các trạng thái có thể có. Dựa vào những mô tả trạng thái nhận được, agent chọn một hành động, $\mathit{A_t} \in \mathcal(\mathit{S_t})$, trong đó $\mathcal(\mathit{S_t})$ là tập các hành động có thể thực hiện tại trạng thái $\mathit{S_t}$. Tại time step sau đó, agent nhận được giá trị điểm thưởng, $\mathit{R_{t+1}} \in \mathbb{R}$, cùng với trạng thái tiếp theo $\mathit{S_{t+1}}$ Quá trình tương tác giữa agent và môi trường được mô tả trong hình \ref{AgentEnvironment}
+Hệ thống và môi trường tương tác theo một chuỗi tuần tự các thời điểm, $t = 0,1,2,...$. Tại mỗi thời điểm $t$, hệ thống nhận những mô tả trạng thái của môi trường, $\mathit{S_t} \in \mathcal{S}$, với $\mathcal{S}$ là tập các trạng thái có thể có. Dựa vào những mô tả trạng thái nhận được, hệ thống chọn một hành động, $\mathit{A_t} \in \mathcal(\mathit{S_t})$, trong đó $\mathcal(\mathit{S_t})$ là tập các hành động có thể thực hiện tại trạng thái $\mathit{S_t}$. Tại thời điểm $t+1$ sau đó, hệ thống nhận được giá trị điểm thưởng, $\mathit{R_{t+1}} \in \mathbb{R}$, cùng với trạng thái tiếp theo $\mathit{S_{t+1}}$ Quá trình tương tác giữa hệ thống và môi trường được mô tả trong hình \ref{AgentEnvironment}
 
 \begin{figure}
 	\centering
@@ -26,25 +26,25 @@ Agent và môi trường tương tác theo một chuỗi tuần tự các time-s
 	\label{AgentEnvironment}
 \end{figure}
 
-Các thành phần của agent gồm có:
+Các thành phần của hệ thống gồm có:
 \begin{itemize}
-	\item \textbf{Chính sách}. Chính sách, $\pi$, xác định khả năng chọn một hành động khi hệ thống nhận được một trạng thái $s$. Chính xác tại time step $t$ được xác định $\pi_t(a \mid s) = \mathbb{P}[\mathit{A_t} = a \mid \mathit{S_t} = s]$. Để đạt được mục tiêu được nhiều điểm thưởng nhất, hệ thống cần có một chính sách chọn lựa hành động phù hợp mỗi khi gặp một trạng thái. Những phương pháp học tăng cường thường tập trung thay đổi các chính sách của hệ thống sao cho đạt được kết quả tốt trong thực nghiệm.
-	\item \textbf{Hàm giá trị}. Hầu hết các thuật toán học tăng cường đầu tập trung đánh giá những hàm giá trị, các hàm này đánh giá một trạng thái hoặc hành động là tốt như thế nào cho agent thông qua việc ước lượng điểm thưởng mà hệ thống có thể nhận được ở tương lai. Thông thường, giá trị của một trạng thái $s$, dưới một chính sách $\pi$  được ký hiệu $v_{\pi}(s)$ là lượng điểm thưởng kỳ vọng nhận được bắt đầu từ trạng thái $s$ về sau.
+	\item \textbf{Chính sách}. Chính sách, $\pi$, xác định khả năng chọn một hành động khi hệ thống nhận được một trạng thái $s$. Chính xác tại thời điểm $t$ được xác định $\pi_t(a \mid s) = \mathbb{P}[\mathit{A_t} = a \mid \mathit{S_t} = s]$. Để đạt được mục tiêu được nhiều điểm thưởng nhất, hệ thống cần có một chính sách chọn lựa hành động phù hợp mỗi khi gặp một trạng thái. Những phương pháp học tăng cường thường tập trung thay đổi các chính sách của hệ thống sao cho đạt được kết quả tốt trong thực nghiệm.
+	\item \textbf{Hàm giá trị}. Hầu hết các thuật toán học tăng cường đầu tập trung đánh giá những hàm giá trị, các hàm này đánh giá một trạng thái hoặc hành động là tốt như thế nào cho hệ thống thông qua việc ước lượng điểm thưởng mà hệ thống có thể nhận được ở tương lai. Thông thường, giá trị của một trạng thái $s$, dưới một chính sách $\pi$  được ký hiệu $v_{\pi}(s)$ là lượng điểm thưởng kỳ vọng nhận được bắt đầu từ trạng thái $s$ về sau.
 	\item \textbf{Mô hình}. Trong một số bài toán học tăng cường, hệ thống có thể xây dựng mô hình cho riêng mình để mô phỏng lại môi trường. Qua đó cho phép hệ thống có thể suy luận hoặc dự đoán những thông tin mà nó có thể nhận được từ môi trường trong tương lai.
 \end{itemize}	
 
 \subsection{Returns}
-Return $\mathit{G_t}$ xác định lượng điểm thưởng mà agent nhận được kể từ thời điểm time step $t$ đến tương lai. Return thường được xác định bằng nhiều hàm khác nhau, trong đó hàm đơn giản nhất xác định return bằng tổng các điểm thưởng có thể nhận được. Nó có dạng như sau:
+Return $\mathit{G_t}$ xác định lượng điểm thưởng mà hệ thống nhận được kể từ thời điểm $t$ đến tương lai. Return thường được xác định bằng nhiều hàm khác nhau, trong đó hàm đơn giản nhất xác định return bằng tổng các điểm thưởng có thể nhận được. Nó có dạng như sau:
 \begin{equation}
 \mathit{G_t} = \mathit{R_{t+1}} + \mathit{R_{t+2}} + ... + \mathit{R_{T}}
 \end{equation}	
-ở đây $T$ là time step cuối cùng.
+ở đây $T$ là thời điểm cuối cuối cùng hệ thống tương tác với môi trường.
 
-Mặt khác, return cũng có thể được xác định bằng tổng điểm thưởng đã bị discount qua từng time step. Nó được định nghĩa như sau:
+Mặt khác, return cũng có thể được xác định bằng tổng điểm thưởng đã bị discount qua từng thời đi. Nó được định nghĩa như sau:
 \begin{equation}
 \mathit{G_t} = \mathit{R_{t+1}} + \gamma\mathit{R_{t+2}} + \gamma^{2}\mathit{R_{t+3}}... + \gamma^{T-1}\mathit{R_{T}} = \sum_{k=0}^{\infty}\gamma^{k}\mathit{R_{t+k+1}}
 \end{equation}
-Trong đó $\gamma$ là một hệ số với giá trị $0\leqslant \gamma \leqslant 1$. $\gamma$ cũng được gọi là tỉ lệ discount. Tỉ lệ này xác định độ tin tưởng của agent vào giá trị điểm thưởng ở tương lai. Khi $\gamma \to 1$, agent có su hướng quan tâm đến giá trị điểm thưởng tương lai càng nhiều. Đặc biệt với $\gamma = 0$, khi đó agent chỉ quan tâm giá trị điểm thưởng ở hiện tại mà bỏ qua những giá trị điểm thưởng ở tương lai.	
+Trong đó $\gamma$ là một hệ số với giá trị $0\leqslant \gamma \leqslant 1$. $\gamma$ cũng được gọi là tỉ lệ discount. Tỉ lệ này xác định độ tin tưởng của hệ thống vào giá trị điểm thưởng ở tương lai. Khi $\gamma \to 1$, hệ thống có su hướng quan tâm đến giá trị điểm thưởng tương lai càng nhiều. Đặc biệt với $\gamma = 0$, khi đó hệ thống chỉ quan tâm giá trị điểm thưởng ở hiện tại mà bỏ qua những giá trị điểm thưởng ở tương lai.
 
 \section{Mô hình Markov Decision Processes}
 %	\begin{itemize}
@@ -415,19 +415,7 @@ q_{*}(s,a) = {} & \mathit{R}_{s}^{a} + \gamma \sum_{s' \in \mathcal{S}}^{} \math
 
 Phương trình \ref{eq:bellman_optimal_state} và \ref{eq:bellman_optimal_action} dễ dàng có được bằng cách thay thế hai phương trình \ref{eq:optimal_state_action} và \ref{eq:optimal_action_state} qua lại lẫn nhau. Từ hai phương trình này, ta thấy được dạng phương trình Bellman trong hàm giá trị trạng thái tối ưu và hàm giá trị hành động tối ưu. Hình \ref{fig:bellman_optimal_function} minh họa ý tưởng nhìn trước một bước của phương trình Bellman trong hàm giá trị tối ưu. Trong đó hình \ref{fig:bellman_optimal_function}a minh họa cách thức xác định giá trị tối ưu cho một trạng thái ứng với phương trình \ref{eq:bellman_optimal_state}. Hình \ref{fig:bellman_optimal_function}b minh họa cách thức xác định giá trị tối ưu của một hành động ở một trạng thái ứng với phương trình \ref{eq:bellman_optimal_action}.
 
-\section{Quy trình lặp chính sách}
-
-%	\begin{itemize}
-%		\item Dẫn nhập: Trên thực tế ta không có thông tin về môi trường
-%		\item Qui trình đánh giá chính sách
-%			\begin{itemize}
-%				\item[+] Dựa trên hàm giá trị trạng thái: Monte-Carlo, TD(0), n-step TD, TD($\lambda$)
-%				\item[+] Dựa trên hàm giá trị hành động: Monte-Carlo, Sarsa(0), n-step Sarsa, Sarsa($\lambda$)
-%			\end{itemize}
-%		\item Qui trình cải thiện chính sách: Phương pháp greedy
-%	\end{itemize}
-
-%	Chúng ta vừa định nghĩa hàm giá trị và chính sách tối ưu. Một hệ thống khi có được chính sách tối ưu thì làm việc rất tốt. Nhưng trong thực thế điều này hiếm khi xảy ra, thông thường để có được hàm giá trị hoặc chính sách tối ưu yêu cầu chi phí tính toán là rất lớn. Thậm chí, dù ta biết được mô hình hoàn toàn của môi trường, chúng ta vẫn không thể đạt được chính sách tối ưu bằng cách giải phương trình Bellman của hàm giá trị tối ưu. Do đó ta chỉ có thể xấp xỉ chính sách hoặc hàm giá trí tối ưu bằng những phương pháp xấp xỉ với các mức độ khác nhau. Ví dụ cụ thể cho vấn đề này đó là cờ vây, mặc dù số trạng thái và hành động có thể đều có thể tính toán được, nhưng chi phí tính toán để tìm một chính sách đánh cờ tối ưu là rất lớn. Do đó người chơi chỉ có thể dựa trên kinh nghiệm có để đi nước cờ tốt nhất cho mình.	Một vấn đề khác mà chúng ta phải đối mặt đó là khả năng lưu trữ có hạn. Thông thường để lưu tất cả các trạng thái hoặc các cặp trạng thái và hành động trong các bài toán học tăng cường  yêu cầu bộ nhớ rất lớn. Mặt khác, trong thực tế, chúng ta thường không biết đầy đủ về môi trường như những trạng thái có thể có, điểm thưởng của một trạng thái bất kỳ, và ma trận chuyển trạng thái. Do đó, ta cần những phương pháp có thể học từ những
+\subsection{Quy trình lặp chính sách}
 Trong các bài toán học tăng cường, mục tiêu chính của ta là tìm được chính sách tối ưu $\pi_{*}$ nhằm giúp cho hệ thông giải quyết bài toán tốt nhất có thể. Do đó ta cần có quy trình để thay đổi chính sách hiện tại trở nên tối ưu. Quy trình này được gọi là \textit{quy trình lặp chính sách}. Hình \ref{fig:policy_iteration} minh họa quy trình chung của lặp chính sách. Trong quy trình này được chia thành hai giai đoạn:
 \begin{itemize}
 	\item \textbf{Đánh giá chính sách}: Việc đánh giá một chính sách $\pi$ được thực hiện bằng cách xác định hàm giá trị trạng thái của dưới chính sách đó.
@@ -459,9 +447,7 @@ Trong các bài toán học tăng cường, mục tiêu chính của ta là tìm
 Một chính sách $\pi_{1}$ được cải thiện từ chính sách $\pi_{0}$ dựa trên hàm giá trị trạng thái $v_{\pi_{0}}$. Khi có được chính sách $\pi_{1}$ ta có thể tính được hàm giá trị $v_{\pi_{1}}$ qua đó tiếp tục cải thiện để có được chính sách $\pi_{2}$. Quá trình này diễn ra cho đến khi đạt được chính sách tối ưu.
 $$\pi_{0} \xrightarrow{\text{Đánh giá}} v_{\pi_{0}} \xrightarrow{\text{Cải thiện}} \pi_{1} \xrightarrow{\text{Đánh giá}} v_{\pi_{1}} \xrightarrow{\text{Cải thiện}} \pi_{2} \cdots \xrightarrow{\text{Cải thiện}} \pi_{*} \xrightarrow{\text{Đánh giá}} v_{\pi_{*}}$$
 
-\subsection{Phương pháp đánh giá chính sách}
-Trong phần này, chúng em sẽ trình bày một số phương pháp được áp dụng để đánh giá chính sách.
-\subsubsection{Phương pháp quy hoạch động (Dynamic Programming)}
+\subsubsection{Đánh giá chính sách bằng quy hoạch động (Dynamic Programming)}
 Quy hoạch động thường được dùng để giải quyết các bài toán tối ưu mà dữ liệu có tính thứ tự, ví dụ như dữ liệu chuỗi hay dữ liệu thời gian. Một bài toán tối ưu có thể được giải quyết bằng quy hoạch động cần có hai đặc điểm:
 \begin{itemize}
 	\item Quy tặc tối ưu (Principle of Optimality): các bài toán có thể phân rã thành các bài toán con, và kết quả của bài toán con này đóng góp vào lời giải của bài toán gốc.
@@ -540,15 +526,83 @@ v_{k+1}(s) \leftarrow \sum_{a \in \mathcal{A}}^{}\pi(a \mid s)(\mathcal{R}_{s}^{
 
 [TODO] Ví dụ minh họa TD
 
-Mặc dù đã quy hoạch động đã được chứng minh là xấp xỉ tốt hay thậm chí là tìm được hàm giá trị trạng thái của chính sách $\pi$ \cite{gordon1995stable}, nhưng trong các bài toán học thực tế của học tăng cường đặc biệt là những bài toán lớn thì quy hoạch động trở nên không khả thi do chi phí tính toán cao, trong trường hơp xấu nhất chi phí tính toán thuộc $O(k^{n})$ với $k$ là số hành động và $n$ là số trạng thái. Ngoài ra, trong nhiều bài toán thực tế thông thường chúng ta không có kiến thức đầy đủ về môi trường như ma trận chuyển trạng thái $\mathcal{P}$, ma trận điểm thưởng $\mathcal{R}$, tập các trạng thái $\mathcal{A}$. Do đó hệ thống phải có khả năng học từ những thông tin mà nó tiếp nhận được qua việc tương tác với môi trường. Các thông tin này thường ở dạng chuỗi (trạng thái, hành động, điểm thưởng)
-$\mathit{S}_1, \mathit{A}_1, \mathit{R}_2, \mathit{S}_2, \mathit{A}_2, \mathit{R}_3, \dots, \mathit{S}_T$. Với những đặc điểm đó, quy hoạch động không thể áp dụng để đánh giá chính sách trong các bài toán này.
+Mặc dù đã quy hoạch động đã được chứng minh là xấp xỉ tốt hay thậm chí là tìm được hàm giá trị trạng thái của chính sách $\pi$ \cite{gordon1995stable}, nhưng trong các bài toán học thực tế của học tăng cường đặc biệt là những bài toán lớn thì quy hoạch động trở nên không khả thi do chi phí tính toán cao, trong trường hơp xấu nhất chi phí tính toán thuộc $O(k^{n})$ với $k$ là số hành động và $n$ là số trạng thái.
+
+\subsubsection{Cải thiện chính sách bằng phương pháp tham lam (greedy)}
+Mục tiêu chúng ta xác định hàm giá trị cho một chính sách là để tìm một chính sách tốt hơn chính sách hiện tại. Giả sử chúng ta có một chính sách $\pi$ cố định tức là với mỗi trạng thái $s$, chính sách này luôn chọn thực hiện một hành động cố định, $\pi(s) = a$. Và cũng đã xác định được một hàm giá trị $v_{\pi}$ cho một chính sách đó. Với một trạng thái $s$, câu hỏi đặt ra là chúng ta nên thay đổi một chính sách cố định khác chọn hành động $a' \neq \pi(s)$ không? Chúng ta biết giá trị của trạng thái $s$ theo chính sách hiện tại $\pi$, $v_{\pi}(s)$, tốt như thế nào nhưng liệu chính sách mới $\pi'$ có tốt hơn hay trở nên tệ đi? Theo \cite{sutton1998introduction}, ta có thể cải thiện một chính sách bằng cách chọn hành động có giá trị cao nhật tại mỗi trạng thái $s$. Chính xách mới $\pi'$ được xác định trong \ref{eq:update_policy}.
+%\begin{equation}
+%\label{eq:update_policy}
+%\pi'(s) = \underset{a \in \mathcal{A}}{\operatorname{argmax}}q_{\pi}(s,a)
+%\end{equation}
+\begin{equation}
+\label{eq:update_policy}
+\pi'(a|s)
+\left\{\begin{matrix}
+1 & \text{nếu }a = \underset{a \in A}{\operatorname{argmax}}q(s,a)\\ 
+0 & \text{ngược lại}
+\end{matrix}\right.
+\end{equation}
+Ngoài ra, việc cải thiện chính sách bằng phương pháp tham lam này, ta đồng thời cũng cải thiện được hàm giá trị \cite{sutton1998introduction}.
+%\begin{align}
+%v_{\pi}(s) \leqslant {} & q_{\pi'}(s, \pi'(s)) = \mathbb{E}_{\pi'}\left[\mathit{R}_{t+1} + \gamma v_{\pi}(\mathit{S}_{t+1}) \mid \mathit{S}_t = s\right] \notag \\
+%\leqslant {} & \mathbb{E}_{\pi'}\left[\mathit{R}_{t+1} + \gamma q_{\pi}(\mathit{S}_{t+1}, \pi'(\mathit{S_{t+1}})) \mid \mathit{S}_t = s\right] \notag \\
+%\leqslant {} & \mathbb{E}_{\pi'}\left[\mathit{R}_{t+1} + \gamma \mathit{R}_{t+2} + \gamma^2 q_{\pi}(\mathit{S}_{t+2}, \pi'(\mathit{S}_{t+2})) \mid \mathit{S}_t = s\right] \notag \\
+%\leqslant {} & \mathbb{E}_{\pi'}\left[\mathit{R}_{t+1} + \gamma \mathit{R}_{t+2} + \dots \mid \mathit{S}_t = s\right] = v_{\pi'}(s) \label{eq:improve_value_function}
+%\end{align}
+Việc đánh giá và cải thiện chính sách qua nhiều vòng lặp sẽ hội tụ về chính sách tối ưu cũng như hàm giá trị tối ưu. Hình \ref{fig:policy_iteration_MDP} minh họa quá trình hội tụ của lặp chính sách.
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{policy_iteration}
+	\caption{Ta có một chính $\pi$, đầu tiên ta thực hiện đánh giá chính sách $\pi$ để có được hàm giá trị theo chính sách này, tiếp theo ta thực hiện cải thiện chính sách bằng cách lựu chọn tham lam hành động có giá trị lớn nhất dựa trên hàm giá trị đang có. Sau khi có được chính sách mới, ta tiếp tục đánh giá chính sách để có được hàm giá trị theo chính sách đó. Và tiếp tục cải thiện khi đã có được hàm giá trị. Quá trình này được lặp nhiều lần cho đến khi đạt được chính sách tối ưu cũng như hàm giá trị tối ưu.}
+	\label{fig:policy_iteration_MDP}
+	
+\end{figure}
+
+\section{Quy trình lặp chính sách không có MDP}
+Trong nhiều bài toán thực tế thông thường chúng ta không có kiến thức đầy đủ về môi trường như ma trận chuyển trạng thái $\mathcal{P}$, ma trận điểm thưởng $\mathcal{R}$, tập các trạng thái $\mathcal{A}$. Do đó một yêu cầu được đặt ra là hệ thống phải có khả năng học từ những thông tin mà nó tiếp nhận được qua việc tương tác với môi trường. Các thông tin này thường ở dạng chuỗi (trạng thái, hành động, điểm thưởng)
+$\mathit{S}_1, \mathit{A}_1, \mathit{R}_2, \mathit{S}_2, \mathit{A}_2, \mathit{R}_3, \dots, \mathit{S}_T$. Với $T$ là thời điểm kết thúc việc tương tác của hệ thống với môi trường.
+%	\begin{itemize}
+%		\item Dẫn nhập: Trên thực tế ta không có thông tin về môi trường
+%		\item Qui trình đánh giá chính sách
+%			\begin{itemize}
+%				\item[+] Dựa trên hàm giá trị trạng thái: Monte-Carlo, TD(0), n-step TD, TD($\lambda$)
+%				\item[+] Dựa trên hàm giá trị hành động: Monte-Carlo, Sarsa(0), n-step Sarsa, Sarsa($\lambda$)
+%			\end{itemize}
+%		\item Qui trình cải thiện chính sách: Phương pháp greedy
+%	\end{itemize}
+
+%	Chúng ta vừa định nghĩa hàm giá trị và chính sách tối ưu. Một hệ thống khi có được chính sách tối ưu thì làm việc rất tốt. Nhưng trong thực thế điều này hiếm khi xảy ra, thông thường để có được hàm giá trị hoặc chính sách tối ưu yêu cầu chi phí tính toán là rất lớn. Thậm chí, dù ta biết được mô hình hoàn toàn của môi trường, chúng ta vẫn không thể đạt được chính sách tối ưu bằng cách giải phương trình Bellman của hàm giá trị tối ưu. Do đó ta chỉ có thể xấp xỉ chính sách hoặc hàm giá trí tối ưu bằng những phương pháp xấp xỉ với các mức độ khác nhau. Ví dụ cụ thể cho vấn đề này đó là cờ vây, mặc dù số trạng thái và hành động có thể đều có thể tính toán được, nhưng chi phí tính toán để tìm một chính sách đánh cờ tối ưu là rất lớn. Do đó người chơi chỉ có thể dựa trên kinh nghiệm có để đi nước cờ tốt nhất cho mình.	Một vấn đề khác mà chúng ta phải đối mặt đó là khả năng lưu trữ có hạn. Thông thường để lưu tất cả các trạng thái hoặc các cặp trạng thái và hành động trong các bài toán học tăng cường  yêu cầu bộ nhớ rất lớn. Mặt khác, trong thực tế, chúng ta thường không biết đầy đủ về môi trường như những trạng thái có thể có, điểm thưởng của một trạng thái bất kỳ, và ma trận chuyển trạng thái. Do đó, ta cần những phương pháp có thể học từ những
+\subsection{Phương pháp cải thiện chính sách}
+
+\subsubsection*{Phương pháp $\epsilon$-greedy}
+Trong những bài toán học tăng cường thực tế, chúng ta thường không có mô hình của môi trường như: tập các trạng thái có thể có, xác suất chuyển từ trạng thái này sang trạng thái khác, và điểm thưởng nhận được cho tất cả các trạng thái. Do đó, câu hỏi đặt ra là chúng ta nên thực hiện \textit{khai thác} những kiến thức đã học để tìm lời giải tối ưu hay \textit{khám phá} những kiến thức mới để có cơ hội tìm được lời giải tối ưu hơn cho bài toán. Ví dụ: trong bài toán chọn nhà nhà hàng.
+\begin{itemize}
+	\item Khai thác: Chọn nhà hàng đã từng vào mà mình thích nhất.
+	\item Khám phá: Thử chọn một nhà hàng mới.
+\end{itemize}
+Nếu chỉ khai thác những kiến thức đã học mà không thực hiện khám phá kiến thức mới thông thường chúng ta chỉ tìm được lời giải tối ưu cục bộ trong những kiến thức đã học. Ngược lại nếu chỉ thực hiện khám phá kiến thức mới mà không thực hiện khai thác kiến thức đã học, chúng ta không thể tìm được lời giải tối ưu.
+
+Ý tưởng của phương pháp $\epsilon$-greedy đảm bảo luôn khám phá kiến thức mới trong quá trình khai thác. Trong bài toán cải thiện chính sách, giả sử chúng có hàm giá trị hành động $Q$, phương pháp $\epsilon$-greedy đảm bảo các hành động luôn có khả năng được chọn thực hiện tại mỗi trạng thái. Phương pháp $\epsilon$-greedy sẽ thực hiện hoàn toàn ngẫu nhiên mà không quan tâm đến hàm giá trị hành động với xác suất $\epsilon$ tại mỗi trạng thái; ngược lại $\epsilon$-greedy sẽ chọn thực hiện hành động dựa trên tham lam hàm giá trị hành động với xác suất $1 - \epsilon$. Qua đó, ta thấy được nếu tại một trạng thái $s$ có thể thực hiện được $m$ hành động khác nhau thì xác xuất để chọn một hành động bất kỳ được chọn mà không quan tâm đến giá trị của chúng là $\epsilon/m$. Từ \ref{eq:epsilon-greedy}, tại một trạng thái $s$, hành động có giá trị lớn nhất sẽ có xác suất được chọn thực hiện là $\epsilon/m + 1 - \epsilon$, ngược lại một hành động không có giá lớn nhất cũng có xác suất được chọn là $\epsilon/m$. 
+\begin{equation}
+\pi(a|s) =
+\left\{\begin{matrix}
+\epsilon/m + 1 - \epsilon & \text{nếu }a = \underset{a \in A}{\operatorname{argmax}}Q(s,a)\\ 
+\epsilon/m & \text{ngược lại}
+\end{matrix}\right.
+\label{eq:epsilon-greedy}
+\end{equation}
+Câu hỏi đặt một chính sách $\pi'$ thực hiện $\epsilon$-greedy trên hàm giá trị hành động của  chính sách $\pi$ có tốt hơn chính sách $\pi$ không? Theo định lý tối ưu: Với chính sách thực hiện theo phương pháp $\epsilon$-greedy $\pi$ bất kỳ, một chính sách khác $\pi'$ thực hiện $\epsilon$-greedy trên hàm giá trị hành động của chính sách $\pi$, $q_{\pi}$, luôn là một chính sách tốt hơn hoặc bằng chính sách $\pi$, $v_{\pi'}(s) \geq v_{\pi'}(s), \forall s \in \mathcal{S}$.
+
+\subsection{Phương pháp đánh giá chính sách}
+Trong phần này, chúng em sẽ trình bày một số phương pháp được áp dụng để đánh giá chính sách.
+
 
 \subsubsection{Phương pháp Monte Carlo (MC)}
-Tương tự với quy hoạch động, Monte Carlo (MC) xác định hàm giá trị của một chính sách bằng cách cập nhật hàm giá trị khởi tạo qua nhiều vòng lặp. Điểm biệt khác với quy hoạch động của phương pháp MC là nó có thể áp dụng để đánh giá chính sách khi hệ thông không có kiến thức đầy đủ về môi trường. MC dựa trên những thông tin mà hệ thông có được qua việc tương tác với môi trường để xấp xỉ hàm giá trị. Thông thường những thông tin này được chia thành các \textit{episode}. Mỗi episode là một chuỗi bắt đầu từ một trạng thái bất kỳ cho đến khi đạt được một trong những trạng thái kết thúc. Khi đó MC chỉ thực hiện cập nhật hàm giá trị khi kết thúc một episode.
+Tương tự với quy hoạch động, Monte Carlo (MC) xác định hàm giá trị của một chính sách bằng cách cập nhật hàm giá trị khởi tạo qua nhiều vòng lặp. Điểm biệt khác với quy hoạch động của phương pháp MC là nó có thể áp dụng để đánh giá chính sách khi hệ thông không có kiến thức đầy đủ về môi trường. MC dựa trên những thông tin mà hệ thông có được qua việc tương tác với môi trường để xấp xỉ hàm giá trị. Thông thường những thông tin này được chia thành các \textit{mẫu thực nghiệm}. Mỗi mẫu thực nghiệm là một chuỗi bắt đầu từ một trạng thái bất kỳ cho đến khi đạt được một trong những trạng thái kết thúc. Khi đó MC chỉ thực hiện cập nhật hàm giá trị khi kết thúc một mẫu thực nghiệm.
 
 Ý tưởng của MC là xác định giá trị của một trạng thái $s$ qua các mẫu thực nghiệm. Phương pháp MC xác định giá trị của trạng thái $s$ bằng cách trung bình những return mà hệ thông nhận được sau khi quan sát được trạng thái $s$. Khi quan sát càng nhiều mẫu thực nghiệm có trạng thái $s$ xuất hiện, giá trị trung bình sẽ càng xấp xỉ tốt giá trị thực của trạng thái này theo chính sách $\pi$.
 
-Một mẫu thực nghiệm là những thông tin có được trong quá trình hệ thống tương tác với môi trường bằng chính sách $\pi$. Giá trị của trạng thái $s$, $v(s)$ được tính dựa trên những mẫu thực nghiệm có trạng thái $s$ xuất hiện. Một trạng thái $s$ có thể xuất hiện nhiều lần trong một mẫu thực nghiệm. Lần xuất hiện đầu tiên của trạng thái $s$ trong một mẫu thực nghiệm được gọi là first-visit trạng thái đó. Phương pháp first-visit MC xác định giá trị trạng thái $s$ $v_{\pi}(s)$ bằng trung bình tất cả return mà hệ thống nhận sau lần first-visit của trạng thái $s$ trong các mẫu thực nghiệm. Tổng thể của việc đánh giá chính sách bằng first-visit MC được trình bày ở thuật toán \ref{alg_MC}. Hình \ref{fig:first_visit_MC} minh họa cách thức cập nhật hàm giá trị trên một episode.
+Một mẫu thực nghiệm là những thông tin có được trong quá trình hệ thống tương tác với môi trường bằng chính sách $\pi$. Giá trị của trạng thái $s$, $v(s)$ được tính dựa trên những mẫu thực nghiệm có trạng thái $s$ xuất hiện. Một trạng thái $s$ có thể xuất hiện nhiều lần trong một mẫu thực nghiệm. Lần xuất hiện đầu tiên của trạng thái $s$ trong một mẫu thực nghiệm được gọi là first-visit trạng thái đó. Phương pháp first-visit MC xác định giá trị trạng thái $s$ $v_{\pi}(s)$ bằng trung bình tất cả return mà hệ thống nhận sau lần first-visit của trạng thái $s$ trong các mẫu thực nghiệm. Tổng thể của việc đánh giá chính sách bằng first-visit MC được trình bày ở thuật toán \ref{alg_MC}. Hình \ref{fig:first_visit_MC} minh họa cách thức cập nhật hàm giá trị trên một mẫu thực nghiệm.
 \begin{algorithm}
 	\newalgname{Thuật toán}
 	\caption{Xác định hàm giá trị trạng thái bằng phương pháp first-visit MC}
@@ -564,9 +618,9 @@ Một mẫu thực nghiệm là những thông tin có được trong quá trìn
 		
 		\Operation
 		\State Khởi tạo ngẫu nhiên $V(s)$ cho tất cả trạng thái $s$ không phải trạng thái kết thúc. Nếu $s$ là trạng thái kết thúc, $V(s) = 0$
-		\State Khởi tạo danh sách rỗng \textbf{Returns($s$)} cho tất cả trạng thái $s \in \mathcal{S}$ \%\% Danh sách Returns($s$) chứa tất cả các return mà hệ thống nhận được sau lần first-visit của trạng thái $s$ trong các episode.
+		\State Khởi tạo danh sách rỗng \textbf{Returns($s$)} cho tất cả trạng thái $s \in \mathcal{S}$ \%\% Danh sách Returns($s$) chứa tất cả các return mà hệ thống nhận được sau lần first-visit của trạng thái $s$ trong các mẫu thực nghiệm.
 		\Repeat
-		\State Tạo một episode $E$ bằng chính sách $\pi$
+		\State Tạo một mẫu thực nghiệm $E$ bằng chính sách $\pi$
 		\For{mỗi trạng thái $s$ xuất hiện lần đầu trong $E$}
 		\State $G \leftarrow$ return nhận được sau lần xuất hiện đầu tiên của $s$
 		\State Thêm $G$ vào danh sách Returns(s)
@@ -622,7 +676,7 @@ Một mẫu thực nghiệm là những thông tin có được trong quá trìn
 	
 	\end{scope}	
 	\end{tikzpicture}
-	\caption[Cập nhật hàm giá trị bằng phương pháp Monte Carlo]{Đồ thị minh họa cập nhật hàm giá trị trên một episode bằng phương pháp first-visit MC. Hình tròn lớn được ký cho trạng thái xuất hiện. Hình tròn nhỏ được ký cho hành động thực hiện. Màu xác khác nhau giữa các hình tròn biểu thị cho sự khác nhau giữa các trạng thái. Phương pháp first-visit MC chỉ cập nhật giá trị cho các trạng thái khi kết thúc một episode, và mỗi trạng thái chỉ được cập nhật một lần mặc dù trạng thái đó có thể xuất hiện nhiều lần trong một episode}
+	\caption[Cập nhật hàm giá trị bằng phương pháp Monte Carlo]{Đồ thị minh họa cập nhật hàm giá trị trên một mẫu thực nghiệm bằng phương pháp first-visit MC. Hình tròn lớn được ký cho trạng thái xuất hiện. Hình tròn nhỏ được ký cho hành động thực hiện. Màu xác khác nhau giữa các hình tròn biểu thị cho sự khác nhau giữa các trạng thái. Phương pháp first-visit MC chỉ cập nhật giá trị cho các trạng thái khi kết thúc một mẫu thực nghiệm, và mỗi trạng thái chỉ được cập nhật một lần mặc dù trạng thái đó có thể xuất hiện nhiều lần trong cùng một mẫu.}
 	\label{fig:first_visit_MC}
 \end{figure}
 
@@ -643,9 +697,9 @@ Việc xác định hàm giá trị hành đọng $q_{\pi}$ được thực hi�
 		
 		\Operation
 		\State Khởi tạo ngẫu nhiên $Q(s,a)$ cho tất cả các cặp trạng thái, hành động $s,a$.
-		\State Khởi tạo danh sách rỗng \textbf{Returns($s,a$)} cho tất cả các cặp trạng thái, hành động ($s,a$). \%\% Danh sách Returns($s,a$) chứa tất cả các return mà hệ thống nhận được sau lần first-visit của cặp trạng thái, hành động ($s,a$) trong các episode.
+		\State Khởi tạo danh sách rỗng \textbf{Returns($s,a$)} cho tất cả các cặp trạng thái, hành động ($s,a$). \%\% Danh sách Returns($s,a$) chứa tất cả các return mà hệ thống nhận được sau lần first-visit của cặp trạng thái, hành động ($s,a$) trong các mẫu thực nghiệm.
 		\Repeat
-		\State Tạo một episode $E$ bằng chính sách $\pi$
+		\State Tạo một thực nghiệm $E$ bằng chính sách $\pi$
 		\For{mỗi cặp trạng thái, hành động $(s,a)$ xuất hiện lần đầu trong $E$}
 		\State $G \leftarrow$ return nhận được sau lần xuất hiện đầu tiên của cặp trạng thái, hành động $(s,a)$
 		\State Thêm $G$ vào danh sách Returns($s,a$)
@@ -656,7 +710,7 @@ Việc xác định hàm giá trị hành đọng $q_{\pi}$ được thực hi�
 \end{algorithm}
 
 \subsubsection{Phương pháp Temporal Difference (TD)}
-Phương pháp Temporal Difference (TD) kết hợp ý tưởng giữa Monte Carlo và quy hoạch động. Giống như Monte Carlo, phương pháp TD có thể học trực tiếp từ các mẫu thực nghiệm có được qua việc tương tác của hệ thống với môi trường mà không cần có mô hình của môi trường. Mặt khác tương tự với quy hoạch động, phương pháp TD thựa hiện cập nhật giá trị dựa trên những phần đã được xác định trước đó mà không phải đợi đến khi kết thúc một episode như MC.
+Phương pháp Temporal Difference (TD) kết hợp ý tưởng giữa Monte Carlo và quy hoạch động. Giống như Monte Carlo, phương pháp TD có thể học trực tiếp từ các mẫu thực nghiệm có được qua việc tương tác của hệ thống với môi trường mà không cần có mô hình của môi trường. Mặt khác tương tự với quy hoạch động, phương pháp TD thựa hiện cập nhật giá trị dựa trên những phần đã được xác định trước đó mà không phải đợi đến khi kết thúc một mẫu thực nghiệm như MC.
 
 Giả sử ta có các trung bình $\mu_{1}$, $\mu_{2}$, ... của chuỗi $x_1, x_2, ...$ có thể được tính như sau:
 \begin{align}
@@ -1034,24 +1088,3 @@ Một điểm khác biệt của phương pháp Q-learning so với các phươn
 	\caption[Minh họa phương pháp Q-learning]{Đồ thị minh họa cập nhật hàm giá trị hành động bằng phương pháp Q-learning. Q-learning xác định mục tiêu cập nhật cho giá trị của cặp trạng thái, hành động $(\mathit{S}_{t}, \mathit{A}_t)$ bằng tổng giữa điểm thưởng $\mathit{R}_{t+1}$ nhận được khi thực hiện hành động $\mathit{A}_t$ tại trạng thái $\mathit{S}_{t}$ và giá trị hành động $a$ lớn nhất tại trạng thái kế tiếp $\mathit{S}_{t+1}$ đã nhân với hệ số $\gamma$.}
 	\label{fig:Q_learning_Alg}
 \end{figure}
-
-\subsection{Phương pháp cải thiện chính sách}
-\subsubsection{Phương pháp tham lam (greedy)}
-Mục tiêu chúng ta xác định hàm giá trị cho một chính sách là để tìm một chính sách tốt hơn chính sách hiện tại. Giả sử chúng ta có một chính sách $\pi$ cố định tức là với mỗi trạng thái $s$, chính sách này luôn chọn thực hiện một hành động cố định, $\pi(s) = a$. Và cũng đã xác định được một hàm giá trị $v_{\pi}$ cho một chính sách đó. Với một trạng thái $s$, câu hỏi đặt ra là chúng ta nên thay đổi một chính sách cố định khác chọn hành động $a' \neq \pi(s)$ không? Chúng ta biết giá trị của trạng thái $s$ theo chính sách hiện tại $\pi$, $v_{\pi}(s)$, tốt như thế nào nhưng liệu chính sách mới $\pi$ có tốt hơn hay trở nên tệ đi? Để trả lời những câu hỏi này, chúng ta xem xét việc chọn một hành động $a$ tại trạng thái $s$ theo chính sách $\pi$. Ta có thể cải thiện một chính sách bằng cách chọn những hành động có giá trị cao nhật tại mỗi trạng thái $s$.
-\begin{equation}
-\label{eq:update_policy}
-\pi'(s) = \underset{a \in \mathcal{A}}{\operatorname{argmax}}q_{\pi}(s,a)
-\end{equation}
-Với $\pi$ là chính sách cố định nên ta có hàm giá trị trạng thái cũng là hàm giá trị hành động do chính sách này chỉ sách định duy nhất một hành động tại một trạng thái $q_{\pi}(s, \pi(s)) = v_{\pi}(s)$. Cách cải thiện này cũng cho ta:
-\begin{equation}
-q_{\pi}(s, \pi'(s)) = \max_{a}q_{\pi}(s,a) \geq q_{\pi}(s,\pi(s)) = v_{\pi}(s)
-\end{equation}
-Ngoài ra với \ref{eq:improve_value_function} cho thấy rằng việc cải thiện chính sách bằng phương pháp tham lam này, ta đồng thời cũng cải thiện được hàm giá trị.
-\begin{align}
-v_{\pi}(s) \leqslant {} & q_{\pi}(s, \pi'(s)) = \mathbb{E}_{\pi'}\left[\mathit{R}_{t+1} + \gamma v_{\pi}(\mathit{S}_{t+1}) \mid \mathit{S}_t = s\right] \notag \\
-\leqslant {} & \mathbb{E}_{\pi'}\left[\mathit{R}_{t+1} + \gamma q_{\pi}(\mathit{S}_{t+1}, \pi'(\mathit{S_{t+1}})) \mid \mathit{S}_t = s\right] \notag \\
-\leqslant {} & \mathbb{E}_{\pi'}\left[\mathit{R}_{t+1} + \gamma \mathit{R}_{t+2} + \gamma^2 q_{\pi}(\mathit{S}_{t+2}, \pi'(\mathit{S}_{t+2})) \mid \mathit{S}_t = s\right] \notag \\
-\leqslant {} & \mathbb{E}_{\pi'}\left[\mathit{R}_{t+1} + \gamma \mathit{R}_{t+2} + \dots \mid \mathit{S}_t = s\right] = v_{\pi'}(s) \label{eq:improve_value_function}
-\end{align}
-
-\subsubsection{Phương pháp $\epsilon$-greedy}
