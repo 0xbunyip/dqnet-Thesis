@@ -280,7 +280,7 @@ q_{\pi}(s,a) = \mathbb{E}_{\pi} \left[\mathit{R}_{t+1} + \gamma q_{\pi}(\mathit{
 
 Phân tích phương trình \ref{action_value} tương tự như đã làm đối với hàm giá trị hành động, ta có được phương trình \ref{bell_action}. Hình \ref{backup_diagram}b minh họa ý tưởng nhìn trước một đước để đánh giá giá trị của một hành động ở trạng thái hiện tại. Từ một hành động $a$ ở trạng thái $s$, môi trường có thể trả ra nhiều điểm thưởng $r$ và trạng thái $s'$ khác nhau. Trong mỗi trạng thái $s'$ lại có nhiều hành động $a'$ khác nhau có thể thực hiện.	Phương trình \ref{bell_action} sẽ trung bình tất cả các trường hợp có thể đó lại theo xác suất mà chúng được thực hiện. Hay nói cách khác, phương trình \ref{bell_action} cho thấy giá trị của một hành động $a$ tại trạng thái $s$, $q_{\pi}(a,s)$ cũng được xác định tổng bằng giá trị kỳ vọng điểm thưởng hệ thống nhận được nhận được ngay sau khi thực hiện thực hiện hành động đó và giá trị kỳ vọng của các hành động trong những trạng thái kế tiếp.
 
-\subsection{Hàm giá trị tối ưu}
+\subsection{Chính sách tối ưu và hàm giá trị tối ưu}
 Để giải quyết những vấn đề trong học tăng cường, chúng ta cần tìm một chính sách sao cho hệ thống có thể đạt được nhiều điểm thưởng nhất có thể. Một chính sách $\pi$ được xác định là tốt hơn hoặc bằng chính sách $\pi'$ khi giá trị kỳ vọng của return theo chính sách $\pi$ lớn hơn hoặc bằng giá trị đó theo chính sách $\pi'$. Hay có thể định nghĩa theo cách khác:
 \begin{equation}
 \pi \geq \pi' \Longleftrightarrow v_{\pi}(s) \geq v_{\pi'}(s), \forall s \in \mathcal{S}
@@ -415,11 +415,11 @@ q_{*}(s,a) = {} & \mathit{R}_{s}^{a} + \gamma \sum_{s' \in \mathcal{S}}^{} \math
 
 Phương trình \ref{eq:bellman_optimal_state} và \ref{eq:bellman_optimal_action} dễ dàng có được bằng cách thay thế hai phương trình \ref{eq:optimal_state_action} và \ref{eq:optimal_action_state} qua lại lẫn nhau. Từ hai phương trình này, ta thấy được dạng phương trình Bellman trong hàm giá trị trạng thái tối ưu và hàm giá trị hành động tối ưu. Hình \ref{fig:bellman_optimal_function} minh họa ý tưởng nhìn trước một bước của phương trình Bellman trong hàm giá trị tối ưu. Trong đó hình \ref{fig:bellman_optimal_function}a minh họa cách thức xác định giá trị tối ưu cho một trạng thái ứng với phương trình \ref{eq:bellman_optimal_state}. Hình \ref{fig:bellman_optimal_function}b minh họa cách thức xác định giá trị tối ưu của một hành động ở một trạng thái ứng với phương trình \ref{eq:bellman_optimal_action}.
 
-\subsection{Quy trình lặp chính sách}
+\subsection{Quy trình tìm chính sách tối ưu}
 Trong các bài toán học tăng cường, mục tiêu chính của ta là tìm được chính sách tối ưu $\pi_{*}$ nhằm giúp cho hệ thông giải quyết bài toán tốt nhất có thể. Do đó ta cần có quy trình để thay đổi chính sách hiện tại trở nên tối ưu. Quy trình này được gọi là \textit{quy trình lặp chính sách}. Hình \ref{fig:policy_iteration} minh họa quy trình chung của lặp chính sách. Trong quy trình này được chia thành hai giai đoạn:
 \begin{itemize}
-	\item \textbf{Đánh giá chính sách}: Việc đánh giá một chính sách $\pi$ được thực hiện bằng cách xác định hàm giá trị trạng thái của dưới chính sách đó.
-	\item \textbf{Cải thiện chính sách}: Sau khi có được hàm giá trị của một chính sách $\pi$, chính sách cải thiện mới $\pi'$ được tạo ra bằng cách thực hiện tham lam trên hàm giá trị của chính sách $\pi$, tức là chỉ chọn thực hiện hành động có giá trị cao nhất dựa trên hàm giá trị trạng thái; việc này có thể thực hiện được do mối quan hệ giữa hai loại hàm. 
+	\item \textbf{Đánh giá chính sách}: Việc đánh giá một chính sách $\pi$ được thực hiện bằng cách xác định hàm giá trị trạng thái hoặc hàm giá trị hành động của dưới chính sách đó.
+	\item \textbf{Cải thiện chính sách}: Sau khi có được hàm giá trị của một chính sách $\pi$, chính sách cải thiện mới $\pi'$ được tạo ra bằng cách thực hiện tham lam trên hàm giá trị của chính sách $\pi$, tức là chỉ chọn thực hiện hành động có giá trị cao nhất dựa trên hàm giá trị hành động có được. 
 \end{itemize}
 \begin{figure}
 	\centering
@@ -436,12 +436,12 @@ Trong các bài toán học tăng cường, mục tiêu chính của ta là tìm
 	\node (policy)                           {\large $\pi$};	
 	
 	\node (value) [right of=policy]              {\large $\mathcal{V}$}
-	edge [post,bend left] node[below]{Cải thiện} node[above=0.1cm]{$\pi \to \text{greedy}(V)$}       (policy)
-	edge [pre,bend right] node[above]{Đánh giá}  node[below=0.1cm]{$V \to V^{\pi}$}     (policy);	
+	edge [post,bend left] node[below]{Cải thiện} (policy)
+	edge [pre,bend right] node[above]{Đánh giá} (policy);	
 	
 	\end{scope}			
 	\end{tikzpicture}
-	\caption[Quy trình lặp chính sách]{Quy trình chung trong lặp chính sách}
+	\caption[Quy trình tìm chính sách tối ưu]{Quy trình tìm chính chính sách tối ưu}
 	\label{fig:policy_iteration}
 \end{figure}
 Một chính sách $\pi_{1}$ được cải thiện từ chính sách $\pi_{0}$ dựa trên hàm giá trị trạng thái $v_{\pi_{0}}$. Khi có được chính sách $\pi_{1}$ ta có thể tính được hàm giá trị $v_{\pi_{1}}$ qua đó tiếp tục cải thiện để có được chính sách $\pi_{2}$. Quá trình này diễn ra cho đến khi đạt được chính sách tối ưu.
@@ -553,12 +553,12 @@ Việc đánh giá và cải thiện chính sách qua nhiều vòng lặp sẽ h
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{policy_iteration}
-	\caption{Ta có một chính $\pi$, đầu tiên ta thực hiện đánh giá chính sách $\pi$ để có được hàm giá trị theo chính sách này, tiếp theo ta thực hiện cải thiện chính sách bằng cách lựu chọn tham lam hành động có giá trị lớn nhất dựa trên hàm giá trị đang có. Sau khi có được chính sách mới, ta tiếp tục đánh giá chính sách để có được hàm giá trị theo chính sách đó. Và tiếp tục cải thiện khi đã có được hàm giá trị. Quá trình này được lặp nhiều lần cho đến khi đạt được chính sách tối ưu cũng như hàm giá trị tối ưu.}
+	\caption[Hội tụ của quy trình tìm kiếm chính sách tối ưu]{Ta có một chính $\pi$, đầu tiên ta thực hiện đánh giá chính sách $\pi$ để có được hàm giá trị theo chính sách này, tiếp theo ta thực hiện cải thiện chính sách bằng cách lựu chọn tham lam hành động có giá trị lớn nhất dựa trên hàm giá trị đang có. Sau khi có được chính sách mới, ta tiếp tục đánh giá chính sách để có được hàm giá trị theo chính sách đó. Và tiếp tục cải thiện khi đã có được hàm giá trị. Quá trình này được lặp nhiều lần cho đến khi đạt được chính sách tối ưu cũng như hàm giá trị tối ưu.}
 	\label{fig:policy_iteration_MDP}
 	
 \end{figure}
 
-\section{Quy trình lặp chính sách không có MDP}
+\section{Quy trình tìm chính sách tối ưu trong bài toán thực tế}
 Trong nhiều bài toán thực tế thông thường chúng ta không có kiến thức đầy đủ về môi trường như ma trận chuyển trạng thái $\mathcal{P}$, ma trận điểm thưởng $\mathcal{R}$, tập các trạng thái $\mathcal{A}$. Do đó một yêu cầu được đặt ra là hệ thống phải có khả năng học từ những thông tin mà nó tiếp nhận được qua việc tương tác với môi trường. Các thông tin này thường ở dạng chuỗi (trạng thái, hành động, điểm thưởng)
 $\mathit{S}_1, \mathit{A}_1, \mathit{R}_2, \mathit{S}_2, \mathit{A}_2, \mathit{R}_3, \dots, \mathit{S}_T$. Với $T$ là thời điểm kết thúc việc tương tác của hệ thống với môi trường.
 %	\begin{itemize}
@@ -941,7 +941,7 @@ Phương pháp Sarsa được dùng để xác định hàm giá trị hành đ�
 
 Phương pháp đơn giản nhất trong Sarsa được gọi là Sarsa(0). Cách thức cập nhật giá trị của một cặp trạng thái và hành động bằng Sarsa(0) được thực hiện:
 \begin{align}
-Q(\mathit{S}_t, \mathit{A}_t) \leftarrow Q(\mathit{S}_t, \mathit{A}_t) + \alpha \left[\mathit{R}_{t+1} + \gamma Q_(\mathit{S}_{t+1}, \mathit{A}_{t+1}) -  Q(\mathit{S}_t, \mathit{A}_t) \right]
+Q(\mathit{S}_t, \mathit{A}_t) \leftarrow Q(\mathit{S}_t, \mathit{A}_t) + \alpha \left[\mathit{R}_{t+1} + \gamma Q(\mathit{S}_{t+1}, \mathit{A}_{t+1}) -  Q(\mathit{S}_t, \mathit{A}_t) \right]
 \label{eq:Sarsa_action_update}
 \end{align}
 Giá trị của hành động $\mathit{A}_t$ tại trạng thái $\mathit{S}_t$ được cập nhật dựa trên điểm thưởng từ môi trường ứng với hành động đó và giá trị của hành động ở trạng thái kế tiếp sau đó. Nếu trạng thái tiếp theo $\mathit{S}_{t+1}$ là trạng thái kết thúc khi đó giá trị của các hành động tại trạng thái đó đều có giá trị là không; tức là $Q(\mathit{S}_{t+1}, \mathit{A}_{t+1}) = 0$
