@@ -2,7 +2,6 @@
 %\begin{itemize}
 %	\item Học tăng cường kết hợp với học sâu
 %		\begin{itemize}
-%			\item Lý do cần áp dụng học sâu
 %			\item Giới thiệu học sâu
 %			\item Mạng nơ-ron tích chập
 %			\item Sử dụng mạng nơ-ron để xấp xỉ hàm
@@ -16,6 +15,8 @@
 %		\end{itemize}
 %\end{itemize}
 %-----------------------------------------------------------------------------
+
+\DeclareMathOperator*{\argmax}{arg\,max}
 
 \chapter{Kết hợp học tăng cường với học sâu}
 \ifpdf
@@ -39,7 +40,8 @@ Chương này trình bày hai phần:
 \section{Học tăng cường kết hợp với học sâu}
 
 %-----------------------------------------------------------------------------
-\subsection{Lý do cần áp dụng học sâu}
+\subsection{Học sâu}
+\subsubsection*{Lý do cần áp dụng học sâu}
 	Những thuật toán học tăng cường được trình bày trong chương trước đều tìm chính sách tối ưu dựa vào hàm giá trị. 
 	Việc tính \textbf{đúng} và \textbf{nhanh} hàm giá trị ảnh hưởng rất nhiều đến kết quả của bài toán. 
 	Các thuật toán học tăng cường cổ điển như ``Monte Carlo'' (MC) hay ``Temporal-Difference'' (TD) đều đã được chính minh là luôn hội tụ trong những điều kiện nhất định \cite{sutton1998introduction}. 
@@ -56,7 +58,7 @@ Chương này trình bày hai phần:
 	Đặc biệt, với những đột phá gần đây của học sâu trong lĩnh vực xử lý ảnh, video... thì việc áp dụng các mô hình phổ biến của học sâu vào bài toán tự động chơi game là đầy hứa hẹn.
 	
 %-----------------------------------------------------------------------------
-\subsection{Giới thiệu học sâu}
+\subsubsection*{Giới thiệu học sâu}
 	Các mô hình truyền thống trong lĩnh vực máy học như ``Linear regression'', ``Bayesian learning''... thông thường đều hoạt động trên các đặc trưng được \textit{rút trích một cách thủ công} (hand-designed features).
 	Với dữ liệu thô thu thập được từ thực tế, các nhà khoa học xây dựng các phương pháp rút trích ra những ``thông tin hữu ích'' (thường được gọi là đặc trưng) để cung cấp cho các mô hình máy học.
 	Kết quả nhận được từ các mô hình này phụ thuộc rất lớn vào cách biểu diễn dữ liệu.
@@ -119,18 +121,18 @@ Chương này trình bày hai phần:
 	\begin{figure}
 		\centering
 		\includegraphics[width=\textwidth]{cnn_first_filter}
-		\label{fig_cnn_filter}
 		\caption[Phép tính đặc trưng của CNN]{Hình mô tả phép ``kiểm tra'' đặc trưng của bộ lọc có kích thước $5\times5$ tại vị trí đầu tiên (góc trái trên) của ảnh đầu vào.
 		Kết quả của phép ``kiểm tra'' này được lưu lại thành một ``điểm ảnh'' trong ``bức ảnh kết quả''.
 		Lưu ý ảnh đầu vào trong ví dụ ở đây có kích thước $28\times28$.
 		Do bộ lọc chỉ kiểm tra những vùng nằm hoàn toàn trong ảnh nên kích thước của ``bức ảnh'' đầu ra là $24\times24$}
+		\label{fig_cnn_filter}
 		
 		\includegraphics[width=\textwidth]{cnn_second_filter}
-		\label{fig_cnn_second_filter}
 		\caption[Phép dịch chuyển bộ lọc của CNN]{Bộ lọc được trượt sang một điểm ảnh về phía bên phải để kiểm tra vùng cục bộ $5\times5$ bên cạnh.
 		Kết quả của phép ``kiểm tra'' này được lưu lại thành một ``điểm ảnh'' bên phải của kết quả của vùng cục bộ trước đó.
 		Thực hiện lần lượt quá trình ``trượt'' này đến hết ảnh ta sẽ có ``bức ảnh kết quả'' cuối cùng.
 		``Bức ảnh kết quả'' này mang thông tin về một đặc trưng cụ thể tại những vùng cục bộ liên tiếp nhau của ảnh gốc.}
+		\label{fig_cnn_second_filter}	
 	\end{figure}
 	
 	Phép ``kiểm tra'' đặc trưng của bộ lọc được thực hiện thông qua phép toán \textbf{tích chập} (convolution):
@@ -167,12 +169,12 @@ Chương này trình bày hai phần:
 	\begin{figure}
 		\centering
 		\includegraphics[width=\textwidth]{cnn_layer}
-		\label{fig_cnn_layer}
 		\caption[Tầng tích chập với ba bộ lọc]{Hình mô tả tầng tích chập với ba bộ lọc học đặc trưng từ ảnh đầu vào.
 		Mỗi bộ lọc lúc này học một bộ trọng số $w$ và giá trị ``bias'' $b$ khác nhau.
 		Do các bộ lọc có cùng kích thước ($5\times5$) nên ``bức hình'' kết quả cũng có cùng kích thước.
 		Ta coi mỗi ``bức hình'' kết quả như một kênh (channel) khác nhau của bức hình và ghép chúng lại thành một bức hình lớn hơn gồm ba kênh.
-		Các kênh này cũng giống như ba kênh màu khác nhau của ảnh RGB.}		
+		Các kênh này cũng giống như ba kênh màu khác nhau của ảnh RGB.}
+		\label{fig_cnn_layer}
 	\end{figure}
 	
 	CNN là một mô hình học sâu.
@@ -190,7 +192,7 @@ Chương này trình bày hai phần:
 	\begin{itemize}
 		\item Mạng nơ-ron có khả năng học được những đặc trưng phức tạp từ dữ liệu thô.
 		\item Mạng nơ-ron có thể xấp xỉ hàm giá trị phức tạp.
-		\item Mạng nơ-ron có tính tổng quát hoá.
+		\item Mạng nơ-ron có thể tổng quát hoá từ trạng thái đã biết sang trạng thái chưa biết.
 	\end{itemize}
 	
 	Mạng nơ-ron là một mô hình học sâu nên có thể học được những đặc trưng phức tạp từ dữ liệu thô như đã nói ở phần trên.
@@ -205,7 +207,7 @@ Chương này trình bày hai phần:
 	Công cụ xấp xỉ hàm giá trị phải có khả năng xấp xỉ những hàm phức tạp như vậy thì thuật toán học tăng cường mới đạt được hiệu quả.
 	Với cách nhìn nhận mạng nơ-ron như là một công cụ xấp xỉ hàm, ta có thể thấy mạng nơ-ron rất linh hoạt với khả năng xấp xỉ hàm đích bất kỳ.
 	
-	Một tính chất quan trọng khác của mạng nơ-ron chính là \textbf{khả năng tổng quát hoá} (generalization).
+	Một tính chất quan trọng khác của mạng nơ-ron chính là khả năng tổng quát hoá (generalization) từ trạng thái đã biết sang trạng thái chưa biết.
 	Nhờ đặc điểm này mà quá trình học tăng cường được tăng tốc đáng kể.
 	Thay vì phải duyệt qua từng trạng thái (thậm chí phải duyệt nhiều lần) để tính hàm giá trị tại đó, mạng nơ-ron có khả năng ``dự đoán'' giá trị của một trạng thái chưa từng thấy dựa vào những trạng thái đã thấy.
 	Như trong bài toán tự động chơi game thì các ``frame hình'' liên tiếp thường rất giống nhau và các trạng thái này thường cũng có giá trị tương đương nhau.
@@ -404,16 +406,16 @@ Chương này trình bày hai phần:
 	Các tầng tích chập có chức năng tìm kiếm các đặc trưng cục bộ cần thiết còn tầng ``fully-connected'' có nhiệm vụ tổng hợp các đặc trưng đó trên \textbf{toàn ảnh}.
 	Tầng ``output'' cũng là một tầng ``fully-connected'' với số nơ-ron là số hành động có thể có.
 	Lưu ý là do tầng này trả về kết quả là giá trị của từng hành động nên ta không áp dụng hàm kích hoạt tại đây.
-	Hình () mô tả cấu trúc mạng ``Deep Q-Network''.
+	Hình (\ref{fig_dqn_nature}) mô tả cấu trúc mạng ``Deep Q-Network''.
 	\begin{figure}
 		\centering
 		\includegraphics[width=\textwidth]{dqn}
-		\label{fig_dqn_nature}
 		\caption[Cấu trúc mạng ``Deep Q-Network'']{Hình mô tả cấu trúc mạng ``Deep Q-Network'' \cite{mnihdqn2015}.
 		Hai tầng ẩn đầu tiên là tầng tích chập với hàm kích hoạt ``rectified linear''.
 		Tầng ẩn tiếp theo là tầng ``fully-connected'' có nhiệm vụ tổng hợp đặc trưng trên toàn ảnh của tầng trước.
 		Tầng ``output'' cũng là tầng ``fully-connected'' trả về kết quả là giá trị của từng hành động ứng với trạng thái đầu vào.
 		Tầng ``output'' không có hàm kích hoạt.}
+		\label{fig_dqn_nature}
 	\end{figure}
 
 %-----------------------------------------------------------------------------
@@ -441,12 +443,112 @@ Chương này trình bày hai phần:
 	Điều này giúp hệ thống học được nhiều hơn mà không phải tương tác với môi trường quá nhiều.
 	
 \subsubsection*{Cố định ``Q-target''}
+	Mỗi khi mạng nơ-ron được cập nhật bộ trọng số thì chính sách hiện tại sẽ thay đổi.
+	Khi chính sách thay đổi thì hàm $q_{\pi}$ mục tiêu cũng thay đổi theo.
+	Thực tế cho thấy, việc thay đổi nhỏ của bộ trọng số sẽ gây ra thay đổi lớn của chính sách \cite{mnih2013playing}.
+	Để thấy được điều này, ta có thể thay đổi trọng số ở những tầng đầu tiên của mạng nơ-ron.
+	Khi đó, trọng số này sẽ ảnh hưởng dây chuyền đến những tầng sau làm cho ``output'' của mạng nơ-ron bị thay đổi nhiều.
+	Do vậy, mỗi khi cập nhật bộ trọng số, hàm mục tiêu $q_{\pi}$ tại một bộ trạng thái $s$ và hành động $a$ nhiều khả năng sẽ thay đổi lớn.
+	Do giá trị mục tiêu của việc xấp xỉ hàm thay đổi quá nhiều và liên tục, mạng nơ-ron có thể không xấp xỉ được hàm giá trị như ta mong muốn.
+	
+	Một kỹ thuật được đề xuất bởi \cite{mnihdqn2015} có tên \textbf{cố định ``Q-target''} (fix Q-target) nhằm giải quyết vấn đề này.
+	Thay vì thay đổi giá trị mục tiêu một cách liên tục, ta có thể cố định lại hàm mục tiêu $q_{\pi}$ trong một số bước cập nhật trọng số để mạng nơ-ron xấp xỉ tốt hàm này.
+	Sau một khoảng thời gian, ta mới thay đổi hàm mục tiêu thành hàm ứng với chính sách hiện tại.
+	Các lần cập nhật trọng số tiếp theo lại tiếp tục cố gắng xấp xỉ tốt hàm mục tiêu mới.
+	Quá trình này được lặp lại nhiều lần để hàm mục tiêu cuối cùng mà ta có cũng chính là hàm giá trị tối ưu.
+	
+	Để có cái nhìn trực quan hơn về kỹ thuật này, ta có thể lấy ví dụ về việc xây một căn nhà.
+	Do quá trình thiết kế ban đầu chưa tính trước đến những trường hợp phát sinh (như thiếu vật liệu, thợ không đủ trình độ...) trong lúc xây dựng nên ta phải điều chỉnh thiết kế lại liên tục.
+	Ta có thể vừa xây dựng căn nhà (ứng với việc thay đổi trọng số mạng nơ-ron) vừa điều chỉnh lại thiết kế căn nhà cho phù hợp (ứng với việc thay đổi chính sách mục tiêu).
+	Tuy nhiên, khi thiết kế căn nhà thay đổi quá nhanh và liên tục thì việc xây dựng theo sẽ gặp nhiều khó khăn và có khả năng khi hoàn thành kết quả sẽ không tốt.
+	Kỹ thuật cố định ``Q-target'' tương tự với việc ta cố gắng xây dựng hoàn tất một phần của căn nhà (tức xấp xỉ tốt hàm giá trị một chính sách cũ) trước khi thay đổi thiết kế.
+	Cứ như vậy, mỗi khi hoàn tất một phần, ta thay đổi thiết kế (ứng với việc thay đổi hàm mục tiêu) rồi lại xây dựng tiếp.
+	Cách làm này giống như tạo dựng một số các ``điểm kiểm soát'' (checkpoint) với những mục tiêu xác định.
+	Do các ``điểm kiểm soát'' này cố định nên việc thay đổi kiến trúc căn nhà sẽ không quá nhiều, dẫn đến quá trình xây dựng sẽ dễ dàng đạt được mục tiêu hơn.
+	
+	Tuy nhiên, kỹ thuật này dẫn đến một vấn đề là ta cần phải thay đổi hàm mục tiêu sau bao nhiêu lần cập nhật trọng số mạng nơ-ron (tức tần suất thay đổi hàm mục tiêu)?
+	Nếu tần suất quá cao (tức thay đổi hàm quá nhiều) thì kỹ thuật này không mang lại được nhiều hiệu quả.
+	Nếu tần suất quá thấp (tức ít khi thay đổi hàm mục tiêu) thì việc học sẽ rất chậm do ta phải cập nhật trọng số rất nhiều để xấp xỉ một hàm giá trị cũ; khi cập nhật hàm mục tiêu thì chính sách mới chỉ tốt lên một chút so với chính sách cũ.
+	Vì vậy, ta cần phải chọn một giá trị vừa phải, phù hợp với bài toán tự động chơi game.
 
 %-----------------------------------------------------------------------------
-\subsection{Vấn đề ``overestimation'' của thuật toán Q-learning}
-
-
-
-
-
-
+\subsection{Vấn đề ``đánh giá quá cao'' của thuật toán ``Q-learning''}
+	Thuật toán ``Q-learning'' cải tiến từ thuật toán ``Sarsa(0)'' bằng cách lấy $\max$ giá trị các hành động của trạng thái tiếp theo.
+	Nhắc lại công thức cập nhật của ``Q-learning'' là:
+	\begin{equation}
+		\theta_{t+1} = \theta_t - \alpha \left[ R_{t+1} + \gamma \max_{a}\hat{q}(S_{t+1}, a;\theta) - \hat{q}(S,A;\theta_t) \right] \nabla_{\theta_t} \hat{q}(S, A;\theta_t)	
+	\end{equation}
+	Nhờ việc lấy $\max$ mà thuật toán ``Q-learning'' hội tụ nhanh hơn \cite{sutton1998introduction}: ta luôn ước lượng giá trị của trạng thái tiếp theo dựa vào hành động tốt nhất tại đó.
+	Đây có thể hiểu là một cách nhìn ``lạc quan'' về tương lai: nếu có nhiều trường hợp tốt, xấu khác nhau thì ta luôn giả sử điều tốt nhất sẽ xảy ra.
+	Tuy việc giả sử này có thể không đúng trong mọi tình huống, do các trạng thái tiếp theo sau đó cũng được cập nhật lại giá trị nên thuật toán ``Q-learning'' vẫn hội tụ chính xác về chính sách tối ưu.
+	
+	Rõ ràng là cách nhìn ``lạc quan'' này cũng có điểm xấu: ta sẽ có cái nhìn quá ``lạc quan'' (optimistic) về tương lại và dễ dẫn đến khả năng đánh giá quá cao (overestimation) giá trị của trạng thái kế tiếp.
+	Nhất là khi áp dụng xấp xỉ hàm, giá trị ước lượng hiện tại của mạng nơ-ron chưa được chính xác.
+	Khi đó nếu mạng nơ-ron ước lượng cao hơn giá trị thật sự thì vấn đề đánh giá quá cao sẽ xảy ra nhiều hơn.
+	Mặc dù vậy, ta vẫn cần đặt ra câu hỏi: liệu việc đánh giá quá cao có gây ảnh hưởng đến kết quả của chính sách cuối cùng hay không?
+	Rõ ràng là nếu tất cả hành động đều bị đánh giá quá cao (ví dụ như tăng một lượng bằng nhau $C$) thì việc lựa chọn hành động không bị ảnh hưởng (do ta vẫn chọn hành động tốt nhất theo thuật toán greedy).
+	Tuy nhiên, nghiên cứu \cite{thrun1993issues} chỉ ra rằng thuật toán ``Q-learning'' với xấp xỉ hàm gặp hiện tượng đánh giá quá cao không đồng đều.
+	Điều này làm cho kết quả của một số bài toán cụ thể bị ảnh hưởng lớn.
+	Trong nghiên cứu này, các tác giả đã giả sử sai số do xấp xỉ hàm là do công cụ xấp xỉ hàm không đủ linh hoạt.
+	Sau đó, nghiên cứu của \cite{hasselt2010double} cho thấy sai số do môi trường gây ra cũng gây ảnh hưởng đến việc xấp xỉ hàm và gây nên hiện tượng đánh giá quá cao.
+	Các nghiên cứu trên đều cho thấy vấn đề này có ảnh hưởng lớn đến chính sách tìm được của thuật toán ``Q-learning''.
+	
+	Để khắc phục vấn đề đánh giá quá cao, thuật toán ``Double Q-learning'' \cite{hasselt2010double} ra đời và được áp dụng vào bài toán tự động chơi game \cite{van2015deep}.
+	Đây là một thuật toán cải tiến của ``Q-learning'' bằng cách thay đổi lại cách ước lượng giá trị của trạng thái tiếp theo.
+	Cụ thể hơn, giá trị này theo ``Q-learning'' là: 
+	\begin{equation}
+		\label{eq_q_max_target}
+		R_{t+1} + \gamma \max_{a}\hat{q}(S_{t+1}, a;\theta)
+	\end{equation}
+	
+	Ta có thể tách việc lấy $\max$ giá trị ra thành hai bước: chọn hành động tối ưu và đánh giá hành động đó.
+	Bước chọn hành động được thực hiện bằng cách chọn hành động cho giá trị cao nhất tại trạng thái: $a^{'} = \argmax_{a}\hat{q}(S_{t+1}, a;\theta)$.
+	Bước đánh giá hành động được thực hiện bằng cách lấy lại giá trị của hành động tốt nhất: $\hat{q}(S_{t+1}, a^{'};\theta)$.
+	Ghép hai bước này lại ta có công cách ước lượng giá trị của thuật toán ``Q-learning'':
+	\begin{equation}
+		\label{eq_q_argmax_target}
+		R_{t+1} + \gamma \hat{q}(S_{t+1}, \argmax_{a}\hat{q}(S_{t+1}, a;\theta); \theta)
+	\end{equation}
+	Lưu ý rằng công thức (\ref{eq_q_argmax_target}) chỉ là một cách nhìn khác của công thức (\ref{eq_q_max_target}) và hai công thức này hoàn toàn tương đương nhau.
+	
+	Thuật toán ``Double Q-learning'' giảm thiểu vấn đề đánh giá quá cao bằng cách đánh giá hành động tốt nhất bằng hàm giá trị của chính sách khác với chính sách hiện tại.
+	Cụ thể hơn, ta cần học hai mạng nơ-ron với hai bộ tham số $\theta$ và $\theta^{-}$.
+	Khi cần cập nhật bộ tham số $\theta$ của mạng đầu tiên, ta áp dụng công thức:
+	\begin{equation}
+		\label{eq_dq_argmax_target}
+		R_{t+1} + \gamma \hat{q}(S_{t+1}, \argmax_{a}\hat{q}(S_{t+1}, a;\theta); \theta^{-})
+	\end{equation}
+	Công thức trên chỉ khác với công thức (\ref{eq_q_argmax_target}) ở chỗ ta đánh giá hành động được chọn bằng một mạng nơ-ron khác.
+	Nhờ việc ``phân tách'' (decouple) hai bước trên, ``Double Q-learning'' làm giảm khả năng bị đánh giá quá cao mà ``Q-learning'' gặp phải (\cite{hasselt2010double}).
+	Vậy tại sao cách cập nhật này lại không gặp vấn đề nêu trên?
+	Trong ``Q-learning'', ta cần tính $\max$ của giá trị của nhiều hành động.
+	Do mỗi giá trị hành động tính được đều là xấp xỉ nên sẽ có sai số nhất định (tức sai số giữa giá trị xấp xỉ và giá trị thực $\hat{q}(s, a;\theta) - q_{\pi}(s, a)$).
+	Giả sử sai số này là ``uniform'' trong đoạn $[-\epsilon, \epsilon]$ với $\epsilon$ là một giá trị dương nhỏ.
+	Khi lấy $\max$ giá trị nhiều hành động lại thì nhiều khả năng hành động được chọn sẽ có sai số dương (do các hành động có sai số âm thì giá trị xấp xỉ bị giảm so với giá trị đúng nên khả năng được chọn thấp hơn).
+	Khi càng có nhiều hành động thì khả năng hành động đó có sai số dương lại càng cao hơn.
+	Điều này làm cho ``Q-learning'' gặp vấn đề đánh giá quá cao.
+	Trong khi với thuật toán ``Double Q-learning'', gọi hành động được chọn theo bộ tham số $\theta$ là $\a_{*}$.
+	Khi đó, xác suất để $\a_{*}$ cũng có sai số dương theo bộ tham số $\theta^{-}$ là thấp (do hai bộ tham số học từ dữ liệu khác nhau).
+	Nhờ vậy, việc phân tách hai bước chọn và đánh giá hành động giúp làm giảm vấn đề đánh giá quá cao.
+	Xem hình (\ref{fig_q_learning_plot}) và (\ref{fig_double_q_learning_plot}) mô tả một ví dụ đơn giản để hiểu hơn về vấn đề đánh giá quá cao trong hai thuật toán ``Q-learning'' và ``Double Q-learning''.
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth]{q_learning}
+		\caption[Vấn đề đánh giá quá cao của thuật toán ``Q-learning'']{Hình mô tả vấn đề đánh giá quá cao của thuật toán ``Q-learning''.
+		Trục hoành thể hiện mười hành động và trục tung thể hiện giá trị tương ứng.
+		Chấm tròn thể hiện giá trị thực sự của từng hành động và các đoạn song song với trục tung thể hiện sai số do quá trình xấp xỉ.
+		Đường thẳng nằm ngang thể hiện $\max$ của giá trị thực sự của tất cả các hành động.
+		Đây là giá trị đích mong muốn của ``Q-learning''.
+		Có nhiều hành động có giá trị xấp xỉ với sai số dương lớn hơn giá trị đích này (hành động 4, 6 và 8) nên khi lấy $\max$ theo ``Q-learning'' thì ta gặp tình trạng đánh giá quá cao.}
+		\label{fig_q_learning_plot}
+		
+		\centering
+		\includegraphics[width=\textwidth]{double_q_learning}
+		\caption[Cách giải quyết vấn đề đánh giá quá cao của thuật toán ``Double Q-learning'']{Hình mô tả cách giải quyết vấn đề đánh giá quá cao của thuật toán ``Double Q-learning''.
+		Đồ thị bên trái thể hiện giá trị hành động được xấp xỉ theo bộ tham số $\theta$; đồ thị bên phải là giá trị hành động theo bộ tham số $\theta^{-}$.
+		Khi chọn hành động theo bộ tham số $\theta$, nhiều khả năng ta sẽ chọn hành động 4, 6 hoặc 8.
+		Tuy nhiên, theo bộ tham số $\theta^{-}$ thì các hành động này lại không phải là những hành động có giá trị xấp xỉ cao nhất.
+		Nhờ việc lựa chọn và đánh giá hành động một cách độc lập như vậy mà thuật toán ``Double Q-learning'' không gặp vấn đề đánh giá quá cao.}
+		\label{fig_double_q_learning_plot}
+	\end{figure}
+	
