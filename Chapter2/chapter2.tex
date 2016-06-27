@@ -572,26 +572,6 @@ $\mathit{S}_1, \mathit{A}_1, \mathit{R}_2, \mathit{S}_2, \mathit{A}_2, \mathit{R
 %	\end{itemize}
 
 %	Chúng ta vừa định nghĩa hàm giá trị và chính sách tối ưu. Một hệ thống khi có được chính sách tối ưu thì làm việc rất tốt. Nhưng trong thực thế điều này hiếm khi xảy ra, thông thường để có được hàm giá trị hoặc chính sách tối ưu yêu cầu chi phí tính toán là rất lớn. Thậm chí, dù ta biết được mô hình hoàn toàn của môi trường, chúng ta vẫn không thể đạt được chính sách tối ưu bằng cách giải phương trình Bellman của hàm giá trị tối ưu. Do đó ta chỉ có thể xấp xỉ chính sách hoặc hàm giá trí tối ưu bằng những phương pháp xấp xỉ với các mức độ khác nhau. Ví dụ cụ thể cho vấn đề này đó là cờ vây, mặc dù số trạng thái và hành động có thể đều có thể tính toán được, nhưng chi phí tính toán để tìm một chính sách đánh cờ tối ưu là rất lớn. Do đó người chơi chỉ có thể dựa trên kinh nghiệm có để đi nước cờ tốt nhất cho mình.	Một vấn đề khác mà chúng ta phải đối mặt đó là khả năng lưu trữ có hạn. Thông thường để lưu tất cả các trạng thái hoặc các cặp trạng thái và hành động trong các bài toán học tăng cường  yêu cầu bộ nhớ rất lớn. Mặt khác, trong thực tế, chúng ta thường không biết đầy đủ về môi trường như những trạng thái có thể có, điểm thưởng của một trạng thái bất kỳ, và ma trận chuyển trạng thái. Do đó, ta cần những phương pháp có thể học từ những
-\subsection{Phương pháp cải thiện chính sách}
-
-\subsubsection*{Phương pháp $\epsilon$-greedy}
-Trong những bài toán học tăng cường thực tế, chúng ta thường không có mô hình của môi trường như: tập các trạng thái có thể có, xác suất chuyển từ trạng thái này sang trạng thái khác, và điểm thưởng nhận được cho tất cả các trạng thái. Do đó, câu hỏi đặt ra là chúng ta nên thực hiện \textit{khai thác} những kiến thức đã học để tìm lời giải tối ưu hay \textit{khám phá} những kiến thức mới để có cơ hội tìm được lời giải tối ưu hơn cho bài toán. Ví dụ: trong bài toán chọn nhà nhà hàng.
-\begin{itemize}
-	\item Khai thác: Chọn nhà hàng đã từng vào mà mình thích nhất.
-	\item Khám phá: Thử chọn một nhà hàng mới.
-\end{itemize}
-Nếu chỉ khai thác những kiến thức đã học mà không thực hiện khám phá kiến thức mới thông thường chúng ta chỉ tìm được lời giải tối ưu cục bộ trong những kiến thức đã học. Ngược lại nếu chỉ thực hiện khám phá kiến thức mới mà không thực hiện khai thác kiến thức đã học, chúng ta không thể tìm được lời giải tối ưu.
-
-Ý tưởng của phương pháp $\epsilon$-greedy đảm bảo luôn khám phá kiến thức mới trong quá trình khai thác. Trong bài toán cải thiện chính sách, giả sử chúng có hàm giá trị hành động $Q$, phương pháp $\epsilon$-greedy đảm bảo các hành động luôn có khả năng được chọn thực hiện tại mỗi trạng thái. Phương pháp $\epsilon$-greedy sẽ thực hiện hoàn toàn ngẫu nhiên mà không quan tâm đến hàm giá trị hành động với xác suất $\epsilon$ tại mỗi trạng thái; ngược lại $\epsilon$-greedy sẽ chọn thực hiện hành động dựa trên tham lam hàm giá trị hành động với xác suất $1 - \epsilon$. Qua đó, ta thấy được nếu tại một trạng thái $s$ có thể thực hiện được $m$ hành động khác nhau thì xác xuất để chọn một hành động bất kỳ được chọn mà không quan tâm đến giá trị của chúng là $\epsilon/m$. Từ \ref{eq:epsilon-greedy}, tại một trạng thái $s$, hành động có giá trị lớn nhất sẽ có xác suất được chọn thực hiện là $\epsilon/m + 1 - \epsilon$, ngược lại một hành động không có giá lớn nhất cũng có xác suất được chọn là $\epsilon/m$. 
-\begin{equation}
-\pi(a|s) =
-\left\{\begin{matrix}
-\epsilon/m + 1 - \epsilon & \text{nếu }a = \underset{a \in A}{\operatorname{argmax}}Q(s,a)\\ 
-\epsilon/m & \text{ngược lại}
-\end{matrix}\right.
-\label{eq:epsilon-greedy}
-\end{equation}
-Câu hỏi đặt một chính sách $\pi'$ thực hiện $\epsilon$-greedy trên hàm giá trị hành động của  chính sách $\pi$ có tốt hơn chính sách $\pi$ không? Theo định lý tối ưu: Với chính sách thực hiện theo phương pháp $\epsilon$-greedy $\pi$ bất kỳ, một chính sách khác $\pi'$ thực hiện $\epsilon$-greedy trên hàm giá trị hành động của chính sách $\pi$, $q_{\pi}$, luôn là một chính sách tốt hơn hoặc bằng chính sách $\pi$, $v_{\pi'}(s) \geq v_{\pi'}(s), \forall s \in \mathcal{S}$.
 
 \subsection{Phương pháp đánh giá chính sách}
 Trong phần này, chúng em sẽ trình bày một số phương pháp được áp dụng để đánh giá chính sách.
@@ -918,7 +898,7 @@ Phương pháp TD(0) xem giá trị của các trạng thái kế tiếp từ m�
 
 Xét một chuỗi trạng thái, điểm thưởng $\mathit{S}_{t}, \mathit{R}_{t+1}, \mathit{S}_{t+1}, \mathit{R}_{t+2}, \dots, \mathit{S}_{T}$. Như chúng ta đã biết, Monte Carlo thực hiện cập nhật ước lượng giá trị của trạng thái $s$ chỉ khi tính được return của trạng thái đó:
 \begin{equation*}
-	G_{t} = \mathit{R}_{t+1} + \gamma \mathit{R}_{t+2} + \gamma^{2} \mathit{R}_{t+3} + \dots + \gamma^{T-t-1}\mathit{R}_T
+G_{t} = \mathit{R}_{t+1} + \gamma \mathit{R}_{t+2} + \gamma^{2} \mathit{R}_{t+3} + \dots + \gamma^{T-t-1}\mathit{R}_T
 \end{equation*}
 trong đó T là thời điểm cuối cùng trong một mẫu thực nghiệm. Ngược với MC, TD(0) thực hiện cập nhật cho một trạng thái dựa trên điểm thưởng vừa nhận được ngay trạng thái đó và giá trị hiện tại của các trạng thái kế tiếp sau đó mà không cần đợi đến khi tính được return:
 \begin{equation*}
@@ -1007,15 +987,36 @@ Cập nhật này sử dụng một bộ gồm 5 phần tử cho cập nhật $(
 
 Phương pháp $n$-step Sarsa là phương pháp tổng quát cho việc đánh giá chính sách bằng cách xác định hàm giá trị hành động. Mục tiêu cập nhật của $n$-step Sarsa cho một cặp trạng thái và hành động $(\mathit{S}_t, \mathit{A}_t)$ được xác định:
 \begin{equation}
-	G_{t}^{(n)} = \mathit{R}_{t+1} + \gamma \mathit{R}_{t+2} + \dots + \gamma^{n-1} \mathit{R}_{t+n} + \gamma^{n} Q(\mathit{S}_{t+n}, \mathit{A}_{t+1})
+G_{t}^{(n)} = \mathit{R}_{t+1} + \gamma \mathit{R}_{t+2} + \dots + \gamma^{n-1} \mathit{R}_{t+n} + \gamma^{n} Q(\mathit{S}_{t+n}, \mathit{A}_{t+1})
 \end{equation}
 Sau khi xác định được mục tiêu cập nhật, giá trị của một cặp trạng thái và hành đông được cập nhật tương tự như cách cập nhật trong \ref{eq:Sarsa_action_update} của Sarsa(0):
 \begin{equation}
-	Q(\mathit{S}_t, \mathit{A}_t) \leftarrow Q(\mathit{S}_t, \mathit{A}_t) + \alpha \left[G_{t}^{(n)} -  Q(\mathit{S}_t, \mathit{A}_t) \right]
-	\label{eq:n_Sarsa_update}
+Q(\mathit{S}_t, \mathit{A}_t) \leftarrow Q(\mathit{S}_t, \mathit{A}_t) + \alpha \left[G_{t}^{(n)} -  Q(\mathit{S}_t, \mathit{A}_t) \right]
+\label{eq:n_Sarsa_update}
 \end{equation}
 
-\subsubsection{Phương pháp Q-learning}
+\subsection{Phương pháp cải thiện chính sách}
+
+\subsubsection*{Phương pháp $\epsilon$-greedy}
+Trong những bài toán học tăng cường thực tế, chúng ta thường không có mô hình của môi trường như: tập các trạng thái có thể có, xác suất chuyển từ trạng thái này sang trạng thái khác, và điểm thưởng nhận được cho tất cả các trạng thái. Do đó, câu hỏi đặt ra là chúng ta nên thực hiện \textit{khai thác} những kiến thức đã học để tìm lời giải tối ưu hay \textit{khám phá} những kiến thức mới để có cơ hội tìm được lời giải tối ưu hơn cho bài toán. Ví dụ: trong bài toán chọn nhà nhà hàng.
+\begin{itemize}
+	\item Khai thác: Chọn nhà hàng đã từng vào mà mình thích nhất.
+	\item Khám phá: Thử chọn một nhà hàng mới.
+\end{itemize}
+Nếu chỉ khai thác những kiến thức đã học mà không thực hiện khám phá kiến thức mới thông thường chúng ta chỉ tìm được lời giải tối ưu cục bộ trong những kiến thức đã học. Ngược lại nếu chỉ thực hiện khám phá kiến thức mới mà không thực hiện khai thác kiến thức đã học, chúng ta không thể tìm được lời giải tối ưu.
+
+Ý tưởng của phương pháp $\epsilon$-greedy đảm bảo luôn khám phá kiến thức mới trong quá trình khai thác. Trong bài toán cải thiện chính sách, giả sử chúng có hàm giá trị hành động $Q$, phương pháp $\epsilon$-greedy đảm bảo các hành động luôn có khả năng được chọn thực hiện tại mỗi trạng thái. Phương pháp $\epsilon$-greedy sẽ thực hiện hoàn toàn ngẫu nhiên mà không quan tâm đến hàm giá trị hành động với xác suất $\epsilon$ tại mỗi trạng thái; ngược lại $\epsilon$-greedy sẽ chọn thực hiện hành động dựa trên tham lam hàm giá trị hành động với xác suất $1 - \epsilon$. Qua đó, ta thấy được nếu tại một trạng thái $s$ có thể thực hiện được $m$ hành động khác nhau thì xác xuất để chọn một hành động bất kỳ được chọn mà không quan tâm đến giá trị của chúng là $\epsilon/m$. Từ \ref{eq:epsilon-greedy}, tại một trạng thái $s$, hành động có giá trị lớn nhất sẽ có xác suất được chọn thực hiện là $\epsilon/m + 1 - \epsilon$, ngược lại một hành động không có giá lớn nhất cũng có xác suất được chọn là $\epsilon/m$. 
+\begin{equation}
+\pi(a|s) =
+\left\{\begin{matrix}
+\epsilon/m + 1 - \epsilon & \text{nếu }a = \underset{a \in A}{\operatorname{argmax}}Q(s,a)\\ 
+\epsilon/m & \text{ngược lại}
+\end{matrix}\right.
+\label{eq:epsilon-greedy}
+\end{equation}
+Câu hỏi đặt một chính sách $\pi'$ thực hiện $\epsilon$-greedy trên hàm giá trị hành động của  chính sách $\pi$ có tốt hơn chính sách $\pi$ không? Theo định lý tối ưu: Với chính sách thực hiện theo phương pháp $\epsilon$-greedy $\pi$ bất kỳ, một chính sách khác $\pi'$ thực hiện $\epsilon$-greedy trên hàm giá trị hành động của chính sách $\pi$, $q_{\pi}$, luôn là một chính sách tốt hơn hoặc bằng chính sách $\pi$, $v_{\pi'}(s) \geq v_{\pi'}(s), \forall s \in \mathcal{S}$.
+
+\subsection{Phương pháp Q-learning}
 \paragraph*{On-policy và off-policy}
 Ý tưởng của on-policy là dựa trên những kinh nghiệm thực tế của chính hệ thống, nó có thể tự cải thiện trở nên tốt hơn. Những phương pháp thực hiện theo \textit{on-policy} là những phương pháp đánh giá và cải thiện chính sách $\pi$ dựa trên những mẫu dữ liệu có được qua việc tương tác với môi trường theo chính chính sách đó. Các phương pháp quy hoạch động, MC, TD, Sarsa là những phương pháp thực hiện theo on-policy.
 Ngược lại với on-policy, ý tưởng của off-policy là hệ thống có thể cải thiện chính sách của nó dựa trên những kinh nghiệm thực tế của một hệ thống có một chính sách thực hiện khác. Những phương pháp thực hiện theo \textit{off-policy} đánh giá và cải thiện chính sách $\pi$ dựa trên những mẫu dữ liệu có được qua việc tương tác với môi trường theo một chính sách $\pi^{'}$ khác. Ngoài ra, những phương pháp thực hiện theo off-policy có thể tận dụng lại những mẫu dữ liệu cũ để tiếp tục cải thiện chính sách.
