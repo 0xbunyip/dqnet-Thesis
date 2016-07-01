@@ -16,7 +16,8 @@
 %\end{itemize}
 %-----------------------------------------------------------------------------
 
-\DeclareMathOperator*{\argmax}{arg\,max}
+%\DeclareMathOperator*{\argmax}{arg\,max}
+\newcommand{\argmax}{\operatornamewithlimits{arg\,max}}
 
 \chapter{Kết hợp học tăng cường với học sâu}
 \ifpdf
@@ -398,7 +399,7 @@ Chương này trình bày hai phần:
 	
 	Với cách thiết kế mạng nơ-ron thông thường, ta cần cung cấp trạng thái $S$ và hành động $A$ để tính được giá trị xấp xỉ $\hat{q}(S, A;\theta)$.
 	Cách thiết kế này không phù hợp cho thuật toán ``Q-learning'': ta cần phải lan truyền tiến nhiều lần để tính giá trị $\max_{a}\hat{q}(S, a;\theta)$ trong công thức (\ref{eq_SGD_Q_learning_Update}).
-	Để khắc phục nhược điểm này, ta chỉnh lại cấu trúc mạng để ``input'' là trạng thái $S$ và ``output'' là giá trị của mọi hành động tại trạng thái này: $\hat{q}(S, a;\theta) \forall a$.
+	Để khắc phục nhược điểm này, ta chỉnh lại cấu trúc mạng để ``input'' là trạng thái $S$ và ``output'' là giá trị của mọi hành động tại trạng thái này: $\hat{q}(S, a;\theta), \forall a$.
 	Với cấu trúc này, ta chỉ việc lan truyền tiến một lần và lấy $\max$ giá trị ``output'' của mạng nơ-ron.
 	Như vậy, số nơ-ron của tầng ``output'' là số lượng hành động có thể có.
 	
@@ -527,8 +528,8 @@ Chương này trình bày hai phần:
 	Khi lấy $\max$ giá trị nhiều hành động lại thì nhiều khả năng hành động được chọn sẽ có sai số dương (do các hành động có sai số âm thì giá trị xấp xỉ bị giảm so với giá trị đúng nên khả năng được chọn thấp hơn).
 	Khi càng có nhiều hành động thì khả năng hành động đó có sai số dương lại càng cao hơn.
 	Điều này làm cho ``Q-learning'' gặp vấn đề đánh giá quá cao.
-	Trong khi với thuật toán ``Double Q-learning'', gọi hành động được chọn theo bộ tham số $\theta$ là $\a_{*}$.
-	Khi đó, xác suất để $\a_{*}$ cũng có sai số dương theo bộ tham số $\theta^{-}$ là thấp (do hai bộ tham số học từ dữ liệu khác nhau).
+	Trong khi với thuật toán ``Double Q-learning'', gọi hành động được chọn theo bộ tham số $\theta$ là $a_{*}$.
+	Khi đó, xác suất để $a_{*}$ cũng có sai số dương theo bộ tham số $\theta^{-}$ là thấp (do hai bộ tham số học từ dữ liệu khác nhau).
 	Nhờ vậy, việc phân tách hai bước chọn và đánh giá hành động giúp làm giảm vấn đề đánh giá quá cao.
 	Xem hình (\ref{fig_q_learning_plot}) và (\ref{fig_double_q_learning_plot}) mô tả một ví dụ đơn giản để hiểu hơn về vấn đề đánh giá quá cao trong hai thuật toán ``Q-learning'' và ``Double Q-learning''.
 	\begin{figure}
@@ -541,7 +542,9 @@ Chương này trình bày hai phần:
 		Đây là giá trị đích mong muốn của ``Q-learning''.
 		Có nhiều hành động có giá trị xấp xỉ với sai số dương lớn hơn giá trị đích này (hành động 4, 6 và 8) nên khi lấy $\max$ theo ``Q-learning'' thì ta gặp tình trạng đánh giá quá cao.}
 		\label{fig_q_learning_plot}
-		
+	\end{figure}
+	
+	\begin{figure}
 		\centering
 		\includegraphics[width=\textwidth]{double_q_learning}
 		\caption[Cách giải quyết vấn đề đánh giá quá cao của thuật toán ``Double Q-learning'']{Hình mô tả cách giải quyết vấn đề đánh giá quá cao của thuật toán ``Double Q-learning''.
