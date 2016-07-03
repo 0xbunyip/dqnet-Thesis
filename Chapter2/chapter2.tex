@@ -66,7 +66,7 @@ Mô hình Markov Decision Processes (MDP) được sử dụng để mô hình h
 	\end{equation}
 	\item $\mathcal{R}$: ma trận điểm thưởng theo từng bộ (trạng thái, hành động). $\mathcal{R}_{s}^a$ là giá trị kỳ vọng điểm thưởng nhận được khi hệ thống thực hiện hành động $a$ ở trạng thái $s$.
 	\begin{equation}
-	\mathcal{R}_{s}^a = \mathbb{E}[\mathit{R_{t}} \mid \mathit{S_{t}} = s, \mathit{A_{t}} = a]
+	\mathcal{R}_{s}^a = \mathbb{E}[\mathit{R_{t+1}} \mid \mathit{S_{t}} = s, \mathit{A_{t}} = a]
 	\end{equation}				
 \end{itemize}
 
@@ -283,7 +283,7 @@ Phân tích phương trình \ref{action_value} tương tự như đã làm đố
 \pi \geq \pi' \Longleftrightarrow v_{\pi}(s) \geq v_{\pi'}(s), \forall s \in \mathcal{S}
 \end{equation}
 
-Luôn có ít nhất một chính sách tốt hơn hoặc bằng tất cả các chính sách còn lại \cite{sutton1998introduction}. Chúng được gọi chung là \textit{chính sách tối ưu} và được ký hiệu $\pi_{*}$. Những chính sách tối ưu đều cùng có chung một hàm giá trị trạng thái và hàm giá trị hành động. Hai loại hàm giá trị này có thể được gọi chung là \textit{hàm giá trị tối ưu}. Chúng ta cũng có thể gọi tách biệt \textit{hàm giá trị trạng thái tối ưu} đối với hàm giá trị trạng thái và \textit{hàm giá trị hành động tối ưu} đối với hàm giá trị hành động. Phương trình \ref{eq:optimal_state} và \ref{eq:optimal_action} định nghĩa hình thức cho hai loại hàm này
+Ta luôn có ít nhất một chính sách tốt hơn hoặc bằng tất cả các chính sách còn lại \cite{sutton1998introduction}. Chúng được gọi chung là \textit{chính sách tối ưu} và được ký hiệu $\pi_{*}$. Những chính sách tối ưu đều cùng có chung một hàm giá trị trạng thái và hàm giá trị hành động. Hai loại hàm giá trị này có thể được gọi chung là \textit{hàm giá trị tối ưu}. Chúng ta cũng có thể gọi tách biệt \textit{hàm giá trị trạng thái tối ưu} đối với hàm giá trị trạng thái và \textit{hàm giá trị hành động tối ưu} đối với hàm giá trị hành động. Do đó, ta có thể dễ dàng tìm được chính sách tối ưu khi có được hàm giá trị tối ưu bằng phương pháp tham lam trên hàm giá trị này. Và ngược lại khi thực hiện hành động theo chính sách tối ưu, ta cũng dễ dàng xác định được hàm giá trị tối ưu. Từ tính chất này, các phương pháp tìm chính sách tối ưu luôn cố gắng tìm hàm giá trị tối ưu thay vì tìm trực tiếp chính sách tối ưu. Phương trình \ref{eq:optimal_state} và \ref{eq:optimal_action} định nghĩa hình thức cho hai loại hàm này
 \begin{align}
 v_{*}(s) = {} & \max_{\pi}v_{\pi}(s), \forall s \in \mathcal{S} \label{eq:optimal_state} \\
 q_{*}(s,a) = {} & \max_{\pi}q_{\pi}(s,a), \forall s \in \mathcal{S} \text{ và } \forall a \in \mathcal{A}(s) \label{eq:optimal_action}
@@ -411,8 +411,8 @@ Phương trình \ref{eq:bellman_optimal_state} và \ref{eq:bellman_optimal_actio
 	\label{fig:bellman_optimal_function}
 \end{figure}
 
-\subsection{Quy trình tìm chính sách tối ưu}
-Trong các bài toán học tăng cường, mục tiêu chính của ta là tìm được chính sách tối ưu $\pi_{*}$ nhằm giúp cho hệ thông giải quyết bài toán tốt nhất có thể. Do đó ta cần có quy trình để thay đổi chính sách hiện tại trở nên tối ưu. Quy trình này được gọi là \textit{quy trình tìm chính sách tối ưu}. Hình \ref{fig:policy_iteration} minh họa quy trình này được chia thành hai giai đoạn:
+\subsection{Phương pháp lặp chính sách}
+Trong các bài toán học tăng cường, mục tiêu chính của ta là tìm được chính sách tối ưu $\pi_{*}$ nhằm giúp cho hệ thông giải quyết bài toán tốt nhất có thể. Do đó ta cần có một quy trình để tìm ra chính sách tối ưu. Quy trình lặp chính sách là một trong hai quy trình thường được áp dụng để tìm kiếm chính sách này. Hình \ref{fig:policy_iteration} minh họa quy trình này được chia thành hai giai đoạn:
 \begin{itemize}
 	\item \textbf{Đánh giá chính sách}: Việc đánh giá một chính sách $\pi$ được thực hiện bằng cách xác định hàm giá trị trạng thái hoặc hàm giá trị hành động của dưới chính sách đó.
 	\item \textbf{Cải thiện chính sách}: Sau khi có được hàm giá trị của một chính sách $\pi$, chính sách cải thiện mới $\pi'$ được tạo ra bằng cách thực hiện tham lam trên hàm giá trị của chính sách $\pi$, tức là chỉ chọn thực hiện hành động có giá trị cao nhất dựa trên hàm giá trị hành động có được. 
@@ -437,7 +437,7 @@ Trong các bài toán học tăng cường, mục tiêu chính của ta là tìm
 	
 	\end{scope}			
 	\end{tikzpicture}
-	\caption[Quy trình tìm chính sách tối ưu]{Quy trình tìm chính chính sách tối ưu}
+	\caption[Quy trình tìm chính sách tối ưu bằng phương pháp lặp chính sách]{Quy trình tìm chính chính sách tối ưu bằng phương pháp lặp chính sách}
 	\label{fig:policy_iteration}
 \end{figure}
 Một chính sách $\pi_{1}$ được cải thiện từ chính sách $\pi_{0}$ dựa trên hàm giá trị trạng thái $v_{\pi_{0}}$. Khi có được chính sách $\pi_{1}$ ta có thể tính được hàm giá trị $v_{\pi_{1}}$ qua đó tiếp tục cải thiện để có được chính sách $\pi_{2}$. Quá trình này diễn ra cho đến khi đạt được chính sách tối ưu.
@@ -551,24 +551,47 @@ Việc đánh giá và cải thiện chính sách qua nhiều vòng lặp sẽ h
 	\label{fig:policy_iteration_MDP}	
 \end{figure}
 
-\section{Quy trình tìm chính sách tối ưu trong bài toán thực tế}
+\subsection{Phương pháp lặp giá trị}
+Một nhược điểm của phương pháp lặp chính sách nằm ở giai đoạn đánh giá chính sách của phương pháp này. Bản thân giai đoạn này cũng là một quá trình lặp để tìm ra hàm giá trị của chính sách $\pi$ đang theo. Ngoài ra, giai đoạn này cũng đã được chứng minh sẽ tìm được chính xác hàm giá trị $v_{\pi}$ khi lặp vô hạn lần. Câu hỏi đặt ra là: Để tìm chính sách tối ưu, chúng ta có cần phải xác định chính xác hàm giá trị $v_{\pi}$ của chính sách $\pi$ hiện tại hay không? \cite{smallwood1973optimal} đã đề xuất một phương pháp có thể tìm đươc chính sách tối ưu mà không cần xác định hàm giá trị $v_{\pi}$, được gọi là phương pháp lặp giá trị. Trong phương pháp lặp chính sách, tại mỗi vòng lặp một ước lượng $V$ cho hàm giá trị $v_{\pi}$ được cập nhật nhiều lần để đạt chính xác hàm $v_{\pi}$ trước khi thực hiện cải thiện chính sách. Ngược lại, phương pháp lặp giá trị thực hiện duy nhất một lần cập nhật ước lượng kết hợp với tối ưu bằng toán tử $\max$ ngay trong mỗi vòng lặp của nó. Chính vì vậy mà phương pháp lặp giá trị không tách biệt hai giai đoạn rõ ràng như phương pháp lặp chính sách và mục tiêu của phương pháp này là tìm được hàm giá trị tối ưu $v_*$. Phương trình \ref{eq:val_iteration} mô tả cách thức cập nhật hàm giá trị cũng như tối ưu trong một lần lặp. Ý nghĩa của phương trình này là dùng giá trị hành động lớn nhất cập nhật giá trị cho một trạng thái $s$.
+\begin{align}
+	v_{k+1}(s) = {} & \max_{a}\mathbb{E}\left[\mathit{R}_{t+1} + \gamma v_{k}(\mathit{S}_{t+1}) \mid \mathit{S}_{t} = s, \mathit{A}_t = a\right] \notag \\
+	= {} & \max_{a}\sum_{s' \in \mathcal{S}}\mathcal{P}_{ss'}^{a}\left[\mathit{R}_{t+1} + \gamma v_{k}(s')\right] \label{eq:val_iteration}
+\end{align}
+với $s \in \mathcal{S}$ và $v_{0}$ được khởi tạo ngẫu nhiên. Qua nhiều cập nhật chuỗi $\{v_{k}\}$ sẽ hội tụ về hàm giá trị tối ưu $v_*$.
+
+Cách thức cập nhật của phương pháp lặp giá trị dựa trên phương trình Bellman của hàm giá trị trạng thái tối ưu \ref{eq:bellman_optimal_state}. Mô hình cập nhật của phương pháp lặp giá trị tương tự mô hình cập nhật của phương pháp lặp chính sách \ref{fig:Update_Value_DP} ngoại trừ nó yêu cầu giá trị cực đại (maximum) được chọn qua các hành động. Thêm vào đó quá trình cập nhật của lặp chính sách để tính hàm giá trị trạng thái $v_{\pi}$ của chính sách $\pi$ hiện tại, trong khi đó quá trình cập nhật của lặp giá trị để tính hàm giá trị trạng thái tối ưu $v_*$. Các bước thực hiện trong phương pháp lặp giá trị được mô tả trong thuật toán \ref{alg_val_iteration}.
+\begin{algorithm}
+	\newalgname{Thuật toán}
+	\caption{Phương pháp lặp giá trị}
+	\label{alg_val_iteration}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmicrequire}{\textbf{Đầu vào:}}
+		\renewcommand{\algorithmicensure}{\textbf{Đầu ra:}}
+		\algnewcommand\algorithmicoperation{\textbf{Thao tác:}}
+		\algnewcommand\Operation{\item[\algorithmicoperation]}
+		
+		\Require
+		\Ensure Hàm giá trị $V$ xấp xỉ hàm giá trị tối ưu $v_{*}$
+		
+		\Operation
+		\State Khởi tạo ngẫu nhiên $V(s)$ cho tất cả trạng thái $s$ không phải trạng thái kết thúc. Nếu $s$ là trạng thái kết thúc, $V(s) = 0$
+		\Repeat
+		\State $\Delta \leftarrow 0$ \%\% Tính độ khác biệt giữa hàm giá trị cũ và giá trị mới. Độ lớn của $\Delta$ được xác định là độ khác biệt lớn nhất giữa giá trị cũ và giá trị mới của một trạng thái trong tất cả các trạng thái.
+		\For{$s \in \mathcal{S}$} \%\% Với mỗi trạng thái
+		\State $v \leftarrow V(s)$ \%\% Lưu giá trị hiện tại của trạng thái $s$
+		\State $V(s) \leftarrow \max_{a}\sum_{s' \in \mathcal{S}}\mathcal{P}_{ss'}^{a}\left[\mathcal{R}_{s}^{a} + \gamma V(s')\right]$ \%\% Duyệt và chọn ra giá trị hành động lớn nhất làm giá trị mới của trạng thái $s$
+		\State $\Delta \leftarrow \max(\Delta,|v - V(s)|)$
+		\EndFor
+		\Until $\Delta < \theta$ (Một lượng đủ nhỏ)
+	\end{algorithmic}
+\end{algorithm}
+
+\section{Tìm chính sách tối ưu bằng phương pháp lặp chính sách trong bài toán thực tế}
 Trong nhiều bài toán thực tế thông thường chúng ta không có kiến thức đầy đủ về môi trường như ma trận chuyển trạng thái $\mathcal{P}$, ma trận điểm thưởng $\mathcal{R}$, tập các trạng thái $\mathcal{A}$. Do đó một yêu cầu được đặt ra là hệ thống phải có khả năng học từ những thông tin mà nó tiếp nhận được qua việc tương tác với môi trường. Các thông tin này thường ở dạng chuỗi (trạng thái, hành động, điểm thưởng)
 $\mathit{S}_1, \mathit{A}_1, \mathit{R}_2, \mathit{S}_2, \mathit{A}_2, \mathit{R}_3, \dots, \mathit{S}_T$. Với $T$ là thời điểm kết thúc việc tương tác của hệ thống với môi trường.
-%	\begin{itemize}
-%		\item Dẫn nhập: Trên thực tế ta không có thông tin về môi trường
-%		\item Qui trình đánh giá chính sách
-%			\begin{itemize}
-%				\item[+] Dựa trên hàm giá trị trạng thái: Monte-Carlo, TD(0), n-step TD, TD($\lambda$)
-%				\item[+] Dựa trên hàm giá trị hành động: Monte-Carlo, Sarsa(0), n-step Sarsa, Sarsa($\lambda$)
-%			\end{itemize}
-%		\item Qui trình cải thiện chính sách: Phương pháp greedy
-%	\end{itemize}
-
-%	Chúng ta vừa định nghĩa hàm giá trị và chính sách tối ưu. Một hệ thống khi có được chính sách tối ưu thì làm việc rất tốt. Nhưng trong thực thế điều này hiếm khi xảy ra, thông thường để có được hàm giá trị hoặc chính sách tối ưu yêu cầu chi phí tính toán là rất lớn. Thậm chí, dù ta biết được mô hình hoàn toàn của môi trường, chúng ta vẫn không thể đạt được chính sách tối ưu bằng cách giải phương trình Bellman của hàm giá trị tối ưu. Do đó ta chỉ có thể xấp xỉ chính sách hoặc hàm giá trí tối ưu bằng những phương pháp xấp xỉ với các mức độ khác nhau. Ví dụ cụ thể cho vấn đề này đó là cờ vây, mặc dù số trạng thái và hành động có thể đều có thể tính toán được, nhưng chi phí tính toán để tìm một chính sách đánh cờ tối ưu là rất lớn. Do đó người chơi chỉ có thể dựa trên kinh nghiệm có để đi nước cờ tốt nhất cho mình.	Một vấn đề khác mà chúng ta phải đối mặt đó là khả năng lưu trữ có hạn. Thông thường để lưu tất cả các trạng thái hoặc các cặp trạng thái và hành động trong các bài toán học tăng cường  yêu cầu bộ nhớ rất lớn. Mặt khác, trong thực tế, chúng ta thường không biết đầy đủ về môi trường như những trạng thái có thể có, điểm thưởng của một trạng thái bất kỳ, và ma trận chuyển trạng thái. Do đó, ta cần những phương pháp có thể học từ những
 
 \subsection{Phương pháp đánh giá chính sách}
 Trong phần này, chúng em sẽ trình bày một số phương pháp được áp dụng để đánh giá chính sách.
-
 
 \subsubsection{Phương pháp Monte Carlo (MC)}
 Tương tự với quy hoạch động, Monte Carlo (MC) xác định hàm giá trị của một chính sách bằng cách cập nhật hàm giá trị khởi tạo qua nhiều vòng lặp. Điểm biệt khác với quy hoạch động của phương pháp MC là nó có thể áp dụng để đánh giá chính sách khi hệ thông không có kiến thức đầy đủ về môi trường. MC dựa trên những thông tin mà hệ thông có được qua việc tương tác với môi trường để xấp xỉ hàm giá trị. Thông thường những thông tin này được chia thành các \textit{mẫu thực nghiệm}. Mỗi mẫu thực nghiệm là một chuỗi bắt đầu từ một trạng thái bất kỳ cho đến khi đạt được một trong những trạng thái kết thúc. Khi đó MC chỉ thực hiện cập nhật hàm giá trị khi kết thúc một mẫu thực nghiệm.
@@ -1008,6 +1031,9 @@ Nếu chỉ khai thác những kiến thức đã học mà không thực hiện
 \label{eq:epsilon-greedy}
 \end{equation}
 Câu hỏi đặt một chính sách $\pi'$ thực hiện $\epsilon$-greedy trên hàm giá trị hành động của  chính sách $\pi$ có tốt hơn chính sách $\pi$ không? Theo định lý tối ưu: Với chính sách thực hiện theo phương pháp $\epsilon$-greedy $\pi$ bất kỳ, một chính sách khác $\pi'$ thực hiện $\epsilon$-greedy trên hàm giá trị hành động của chính sách $\pi$, $q_{\pi}$, luôn là một chính sách tốt hơn hoặc bằng chính sách $\pi$, $v_{\pi'}(s) \geq v_{\pi'}(s), \forall s \in \mathcal{S}$.
+
+\section{Tìm chính sách tối ưu bằng phương pháp lặp giá trị trong bài toán thực tế}
+Như đã nói ở phần trước, những bài toán thực tế không có tính chất MDP của môi trường hay nói cách khác những thông tin như: những trạng thái có thể có, xác suất chuyển trạng thái, và những giá trị kỳ vọng điểm thưởng ứng với từng hành động tại mỗi trạng thái, chúng ta không biết hoặc chỉ biết một phần. Chính vì lý do đó, ngoài việc các phương pháp có khả năng tìm chính sách tối ưu trên, phương pháp lặp giá trị áp dụng trong bài toán thực tế sẽ cố gắng xấp xỉ hàm giá trị hành động tối ưu $q_{*}$ khác với trong mô hình MDP.
 
 \subsection{Phương pháp Q-learning}
 \paragraph*{On-policy và off-policy}
