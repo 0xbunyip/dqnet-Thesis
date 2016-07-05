@@ -8,19 +8,19 @@
 	\textit{Trong chương này, chúng em trình bày kết quả thực nghiệm của bài toán tự động chơi game.
 	Đầu tiên, môi trường giả lập của bài toán tự động chơi game cùng với các thiết lập thực nghiệm được giới thiệu.
 	Phần tiếp theo, chúng em trình bày về kết quả thực nghiệm của thuật toán ``Q-learning'' để chứng minh tính khả thi của việc kết hợp học tăng cường với học sâu vào bài toán tự động chơi game.
-	Kế tiếp, chúng em phân tích mức độ ảnh hưởng của vấn đề ``đánh giá quá cao'' và kết quả của thuật toán ``Double Q-learning''.
-	Phần cuối cùng bao gồm một số thực nghiệm chứng minh rằng mô hình mạng nơ-ron xấp xỉ tốt hàm giá trị hành động.}
+	Kế tiếp, chúng em phân tích mức độ ảnh hưởng của vấn đề đánh giá quá cao và kết quả của thuật toán ``Double Q-learning''.
+	Phần cuối cùng là một thực nghiệm nhằm phân tích ý nghĩa hàm giá trị học được.}
 \end{quote}
  
 \section{Giới thiệu Arcade Learning Environment}
-Arcade Learning Environment (ALE) \cite{bellemare2012arcade} là một ``framework'' được thiết kế giúp dễ dàng trong việc phát triển những hệ thống có thể tự động chơi game trên hệ máy Atari 2600.
+Arcade Learning Environment (ALE) \cite{bellemare2012arcade} là một framework được thiết kế giúp dễ dàng trong việc phát triển những hệ thống có thể tự động chơi game trên hệ máy Atari 2600.
 Do ALE giúp ta giả lập game Atari trên máy vi tính mà không bị giới hạn số khung hình/giây, việc huấn luyện được tăng tốc đáng kể.
 Hình ảnh của những game này là ảnh RGB với kích thước $210 \times 160$. 
 Số lượng hành động tối đa của một game là 18.
 
 ALE cung cấp một giao diện lập trình cho ngôn ngữ Python.
 Và quan trọng nhất đó là ALE giúp mô hình hoá các game trên Atari về thành cái bài toán học tăng cường.
-Cụ thể hơn, ta có thể lấy ``frame'' ảnh hiện tại, lấy điểm số của hành động vừa thực hiện...
+Cụ thể hơn, ta có thể lấy frame ảnh hiện tại, lấy điểm số của hành động vừa thực hiện...
 Cuối cùng, ALE hỗ trợ khá nhiều game (hơn 50 game) để ta có thể thử nghiệm tính tổng quát của mô hình.
 
 \section{Các thiết lập thực nghiệm}
@@ -39,7 +39,7 @@ Cuối cùng, ALE hỗ trợ khá nhiều game (hơn 50 game) để ta có thể
 	
 	Để giảm bớt tính toán của mô hình, khung ảnh RGB đầu vào được chuyển về ảnh mức xám (grayscale) và được giảm kích thước về $84\times84$.
 	Để lưu thông tin về sự di chuyển và tốc độ của các đối tượng trong ảnh, ta ghép bốn khung ảnh liên tiếp nhau lại thành một trạng thái.
-	Vậy một trạng thái lúc này sẽ gồm bốn ảnh mức xám $84\times84$ và được đưa trực tiếp vào ``input'' của mạng nơ-ron.
+	Vậy một trạng thái lúc này sẽ gồm bốn ảnh mức xám $84\times84$ và được đưa trực tiếp vào input của mạng nơ-ron.
 	Ngoài ra, do các khung hình gần nhau thường không thay đổi nhiều, một kỹ thuật đơn giản để tăng tốc độ huấn luyện đó là ta lặp lại một hành động cho $k$ khung hình liên tiếp.
 	Nhờ kỹ thuật này, ta có thể huấn luyện nhiều hơn $k$ lần so với khi không áp dụng.
 	Trong thực nghiệm này, chúng em chọn $k$ bằng 4 theo đề xuất của (\cite{mnih2013playing}).
@@ -50,7 +50,7 @@ Cuối cùng, ALE hỗ trợ khá nhiều game (hơn 50 game) để ta có thể
 	Tầng tích chập thứ hai gồm $64$ bộ lọc với kích thước $4\times4$ và bước dịch chuyển là $2\times2$.
 	Tầng tích chập cuối cùng gồm $64$ bộ lọc với kích thước $3\times3$ và bước dịch chuyển là $1\times1$.
 	Đầu ra của tầng tích chập được đưa vào một tầng ``Fully-connected'' gồm $512$ nơ-ron ẩn để tổng hợp đặc trưng.
-	Tầng ``output'' của mạng cũng là một tầng ``Fully-connected'' với số nơ-ron ẩn là số hành động của trò chơi (6 cho ``Assault'', 4 cho ``Breakout'' và 18 cho ``Seaquest'').
+	Tầng output của mạng cũng là một tầng ``Fully-connected'' với số nơ-ron ẩn là số hành động của trò chơi (6 cho ``Assault'', 4 cho ``Breakout'' và 18 cho ``Seaquest'').
 	Tầng này sẽ trả về giá trị hành động tương ứng cho trạng thái đầu vào.
 	Hàm kích hoạt của tất cả các tầng ẩn là hàm ``Rectified'': $\sigma(x) = \max(0, x)$.
 	
@@ -60,7 +60,7 @@ Cuối cùng, ALE hỗ trợ khá nhiều game (hơn 50 game) để ta có thể
 	Cụ thể hơn, nếu trọng số này được cập nhật ít ở những lần cập nhật trước thì hệ số học sẽ được tăng lên; trọng số được cập nhật nhiều thì sẽ có hệ số học giảm đi.
 	Nhờ thuật toán này mà mức độ thay đổi của các trọng số là tương đương nhau.
 	
-	Chúng em sử dụng ``Python'' (kết hợp với framework ``Theano'' (\cite{2016arXiv160502688short})) làm ngôn ngữ lập trình chính.
+	Chúng em sử dụng Python (kết hợp với framework ``Theano'' (\cite{2016arXiv160502688short})) làm ngôn ngữ lập trình chính.
 	Do việc huấn luyện đòi hỏi sức mạnh tính toán rất lớn nên chúng em thực hiện cài đặt tính toán song song trên GPU để tăng tốc.
 	GPU được dùng là NVIDIA GTX 980.
 	
@@ -106,7 +106,7 @@ Cuối cùng, ALE hỗ trợ khá nhiều game (hơn 50 game) để ta có thể
 		\label{fig_assault_vr}
 	\end{figure}
 	
-	Hình (\ref{fig_assault_vr}) thể hiện đồ thị điểm số và giá trị trạng thái trên tập ``hold-out'' của trò chơi \textit{Assault}.
+	Hình \ref{fig_assault_vr} thể hiện đồ thị điểm số và giá trị trạng thái trên tập ``hold-out'' của trò chơi \textit{Assault}.
 	Điểm thưởng kết quả của ba game được báo cáo trong bảng (\ref{table_dqn_results}).
 	Cả ba game được thực nghiệm cho kết quả vượt xa kết quả chơi ngẫu nhiên.
 	Điều này cho thấy hệ thống thật sự học được cách chơi để đạt được nhiều điểm số dù ban đầu không hề biết quy luật chơi.
@@ -170,7 +170,7 @@ Cuối cùng, ALE hỗ trợ khá nhiều game (hơn 50 game) để ta có thể
 	Vì vậy, thuật toán ``Q-learning'' bị ảnh hưởng rất lớn bởi vấn đề đánh giá quá cao và thuật toán ``Double Q-learning'' cho kết quả tốt hơn hẳn khi giải quyết được vấn đề này.
 	Các kết quả này cho thấy thuật toán ``Double Q-learning'' là một cải tiến rất tốt cho bài toán tự động chơi game.
 	
-	Để thấy rõ hơn việc hạn chế vấn đề đánh giá quá cao của ``Double Q-learning'', ta có thể coi đồ thị giá trị hành động trung bình trên tập ``hold-out'' và đồ thị điểm thưởng trung bình của cả hai thuật toán ở hình (\ref{fig_double_compare}).
+	Để thấy rõ hơn việc hạn chế vấn đề đánh giá quá cao của ``Double Q-learning'', ta có thể coi đồ thị giá trị hành động trung bình trên tập ``hold-out'' và đồ thị điểm thưởng trung bình của cả hai thuật toán ở hình \ref{fig_double_compare}.
 	Thuật toán ``Double Q-learning'' cho kết quả điểm thưởng tốt hơn hẳn ``Q-learning'' vì đánh giá hành động chính xác hơn (không bị vấn đề đánh giá quá cao).
 	
 	\begin{figure}
@@ -189,9 +189,9 @@ Cuối cùng, ALE hỗ trợ khá nhiều game (hơn 50 game) để ta có thể
 		
 \section{Phân tích hàm giá trị hành động}
 	Để thấy rõ hơn khả năng xấp xỉ hàm giá trị của mạng nơ-ron, ta có thể xem xét giá trị của một số trạng thái trong quá trình chơi game.
-	Cụ thể hơn, chúng em thực hiện lưu một số ``frame'' ảnh trong quá trình chơi cùng với giá trị của chúng được tính từ mạng nơ-ron (với thuật toán ``Q-learning'').
+	Cụ thể hơn, chúng em thực hiện lưu một số frame ảnh trong quá trình chơi cùng với giá trị của chúng được tính từ mạng nơ-ron (với thuật toán ``Q-learning'').
 	
-	Hình \ref{seaquest:frames} và đồ thị \ref{fig_seaquest_frames} thể hiện các ``frame'' ảnh và giá trị của các trạng thái tương ứng.
+	Hình \ref{seaquest:frames} và đồ thị \ref{fig_seaquest_frames} thể hiện các frame ảnh và giá trị của các trạng thái tương ứng.
 	Quan sát giá trị tương đối của các trạng thái liên tiếp nhau trong một lần chơi, ta có thể thấy mạng nơ-ron học được một hàm giá trị phức tạp và có ý nghĩa cao.
 	Nhờ hàm giá trị được xấp xỉ tốt, chính sách chơi game mới lựa chọn hành động hợp lý để nhận được điểm thưởng cao nhất có thể.
 	
@@ -220,12 +220,12 @@ Cuối cùng, ALE hỗ trợ khá nhiều game (hơn 50 game) để ta có thể
 			\caption{}
 			\label{seaquest:frame_4}
 		\end{subfigure}%
-		\caption[Hình ảnh một số ``frame'' của trò chơi \textit{Seaquest}]{Hình ảnh 4 ``frame'' của trò chơi \textit{Seaquest}.
-		Ở ``frame'' đầu tiên (hình \ref{seaquest:frame_1}), tàu ngầm do hệ thống điều khiển ở giữa và tàu ngầm địch ở bên phải.
-		Ở ``frame'' kế tiếp (hình \ref{seaquest:frame_2}), hệ thống thực hiện hành động phóng ngư lôi.
+		\caption[Hình ảnh một số frame của trò chơi \textit{Seaquest}]{Hình ảnh 4 frame của trò chơi \textit{Seaquest}.
+		Ở frame đầu tiên (hình \ref{seaquest:frame_1}), tàu ngầm do hệ thống điều khiển ở giữa và tàu ngầm địch ở bên phải.
+		Ở frame kế tiếp (hình \ref{seaquest:frame_2}), hệ thống thực hiện hành động phóng ngư lôi.
 		Tiếp đó (hình \ref{seaquest:frame_3}), ngư lôi trúng tàu ngầm địch.
 		Cuối cùng (hình \ref{seaquest:frame_4}), tàu ngầm địch bị phá huỷ cho điểm thưởng.
-		Các ``frame'' này ứng với các giá trị trong đồ thị ở hình \ref{fig_seaquest_frames}.}
+		Các frame này ứng với các giá trị trong đồ thị ở hình \ref{fig_seaquest_frames}.}
 		\label{seaquest:frames}
 	\end{figure}
 	
@@ -233,13 +233,13 @@ Cuối cùng, ALE hỗ trợ khá nhiều game (hơn 50 game) để ta có thể
 		\centering
 		\includegraphics[width=\textwidth]{dqn_seaquest_frames}
 		\caption[Đồ thị giá trị hành động của một số trạng thái trong một lần chơi game]{
-		Đồ thị thể hiện giá trị hành động lớn nhất tại một số trạng thái; các trạng thái này ứng với các ``frame'' trò chơi \textit{Seaquest}.
-		Tại ``frame'' được đánh dấu \textit{A}, giá trị hành động lớn nhất đang ở mức trung bình ứng với việc tàu ngầm của ta chưa thực hiện hành động gì ảnh hưởng đến điểm số.
-		Tại ``frame'' \textit{B}, tàu ngầm của ta bắn ngư lôi về phía tàu ngầm địch.
-		Mạng nơ-ron khi nhận được ``frame'' ảnh này ``hiểu'' được rằng nếu ngư lôi chạm vào địch thì ta sẽ nhận được điểm thưởng.
+		Đồ thị thể hiện giá trị hành động lớn nhất tại một số trạng thái; các trạng thái này ứng với các frame trò chơi \textit{Seaquest}.
+		Tại frame được đánh dấu \textit{A}, giá trị hành động lớn nhất đang ở mức trung bình ứng với việc tàu ngầm của ta chưa thực hiện hành động gì ảnh hưởng đến điểm số.
+		Tại frame \textit{B}, tàu ngầm của ta bắn ngư lôi về phía tàu ngầm địch.
+		Mạng nơ-ron khi nhận được frame ảnh này ``hiểu'' được rằng nếu ngư lôi chạm vào địch thì ta sẽ nhận được điểm thưởng.
 		Vì vậy, đồ thị giá trị bắt đầu tăng lên đến ''frame'' \textit{C}.
-		Tại ``frame'' \textit{C}, ngư lôi trúng tàu ngầm địch nên việc nhận được điểm là chắc chắn; hàm giá trị biết được điều này nên đồ thị giá trị đạt đỉnh điểm tại đây.
-		Sau khi nhận được điểm thưởng và tàu ngầm địch bị phá huỷ, mạng nơ-ron nhận thấy rằng xung quanh không có yếu tố nào có thể giúp tăng điểm số nên đánh giá ``frame'' \textit{D} có giá trị thấp.		
+		Tại frame \textit{C}, ngư lôi trúng tàu ngầm địch nên việc nhận được điểm là chắc chắn; hàm giá trị biết được điều này nên đồ thị giá trị đạt đỉnh điểm tại đây.
+		Sau khi nhận được điểm thưởng và tàu ngầm địch bị phá huỷ, mạng nơ-ron nhận thấy rằng xung quanh không có yếu tố nào có thể giúp tăng điểm số nên đánh giá frame \textit{D} có giá trị thấp.		
 		}
 		\label{fig_seaquest_frames}
 	\end{figure}

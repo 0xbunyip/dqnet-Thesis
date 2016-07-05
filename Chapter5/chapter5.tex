@@ -1,5 +1,20 @@
 \chapter{Kết luận và hướng phát triển}
 \section{Kết luận}
+	Khoá luận này thực hiện cài đặt lại hướng tiếp cận kết hợp học tăng cường với học sâu trong bài toán tự động chơi game được đề xuất bởi \cite{mnihdqn2015}.
+	Hướng tiếp cận này sử dụng mạng nơ-ron tích chập của phương pháp học sâu cùng với thuật toán ``Q-learning'' của phương pháp học tăng cường để tạo thành một mô hình ``end-to-end''.
+	Việc thực nghiệm lại cho thấy, hướng tiếp cận này giúp xây dựng một mô hình có khả năng tự động học và chơi nhiều game khác nhau của hệ máy Atari.
+	Kết quả thực nghiệm không hoàn toàn tương đồng với kết quả được báo cáo trong \cite{mnihdqn2015} dù cấu trúc mô hình và siêu tham số đều giống nhau (có một game cho kết quả tốt hơn \cite{mnihdqn2015} và hai game cho kết quả thấp hơn \cite{mnihdqn2015}).
+	Lý do chính của vấn đề này là do cách cài đặt khác nhau và hệ thống giả lập game cũng khác nhau.
+	Ngoài ra, bản chất của bài toán tự động chơi game là giá trị điểm thưởng của nhiều lần chơi có phương sai rất lớn nên việc so sánh phải chấp nhận một mức độ sai số nhất định.
+	
+	Tiếp đó, chúng em tìm hiểu vấn đề đánh giá quá cao của thuật toán ``Q-learning''.
+	Vấn đề này được đề cập bởi \cite{hasselt2010double, van2015deep}.
+	Theo các nghiên cứu này, vấn đề đánh giá quá cao ảnh hưởng lớn đến kết quả bài toán tự động chơi game.
+	Do đó, nhóm đã cài đặt lại và thực nghiệm thuật toán ``Double Q-learning'' được đề xuất bởi \cite{van2015deep}.
+	Đây là một cải tiến đơn giản của ``Q-learning'' giúp hạn chế vấn đề đánh giá quá cao.
+	Kết quả thực nghiệm cho thấy, thuật toán ``Double Q-learning'' giải quyết vấn đề này và giúp cải thiện 	rất nhiều cho hệ thống tự động chơi game.
+	Tương tự như với ``Q-learning'', kết quả thực nghiệm của nhóm cũng không hoàn toàn tương đồng với \cite{van2015deep} vì cách cài đặt và hệ thống giả lập game khác nhau.
+
 \section{Hướng phát triển}
 	Các kết quả thực nghiệm cho thấy hệ thống có khả năng chơi và đạt được điểm số cao nhưng việc thực nghiệm chỉ mới trên ba game khác nhau; số lượng game thực nghiệm còn nhỏ nên vẫn chưa thể rút ra kết luận chặt chẽ cho hướng tiếp cận này.
 	Lý do nhóm không thực nghiệm trên nhiều game hơn là vì thời gian huấn luyện quá lâu (hơn hai ngày huấn luyện liên tục cho mỗi game và mỗi thuật toán).
@@ -9,11 +24,11 @@
 	\begin{itemize}
 		\item \textbf{Tăng tốc việc huấn luyện mạng nơ-ron}: sử dụng các kỹ thuật tiên tiến của học sâu (như ``Weight normalization'', ``Dropout'', ...) để mạng nơ-ron xấp xỉ hàm đích nhanh hơn và chính xác hơn.
 		Thực tế cho thấy, phần lớn thời gian huấn luyện là để cập nhật trọng số của mạng nơ-ron. 
-		Khi mạng nơ-ron xấp xỉ hàm càng nhanh thì tốc độ chung của toàn mô hình sẽ được cải thiện.
+		Khi mạng nơ-ron xấp xỉ hàm càng nhanh thì tốc độ chung của toàn mô hình càng được cải thiện.
 		Còn nếu mạng nơ-ron xấp xỉ hàm chính xác hơn thì ta có thể giảm số ``frame'' ảnh huấn luyện.
 		Khi đó, ta có thể thử nhiều game hơn trong cùng một khoảng thời gian.
 		\item \textbf{Cải thiện thuật toán học tăng cường}: thử nghiệm các thuật toán khác của học tăng cường (như thuật toán ``Expected Sarsa'', ``Policy Gradient'', ...) để tìm chính sách tốt hơn.
-		Các thuật toán khác nhau của học tăng cường có thể tìm được những chính sách khác nhau và phù hợp cho bài toán tự động chơi game hơn.
-		Việc thử nghiệm các thuật toán khác cho bài toán này cũng là một hướng cải tiến hứa hẹn.
+		Các thuật toán khác của học tăng cường có thể tìm được những chính sách tốt hơn thuật toán ``Q-learning'' trong bài toán tự động chơi game.
+		Ngoài ra, việc thử nghiệm các thuật toán khác cũng giúp ta hiểu hơn về ảnh hưởng của mạng nơ-ron tích chập đến các thuật toán học tăng cường.
 	\end{itemize}
 	

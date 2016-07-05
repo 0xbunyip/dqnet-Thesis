@@ -34,12 +34,12 @@ Hai vấn đề này (tính thưa và nhiễu của điểm thưởng) cũng ch�
 
 Các trò chơi điện tử thường hay có điểm số mà người chơi cần phải tối ưu hoá. 
 Đặc điểm này trùng với yêu cầu của bài toán học tăng cường, vì vậy các trò chơi này cũng chính là những ứng dụng tự nhiên nhất của phương pháp học tăng cường. 
-Trong luận văn này, chúng em áp dụng phương pháp học tăng cường nhằm xây dựng \textbf{hệ thống tự động chơi các game} trên hệ máy Atari. 
+Trong khoá luận này, chúng em áp dụng phương pháp học tăng cường nhằm xây dựng \textbf{hệ thống tự động chơi các game} trên hệ máy Atari. 
 Dữ liệu đầu vào của hệ thống chỉ bao gồm các frame ảnh RGB cùng với điểm số. 
 Từ hình ảnh thô này, hệ thống cần tìm cách chơi sao cho điểm số cuối màn chơi (episode) là lớn nhất có thể.
 Lưu ý rằng điểm số được game cung cấp hệ thống dưới dạng số thực (chứ không cần phải nhìn hình ảnh thô để ``đọc'' điểm số).
 Điểm khó khăn của bài toán này là hệ thống hoàn toàn không biết quy luật của game trước khi bắt đầu quá trình học mà phải tự tìm hiểu quy luật và chiến thuật chơi tối ưu. 
-Lý do luận văn sử dụng game của máy Atari là vì các game này có quy luật chơi tương đối đơn giản nhưng lại rất đa dạng. 
+Lý do khoá luận sử dụng game của máy Atari là vì các game này có quy luật chơi tương đối đơn giản nhưng lại rất đa dạng. 
 Mỗi màn chơi thường có độ dài vừa phải (từ 2 - 15 phút) và số hành động có ý nghĩa không quá nhiều (18 hành động). 
 Ngoài ra, các trò chơi này có thể được giả lập trên máy vi tính với tốc độ cao, giúp quá trình học được tăng tốc.
 
@@ -89,5 +89,5 @@ Trong những năm gần đây, học sâu đạt đươc nhiều bước đột
 Việc kết hợp học tăng cường với học sâu đã dẫn đến một hướng tiếp cận mới cho bài toán tự động chơi game; hướng tiếp cận này giúp hệ thống có thể học cách chơi nhiều game khác nhau từ hình ảnh đầu vào RGB \cite{mnihdqn2015}. 
 Với học sâu, ta có thể học được những đặc trưng cấp cao (high level features) từ hình ảnh thô mà không cần phải tự thiết kế đặc trưng bằng tay (hand-designed features). 
 Khi kết hợp với học tăng cường, ta có một hình ``\textbf{End-to-end}'': việc học đặc trưng và học chiến thuật chơi được liên kết chặt chẽ với nhau. 
-Trong luận văn này, chúng em thực hiện việc cài đặt lại phương pháp học tăng cường sâu và thử nghiệm mô hình với những tham số khác nhau. 
-Cùng với đó, luận văn tìm hiểu những khó khăn cơ bản của bài toán tự động chơi game cũng như thử nghiệm lại các đề xuất nhằm giải quyết những khó khăn này.
+Trong khoá luận này, chúng em thực hiện việc cài đặt lại phương pháp học tăng cường sâu và thử nghiệm mô hình với những tham số khác nhau. 
+Cùng với đó, khoá luận tìm hiểu những khó khăn cơ bản của bài toán tự động chơi game cũng như thử nghiệm lại các đề xuất nhằm giải quyết những khó khăn này.

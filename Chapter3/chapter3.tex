@@ -46,7 +46,7 @@ Chương này trình bày hai phần:
 	Ngoài ra, khi áp dụng vào các bài toán kinh điển của học tăng cường thì các thuật toán này đều hội tụ khá nhanh.
 	
 	Tuy nhiên, với những bài toán thực tế với số trạng thái rất lớn thì việc lưu véc-tơ hàm giá trị trạng thái $v_{\pi}$ (hoặc ma trận hàm giá trị hành động $q_{\pi}$) là việc không thể. 
-	Ví dụ như ``frame'' hình của bài toán tự động chơi game có kích thước $210\times160\times3=100800$ điểm ảnh; mỗi điểm ảnh có giá trị trong khoảng $[0, 127]$ nên số trạng thái có thể có lên đến $128^{100800}$.
+	Ví dụ như frame hình của bài toán tự động chơi game có kích thước $210\times160\times3=100800$ điểm ảnh; mỗi điểm ảnh có giá trị trong khoảng $[0, 127]$ nên số trạng thái có thể có lên đến $128^{100800}$.
 	Vì vậy, việc lưu trữ hàm giá trị dưới dạng bảng là không khả thi về mặt bộ nhớ.
 	Còn về mặt tốc độ tính toán thì các thuật toán học tăng cường trên đều tính hàm giá trị \textbf{rời rạc} cho từng trạng thái.
 	Với số trạng thái quá lớn như trên thì ta không thể duyệt lần lượt từng trạng thái để tính được.
@@ -84,13 +84,13 @@ Chương này trình bày hai phần:
 		\includegraphics[width=\textwidth]{deep_learning_example}
 		\label{fig_dl_Example}
 		\caption[Hình mô phỏng cách hoạt động của mô hình học sâu]{Hình mô phỏng cách hoạt động của mô hình học sâu cho bài toán nhận diện đối tượng trong ảnh.
-		Dữ liệu đầu vào là hình ảnh RGB chứa đối tượng cần xác định. Tầng đầu tiên của mô hình là tầng ``input'' tiếp nhận thông tin này dưới dạng ma trấn số. 
+		Dữ liệu đầu vào là hình ảnh RGB chứa đối tượng cần xác định. Tầng đầu tiên của mô hình là tầng input tiếp nhận thông tin này dưới dạng ma trấn số. 
 		Các tầng tiếp theo ngoại trừ tầng cuối cùng được gọi là tầng ẩn ``hidden layer'' vì đặc trưng học được tại đây con người không quan sát được. 
 		Các tầng ẩn học các đặc trưng ngày càng trừu tượng dựa vào đặc trưng ở tầng phía trước. 
 		Tầng ẩn đầu tiên học được các đặc trưng về cạnh bằng cách so sánh độ sáng giữa các điểm ảnh gần nhau. 
 		Tầng ẩn thứ hai học được các đặc trưng về đường cong bằng cách tổng hợp đặc trưng về cạnh ở tầng trước đó. 
 		Tầng ẩn thứ ba học được các đặc trưng về bộ phận của đồ vật như khuôn mặt, bánh xe... dựa vào các đặc trưng về đường cong ở tầng trước. 
-		Tầng cuối cùng được gọi là tầng ``output'' có nhiệm vụ tìm kiếm các bộ phận và trả về lớp đối tượng tương ứng. 
+		Tầng cuối cùng được gọi là tầng output có nhiệm vụ tìm kiếm các bộ phận và trả về lớp đối tượng tương ứng. 
 		Bằng cách học đặc trưng ngày càng trừu tượng hơn, các mô hình học sâu có khả năng tự động học được các đặc trưng từ đơn giản đến phức tạp; tất cả đều nhằm hỗ trợ cho quá trình phân lớp dữ liệu (hình được chỉnh sửa từ \cite{Goodfellow-et-al-2016-Book})}
 	\end{figure}
 	
@@ -196,7 +196,7 @@ Chương này trình bày hai phần:
 	\end{itemize}
 	
 	Mạng nơ-ron là một mô hình học sâu nên có thể học được những đặc trưng trừu tượng từ dữ liệu thô như đã nói ở phần trên.
-	Cụ thể hơn trong bài toán tự động chơi game, ta có thể đưa dữ liệu đầu vào là các ``frame'' hình RGB thẳng vào ``input'' của mạng nơ-ron để tính ra giá trị tương ứng.
+	Cụ thể hơn trong bài toán tự động chơi game, ta có thể đưa dữ liệu đầu vào là các frame hình RGB thẳng vào input của mạng nơ-ron để tính ra giá trị tương ứng.
 	Nhờ vậy, ta không cần phải thiết kế các đặc trưng bằng tay để biễu diễn lại từng trạng thái của game.
 	Ngoài ra, do quá trình học đặc trưng là hoàn toàn tự động, thuật toán học tăng cường lúc này \textbf{có thể áp dụng cho bất kỳ game} nào mà không cần phải thay đổi cách rút trích đặc trưng.
 	Với một mô hình cố định lúc này, ta có thể học chơi được nhiều game.
@@ -210,7 +210,7 @@ Chương này trình bày hai phần:
 	Một tính chất quan trọng khác của mạng nơ-ron chính là khả năng tổng quát hoá (generalization) từ trạng thái đã gặp sang trạng thái chưa gặp \cite{mnihdqn2015}.
 	Nhờ đặc điểm này mà quá trình học được tăng tốc đáng kể.
 	Thay vì phải duyệt qua từng trạng thái (thậm chí phải duyệt nhiều lần) để tính hàm giá trị tại đó, mạng nơ-ron có khả năng \textbf{``dự đoán'' giá trị} của một trạng thái chưa từng thấy dựa vào những trạng thái đã thấy.
-	Như trong bài toán tự động chơi game thì các ``frame'' hình liên tiếp thường rất giống nhau và các trạng thái này thường cũng có giá trị tương đương nhau.
+	Như trong bài toán tự động chơi game thì các frame hình liên tiếp thường rất giống nhau và các trạng thái này thường cũng có giá trị tương đương nhau.
 	Vì vậy, khi học xong cách chơi một game nào đó, hệ thống vẫn hoạt động tốt trong quá trình kiểm thử khi gặp những tình huống game chưa từng thấy trong lúc huấn luyện.
 	
 	Các thuật toán học tăng cường ở chương 2 đều lưu hàm giá trị dưới dạng bảng (lookup table).
@@ -398,13 +398,13 @@ Chương này trình bày hai phần:
 	
 	Với cách thiết kế mạng nơ-ron thông thường, ta cần cung cấp trạng thái $S$ và hành động $A$ để tính được giá trị xấp xỉ $\hat{q}(S, A;\theta)$.
 	Cách thiết kế này không phù hợp cho thuật toán ``Q-learning'': ta cần phải lan truyền tiến nhiều lần để tính giá trị $\max_{a}\hat{q}(S, a;\theta)$ trong công thức (\ref{eq_SGD_Q_learning_Update}).
-	Để khắc phục nhược điểm này, ta chỉnh lại cấu trúc mạng để ``input'' là trạng thái $S$ và ``output'' là giá trị của mọi hành động tại trạng thái này: $\hat{q}(S, a;\theta), \forall a$.
-	Với cấu trúc này, ta chỉ việc lan truyền tiến một lần và lấy $\max$ giá trị ``output'' của mạng nơ-ron.
-	Như vậy, số nơ-ron của tầng ``output'' là số lượng hành động có thể có.
+	Để khắc phục nhược điểm này, ta chỉnh lại cấu trúc mạng để input là trạng thái $S$ và output là giá trị của mọi hành động tại trạng thái này: $\hat{q}(S, a;\theta), \forall a$.
+	Với cấu trúc này, ta chỉ việc lan truyền tiến một lần và lấy $\max$ giá trị output của mạng nơ-ron.
+	Như vậy, số nơ-ron của tầng output là số lượng hành động có thể có.
 	
 	Để tổng hợp các đặc trưng được học từ các tầng tích chập, các tầng ẩn cuối cùng của mạng nơ-ron sẽ là các tầng ``fully-connected''.
 	Các tầng tích chập có chức năng tìm kiếm các đặc trưng cục bộ cần thiết còn tầng ``fully-connected'' có nhiệm vụ tổng hợp các đặc trưng đó trên \textbf{toàn ảnh}.
-	Tầng ``output'' cũng là một tầng ``fully-connected'' với số nơ-ron là số hành động có thể có.
+	Tầng output cũng là một tầng ``fully-connected'' với số nơ-ron là số hành động có thể có.
 	Lưu ý là do tầng này trả về kết quả là giá trị của từng hành động nên ta không áp dụng hàm kích hoạt tại đây.
 	Hình \ref{fig_dqn_nature} mô tả cấu trúc mạng ``Deep Q-Network''.
 	\begin{figure}
@@ -413,8 +413,8 @@ Chương này trình bày hai phần:
 		\caption[Cấu trúc mạng ``Deep Q-Network'']{Hình mô tả cấu trúc mạng ``Deep Q-Network'' \cite{mnihdqn2015}.
 		Các tầng ẩn đầu tiên là tầng tích chập với hàm kích hoạt ``rectified linear''.
 		Tầng ẩn tiếp theo là tầng ``fully-connected'' có nhiệm vụ tổng hợp đặc trưng trên toàn ảnh của tầng trước.
-		Tầng ``output'' cũng là tầng ``fully-connected'' trả về kết quả là giá trị của từng hành động ứng với trạng thái đầu vào.
-		Tầng ``output'' không có hàm kích hoạt.}
+		Tầng output cũng là tầng ``fully-connected'' trả về kết quả là giá trị của từng hành động ứng với trạng thái đầu vào.
+		Tầng output không có hàm kích hoạt.}
 		\label{fig_dqn_nature}
 	\end{figure}
 
@@ -447,7 +447,7 @@ Chương này trình bày hai phần:
 	Khi chính sách thay đổi thì hàm $q_{\pi}$ mục tiêu cũng thay đổi theo.
 	Thực tế cho thấy, việc thay đổi nhỏ của bộ trọng số sẽ gây ra thay đổi lớn của chính sách \cite{mnih2013playing}.
 	Để thấy được điều này, ta có thể thay đổi trọng số ở những tầng đầu tiên của mạng nơ-ron.
-	Khi đó, trọng số này sẽ ảnh hưởng dây chuyền đến những tầng sau làm cho ``output'' của mạng nơ-ron bị thay đổi nhiều.
+	Khi đó, trọng số này sẽ ảnh hưởng dây chuyền đến những tầng sau làm cho output của mạng nơ-ron bị thay đổi nhiều.
 	Do vậy, mỗi khi cập nhật bộ trọng số, hàm mục tiêu $q_{\pi}$ tại một bộ trạng thái $s$ và hành động $a$ nhiều khả năng sẽ thay đổi lớn.
 	Do giá trị mục tiêu của việc xấp xỉ hàm thay đổi quá nhiều và liên tục, mạng nơ-ron có thể không xấp xỉ được hàm giá trị như ta mong muốn.
 	
