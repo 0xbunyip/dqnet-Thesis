@@ -23,7 +23,7 @@
 \usepackage{stmaryrd}
 \usepackage[version=0.96]{pgf}
 \usepackage{tikz}
-\usetikzlibrary{arrows,shapes,snakes,automata,backgrounds,petri,positioning, angles, calc}
+%\usetikzlibrary{arrows,shapes,snakes,automata,backgrounds,petri,positioning, angles, calc}
 
 \usepackage[hyphens]{url}
 %\usepackage[hidelinks]{hyperref}
@@ -107,24 +107,25 @@
 	\tableofcontents
 	
 	\newpage
+	\phantomsection
 	\renewcommand\listfigurename{\centerline{DANH MỤC HÌNH ẢNH}}
 	\addcontentsline{toc}{chapter}{DANH MỤC HÌNH ẢNH}
 	\listoffigures
-	
-	
+		
 	\newpage
+	\phantomsection
 	\renewcommand\listtablename{\centerline{DANH MỤC BẢNG}}
 	\addcontentsline{toc}{chapter}{DANH MỤC BẢNG}
 	\listoftables
 	
-	
 	%\input{Abstract}
 	\newpage
+	\phantomsection
 	\pagenumbering{arabic}
 	
 	\include{Chapter1/chapter1}
-	\include{Chapter2/chapter2}
-	%\include{Chapter3/chapter3}
+	%\include{Chapter2/chapter2}
+	\include{Chapter3/chapter3}
 	\include{Chapter4/chapter4}
 	\include{Chapter5/chapter5}
 

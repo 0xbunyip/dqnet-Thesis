@@ -1,1 +1,19 @@
 \chapter{Kết luận và hướng phát triển}
+\section{Kết luận}
+\section{Hướng phát triển}
+	Các kết quả thực nghiệm cho thấy hệ thống có khả năng chơi và đạt được điểm số cao nhưng việc thực nghiệm chỉ mới trên ba game khác nhau; số lượng game thực nghiệm còn nhỏ nên vẫn chưa thể rút ra kết luận chặt chẽ cho hướng tiếp cận này.
+	Lý do nhóm không thực nghiệm trên nhiều game hơn là vì thời gian huấn luyện quá lâu (hơn hai ngày huấn luyện liên tục cho mỗi game và mỗi thuật toán).
+	Đây cũng là một nhược điểm lớn của hướng tiếp cận kết hợp học tăng cường với học sâu.
+	Những hướng phát triển tiếp theo của đề tài có thể tập trung vào việc tăng tốc độ huấn luyện của mô hình.
+	Cụ thể hơn, nhóm xác định có hai hướng chính để cải tiến hướng tiếp cận này:
+	\begin{itemize}
+		\item \textbf{Tăng tốc việc huấn luyện mạng nơ-ron}: sử dụng các kỹ thuật tiên tiến của học sâu (như ``Weight normalization'', ``Dropout'', ...) để mạng nơ-ron xấp xỉ hàm đích nhanh hơn và chính xác hơn.
+		Thực tế cho thấy, phần lớn thời gian huấn luyện là để cập nhật trọng số của mạng nơ-ron. 
+		Khi mạng nơ-ron xấp xỉ hàm càng nhanh thì tốc độ chung của toàn mô hình sẽ được cải thiện.
+		Còn nếu mạng nơ-ron xấp xỉ hàm chính xác hơn thì ta có thể giảm số ``frame'' ảnh huấn luyện.
+		Khi đó, ta có thể thử nhiều game hơn trong cùng một khoảng thời gian.
+		\item \textbf{Cải thiện thuật toán học tăng cường}: thử nghiệm các thuật toán khác của học tăng cường (như thuật toán ``Expected Sarsa'', ``Policy Gradient'', ...) để tìm chính sách tốt hơn.
+		Các thuật toán khác nhau của học tăng cường có thể tìm được những chính sách khác nhau và phù hợp cho bài toán tự động chơi game hơn.
+		Việc thử nghiệm các thuật toán khác cho bài toán này cũng là một hướng cải tiến hứa hẹn.
+	\end{itemize}
+	

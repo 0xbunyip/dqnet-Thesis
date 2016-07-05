@@ -16,9 +16,6 @@
 %\end{itemize}
 %-----------------------------------------------------------------------------
 
-%\DeclareMathOperator*{\argmax}{arg\,max}
-\newcommand{\argmax}{\operatornamewithlimits{arg\,max}}
-
 \chapter{Kết hợp học tăng cường với học sâu}
 \ifpdf
 \graphicspath{{Chapter3/Chapter3Figs/PNG/}{Chapter3/Chapter3Figs/PDF/}{Chapter3/Chapter3Figs/}}
@@ -27,51 +24,51 @@
 \fi
 \begin{quote}
 \textit{Những thành công gần đây của học sâu (Deep learning) trong các bài toán như xử lý ngôn ngữ tự nhiên, nhận diện đối tượng trong ảnh... đặt ra vấn đề: liệu các kỹ thuật trong học sâu có thể áp dụng vào học tăng cường?
-Để trả lời câu hỏi đó, chương này trình bày về hướng tiếp cận kết hợp học sâu với học tăng cường để áp dụng vào bài toán ``Tự động chơi game''. 
-Hướng tiếp cận mới mẻ này của lĩnh vực học tăng cường này mang tên ``Học tăng cường sâu'' (Deep reinforcement learning)\\
+Để trả lời câu hỏi đó, chương này trình bày về hướng tiếp cận kết hợp học tăng cường với học sâu để áp dụng vào bài toán tự động chơi game. 
+Hướng tiếp cận này giúp cho các thuật toán học tăng cường được trình bày trong chương 2 có thể áp dụng vào những bài toán thực tế với số lượng trạng thái rất lớn.
 Chương này trình bày hai phần:
 \begin{itemize}
-	\item Nguyên nhân cần sử dụng học sâu và kiến thức cơ bản về học sâu
-	\item Áp dụng học tăng cường sâu vào bài toán ``Tự động chơi game''
+	\item Các kiến thức cơ bản của học sâu và cách kết hợp học tăng cường với học sâu.
+	\item Áp dụng hướng tiếp cận này vào bài toán tự động chơi game.
 \end{itemize}}
 \end{quote}
 
 %-----------------------------------------------------------------------------
 %-----------------------------------------------------------------------------
-\section{Học tăng cường kết hợp với học sâu}
+\section{Kết hợp học tăng cường với học sâu}
 
 %-----------------------------------------------------------------------------
 \subsection{Học sâu}
 \subsubsection*{Lý do cần áp dụng học sâu}
 	Những thuật toán học tăng cường được trình bày trong chương trước đều tìm chính sách tối ưu dựa vào hàm giá trị. 
 	Việc tính \textbf{đúng} và \textbf{nhanh} hàm giá trị ảnh hưởng rất nhiều đến kết quả của bài toán. 
-	Các thuật toán học tăng cường cổ điển như ``Monte Carlo'' (MC) hay ``Temporal-Difference'' (TD) đều đã được chính minh là luôn hội tụ trong những điều kiện nhất định \cite{sutton1998introduction}. 
+	Các thuật toán học tăng cường cổ điển như ``Monte Carlo'' (MC) hay ``Temporal-Difference'' (TD) đều đã được chứng minh là luôn hội tụ trong những điều kiện nhất định \cite{sutton1998introduction}. 
 	Ngoài ra, khi áp dụng vào các bài toán kinh điển của học tăng cường thì các thuật toán này đều hội tụ khá nhanh.
 	
 	Tuy nhiên, với những bài toán thực tế với số trạng thái rất lớn thì việc lưu véc-tơ hàm giá trị trạng thái $v_{\pi}$ (hoặc ma trận hàm giá trị hành động $q_{\pi}$) là việc không thể. 
-	Ví dụ như ``frame hình'' của bài toán tự động chơi game có kích thước $210\times160\times3=100800$ điểm ảnh; mỗi điểm ảnh có giá trị trong khoảng $[0, 127]$ nên số trạng thái có thể có lên đến $128^{100800}$.
+	Ví dụ như ``frame'' hình của bài toán tự động chơi game có kích thước $210\times160\times3=100800$ điểm ảnh; mỗi điểm ảnh có giá trị trong khoảng $[0, 127]$ nên số trạng thái có thể có lên đến $128^{100800}$.
 	Vì vậy, việc lưu trữ hàm giá trị dưới dạng bảng là không khả thi về mặt bộ nhớ.
-	Còn về mặt tốc độ tính toán thì các thuật toán học tăng cường trên đều tính hàm giá trị \textit{rời rạc} cho từng trạng thái.
+	Còn về mặt tốc độ tính toán thì các thuật toán học tăng cường trên đều tính hàm giá trị \textbf{rời rạc} cho từng trạng thái.
 	Với số trạng thái quá lớn như trên thì ta không thể duyệt lần lượt từng trạng thái để tính được.
 	
 	Những lý do trên dẫn đến việc sử dụng một phương pháp xấp xỉ hàm là bắt buộc cho các bài toán học tăng cường với số trạng thái lớn.
 	Một trong những tiếp cận rất tự nhiên đó là sử dụng các mô hình học có giám sát như là một phương pháp xấp xỉ hàm giá trị.
-	Đặc biệt, với những đột phá gần đây của học sâu trong lĩnh vực xử lý ảnh, video... thì việc áp dụng các mô hình phổ biến của học sâu vào bài toán tự động chơi game là đầy hứa hẹn.
+	Đặc biệt, với những đột phá gần đây của học sâu trong lĩnh vực xử lý ảnh, video... \cite{lecun2015deep} thì việc áp dụng các mô hình phổ biến của học sâu vào bài toán tự động chơi game là đầy hứa hẹn.
 	
 %-----------------------------------------------------------------------------
 \subsubsection*{Giới thiệu học sâu}
-	Các mô hình truyền thống trong lĩnh vực máy học như ``Linear regression'', ``Bayesian learning''... thông thường đều hoạt động trên các đặc trưng được \textit{rút trích một cách thủ công} (hand-designed features).
-	Với dữ liệu thô thu thập được từ thực tế, các nhà khoa học xây dựng các phương pháp rút trích ra những ``thông tin hữu ích'' (thường được gọi là đặc trưng) để cung cấp cho các mô hình máy học.
+	Các mô hình truyền thống trong lĩnh vực máy học như ``Linear regression'', ``Bayesian learning''... thông thường đều hoạt động trên các biểu diễn dữ liệu (thường được gọi là đặc trưng) được \textbf{rút trích một cách thủ công} (hand-designed features).
+	Với dữ liệu thô thu thập được từ thực tế, các nhà khoa học xây dựng các phương pháp rút trích ra những ``thông tin hữu ích'' để cung cấp cho các mô hình máy học.
 	Kết quả nhận được từ các mô hình này phụ thuộc rất lớn vào cách biểu diễn dữ liệu.
 	Ví dụ như trong bài toán nhận diện người nói từ một đoạn âm thanh, các đặc trưng có thể bao gồm: độ lớn âm thanh, tần số trung bình của đoạn âm,...
-	Nếu các đặc trưng này không đủ ``mạnh'' (như có hai người nói đoạn âm thanh nhưng lại có chung độ lớn, tần số...) thì các mô hình học sẽ không thể phân biệt.
+	Nếu các đặc trưng này không đủ ``tốt'' (như có hai người nói đoạn âm thanh nhưng lại có chung độ lớn, tần số...) thì các mô hình học sẽ không thể phân biệt.
 		
 	Để giải quyết vấn đề thiết kế đặc trưng, các mô hình máy học thuộc loại ``Học biểu diễn'' \textit{(Representation learning)} ra đời.
 	Các mô hình này có khả năng tự động học luôn các đặc trưng cần thiết cho quá trình phân tích dữ liệu.
 	Nhờ vậy, các mô hình này có thể áp dụng được dễ dàng hơn vào các bài toán thực tế mà không cần con người phải can thiệp.
 	Tuy nhiên, các đặc trưng cần thiết lại có thể rất phức tạp.
 	Việc học ra các đặc trưng này có thể khó ngang với việc giải bài toán gốc.
-	Ví dụ như trong bài toán nhận diện người nói trên, ta có thể sử dụng thông tin về giọng địa phương của người nói (accent).
+	Ví dụ như trong bài toán nhận diện người nói trên, ta có thể sử dụng thông tin về giọng địa phương (accent) của người nói.
 	Đặc trưng này rất trừu tượng, không dễ phân tích bằng máy tính mặc dù con người có thể nhận biết một cách khá dễ dàng.
 	Vì vậy, nếu các đặc trưng cần thiết quá khó để học thì các mô hình máy học thuộc loại ``Học biểu diễn'' cũng không thể cho kết quả tốt.
 
@@ -80,7 +77,7 @@ Chương này trình bày hai phần:
 	Học sâu được thiết kế để học ra các đặc trưng có quan hệ với nhau theo nhiều tầng (layer).
 	Các đặc trưng ở tầng phía sau được xây dựng dựa vào các đặc trưng ở tầng phía trước.
 	Các tầng đầu tiên bao gồm những đặc trưng đơn giản và các tầng tiếp theo ngày càng trừu tượng, ngày càng phức tạp hơn.
-	Mỗi tầng chỉ cần học cách xây dựng đặc trưng từ những đặc trưng ở tầng phía trước (đã có sẵn độ trừu tượng nhất định) thay vì học từ dữ liệu thô ban đầu; điều này giúp cho học sâu có khả năng học được những đặc trưng rất phức tạp.
+	Mỗi tầng chỉ cần học cách xây dựng đặc trưng từ những đặc trưng ở tầng phía trước (đã có sẵn độ trừu tượng nhất định) thay vì học từ dữ liệu thô ban đầu; điều này giúp cho học sâu có khả năng học được những đặc trưng có tính trừu tượng cao.
 	
 	\begin{figure}
 		\centering
@@ -97,46 +94,48 @@ Chương này trình bày hai phần:
 		Bằng cách học đặc trưng ngày càng trừu tượng hơn, các mô hình học sâu có khả năng tự động học được các đặc trưng từ đơn giản đến phức tạp; tất cả đều nhằm hỗ trợ cho quá trình phân lớp dữ liệu (hình được chỉnh sửa từ \cite{Goodfellow-et-al-2016-Book})}
 	\end{figure}
 	
-	Một trong những mô hình học sâu phổ biến nhất và cũng cho kết quả rất tốt với dữ liệu ảnh đó là mạng nơ-ron tích chập (Convolutional Networks).
+	Một trong những mô hình học sâu phổ biến nhất và cũng cho kết quả rất tốt với dữ liệu ảnh \cite{lecun2015deep} đó là mạng nơ-ron tích chập (Convolutional Neural Networks).
 	Với bài toán tự động chơi game, dữ liệu hệ thống nhận được từ môi trường là ảnh RGB.
 	Chính vì vậy, mạng nơ-ron tích chập là một mô hình rất phù hợp để kết hợp với các thuật toán học tăng cường.
 	
 %-----------------------------------------------------------------------------
 \subsection{Mạng nơ-ron tích chập}
-	Mạng nơ-ron tích chập (Convolutional Networks - CNN) là một mô hình học sâu được áp dụng rộng rãi trong các bài toán liên quan đến ảnh, video hoặc âm thanh...
+	Mạng nơ-ron tích chập (Convolutional Neural Networks - CNN) là một mô hình học sâu được áp dụng rộng rãi trong các bài toán liên quan đến ảnh, video hoặc âm thanh... \cite{lecun2015deep}.
 	CNN được thiết kế để tận dụng thông tin về không gian (spatial structures) của các loại dữ liệu nêu trên.
-	Ví dụ như trong bài toán nhận diện mặt người trong ảnh, thông tin về vị trí của mắt, mũi, miệng... là rất quan trọng.
+	Ví dụ như trong bài toán nhận diện mặt người trong ảnh, thông tin về vị trí của mắt, mũi, miệng,... là rất quan trọng.
 	Nếu ta coi các điểm ảnh đều có ý nghĩa tương tự nhau thì ta đã bỏ quên thông tin về vị trí của những đặc trưng này.
-	Ví dụ như khi ta tìm được hai mắt và miệng trong bức ảnh, ta có thể xác định vị trí tương đối của mũi là nằm ở giữa hai đặc trưng này.
+	Trong khi đó, thông tin về vị trí tương đối của mắt, mũi, miệng... rõ ràng là rất quan trọng trong việc nhận diện mặt người.
 	Trong ví dụ trên, nếu ta áp dụng các mô hình không quan tâm đến loại dữ liệu (coi từng thuộc tính dữ liệu đầu vào là độc lập) thì ta sẽ không tận dụng được thông tin về không gian trong đó.
 	
 	Để tận dụng thông tin về không gian trong dữ liệu ảnh, CNN được thiết kế để học các đặc trưng trên một vùng nhỏ của ảnh.
-	Các đặc trưng này được lưu trữ dưới dạng những bộ lọc (filter) thường có kích thước nhỏ hơn nhiều so với kích thước ảnh gốc.
+	Các đặc trưng này được lưu trữ dưới dạng những \textbf{bộ lọc} (filter) thường có \textbf{kích thước nh}ỏ hơn nhiều so với kích thước ảnh gốc.
 	Các đặc trưng sau khi được học được áp dụng trên toàn bộ ảnh gốc để kiểm tra xem vị trí nào của ảnh xuất hiện đặc trưng này.
 	CNN thực hiện phép kiểm tra này bằng cách ``trượt'' các bộ lọc này trên toàn bộ ảnh gốc.
 	Phép ``trượt'' được thực hiện lần lượt từ trái qua phải và từ trên xuống dưới.
 	Một cách tổng quát, phép ``trượt'' này có thể di chuyển không đồng đều theo hai chiều: ta có thể chỉ di chuyển qua phải một điểm ảnh nhưng lại di chuyển xuống dưới hai điểm ảnh.
 	Tại mỗi vị trí, bộ lọc có nhiệm vụ kiểm tra thử đặc trưng được học có xuất hiện (hoặc mức độ rõ ràng của đặc trưng - đặc trưng xuất hiện nhiều hay ít) tại vị trí này không.
-	Kết quả của phép kiểm tra này được lưu trữ lại dưới dạng một ``bức ảnh'' nhỏ hơn; giá trị mỗi ``điểm ảnh'' lúc này chính là kết quả của phép kiểm tra đặc trưng của bộ lọc.
+	Kết quả của phép kiểm tra này được lưu trữ lại dưới dạng một ``bức ảnh'' kết quả; giá trị mỗi ``điểm ảnh'' lúc này chính là kết quả của phép kiểm tra đặc trưng của bộ lọc.
 	Do phép ``trượt'' được thực hiện theo thứ tự được nêu ở trên, các ``điểm ảnh'' kết quả vẫn mang thông tin tương đối về vị trí: ``điểm ảnh'' bên trái ứng với kết quả của vùng nằm bên trái trong ảnh gốc và tương tự với điểm ảnh bên phải.
 	\begin{figure}
 		\centering
-		\includegraphics[width=\textwidth]{cnn_first_filter}
+		\includegraphics[width=.8\textwidth]{cnn_first_filter}
 		\caption[Phép tính đặc trưng của CNN]{Hình mô tả phép ``kiểm tra'' đặc trưng của bộ lọc có kích thước $5\times5$ tại vị trí đầu tiên (góc trái trên) của ảnh đầu vào.
 		Kết quả của phép ``kiểm tra'' này được lưu lại thành một ``điểm ảnh'' trong ``bức ảnh kết quả''.
 		Lưu ý ảnh đầu vào trong ví dụ ở đây có kích thước $28\times28$.
-		Do bộ lọc chỉ kiểm tra những vùng nằm hoàn toàn trong ảnh nên kích thước của ``bức ảnh'' đầu ra là $24\times24$}
+		Do bộ lọc chỉ kiểm tra những vùng nằm hoàn toàn trong ảnh nên kích thước của ``bức ảnh'' đầu ra là $24\times24$.}
 		\label{fig_cnn_filter}
 		
-		\includegraphics[width=\textwidth]{cnn_second_filter}
+		\includegraphics[width=.8\textwidth]{cnn_second_filter}
 		\caption[Phép dịch chuyển bộ lọc của CNN]{Bộ lọc được trượt sang một điểm ảnh về phía bên phải để kiểm tra vùng cục bộ $5\times5$ bên cạnh.
 		Kết quả của phép ``kiểm tra'' này được lưu lại thành một ``điểm ảnh'' bên phải của kết quả của vùng cục bộ trước đó.
 		Thực hiện lần lượt quá trình ``trượt'' này đến hết ảnh ta sẽ có ``bức ảnh kết quả'' cuối cùng.
-		``Bức ảnh kết quả'' này mang thông tin về một đặc trưng cụ thể tại những vùng cục bộ liên tiếp nhau của ảnh gốc.}
+		``Bức ảnh kết quả'' này mang thông tin về một đặc trưng cụ thể tại những vùng cục bộ liên tiếp nhau trên ảnh gốc.}
 		\label{fig_cnn_second_filter}	
 	\end{figure}
 	
-	Phép ``kiểm tra'' đặc trưng của bộ lọc được thực hiện thông qua phép toán \textbf{tích chập} (convolution):
+	Phép ``kiểm tra'' đặc trưng của bộ lọc được thực hiện thông qua phép toán \textbf{tích chập} (convolution).
+	Kết quả của phép tích chập được cộng với giá trị ``bias'' và đưa qua một hàm kích hoạt.
+	Toàn bộ quá trình này có thể được biểu diễn thành công thức:
 	\begin{equation}
 		a_{i,j} = \sigma \left( b + \sum_{u = 0}^{height} \sum_{v = 0}^{width} w_{u, v} x_{i + u, j + v} \right)
 	\end{equation}
@@ -144,20 +143,20 @@ Chương này trình bày hai phần:
 	\begin{itemize}
 		\item $a_{i,j}$ là kết quả của phép kiểm tra tại vùng có góc trái trên là $i, j$ trong ảnh gốc.
 		\item $b$ là số thực gọi là ``bias'' của bộ lọc.
-		\item $width, height$ lần lượt là chiều rộng và chiều cao của bộ lọc ($5\times5$ trong hình (\ref{fig_cnn_filter})).
+		\item $width, height$ lần lượt là chiều rộng và chiều cao của bộ lọc ($5\times5$ trong hình \ref{fig_cnn_filter}).
 		\item $w$ là ma trận trọng số có kích thước $height \times width$ của bộ lọc. 
 		$w_{u, v}$ là thành phần dòng $u$ cột $v$ của ma trận.
 		\item $x_{i + u, j + v}$ là giá trị điểm ảnh đầu vào tại vị trí dòng $i + u$ và cột $j + v$.
 		\item $\sigma$ là một hàm phi tuyến được gọi là hàm kích hoạt (activation function).
 	\end{itemize}
 	Phép toán tích chập này chỉ đơn giản là một tổng gồm các tích của trọng số và giá trị điểm ảnh.
-	Hàm kích hoạt sau đó nhận giá trị tổng của phép tích chập để thực hiện phép biến đổi phi tuyến tính; nhờ có hàm kích hoạt, bộ lọc có thể học được những đặc trưng phi tuyến tính.
+	Hàm kích hoạt sau đó nhận kết quả của phép tích chập để thực hiện phép biến đổi phi tuyến tính; nhờ có hàm kích hoạt, bộ lọc có thể học được những đặc trưng phi tuyến tính.
 	Một trong những hàm phi tuyến hay được áp dụng đó là hàm ``Rectified linear'': $\sigma(x)=\max(0, x)$.
 	Công thức tích chập trên chứa hai thành phần cần được ``học'' đó là ``bias'' $b$ và ma trận trọng số $w$.
 	Hai thành phần này lưu trữ thông tin về đặc trưng mà bộ lọc học được.
-	Một trong những đặc điểm quan trọng nhất là việc ma trận trọng số $w$ và ``bias'' $b$ được sử dụng chung cho việc ``kiểm tra'' đặc trưng tại mọi vị trí của ảnh gốc.
+	Một trong những đặc điểm quan trọng nhất là việc ma trận trọng số $w$ và ``bias'' $b$ được sử dụng chung cho việc ``kiểm tra'' đặc trưng tại mọi vị trí của ảnh gốc (hình \ref{fig_cnn_second_filter}).
 	Nhờ việc sử dụng chung ma trận trọng số và ``bias'' này, số lượng trọng số phải học của CNN được giảm đi rất nhiều.
-	Cụ thể hơn, với ảnh gốc kích thước $28\times28 = 764$ như trong hình (\ref{fig_cnn_filter}), nếu áp dụng mạng nơ-ron truyền thẳng thông thường để học đặc trưng từ toàn bộ ảnh, số lượng trọng số sẽ lên đến $764$ cho một đặc trưng.
+	Cụ thể hơn, với ảnh gốc kích thước $28\times28 = 784$ như trong hình \ref{fig_cnn_filter}, nếu áp dụng mạng nơ-ron truyền thẳng thông thường để học đặc trưng từ toàn bộ ảnh, số lượng trọng số sẽ lên đến $784$ cho một đặc trưng.
 	Trong khi đó, CNN chỉ gồm khoảng $5\times5=25$ trọng số cần học.
 	
 	Một bộ lọc của CNN chỉ học được một đặc trưng cụ thể.
@@ -166,10 +165,10 @@ Chương này trình bày hai phần:
 	Để học được nhiều đặc trưng khác nhau với CNN, ta chỉ việc thiết kế thêm nhiều bộ lọc học đặc trưng song song với nhau từ ảnh gốc.
 	Với mỗi bộ lọc, ta cần học một ma trận trọng số và giá trị ``bias'' khác nhau.
 	Ta gọi tập hợp các bộ lọc này là một tầng tích chập (convolution layer).
-	Hình (\ref{fig_cnn_layer}) mô tả tầng tích chập với ba bộ lọc.
+	Hình \ref{fig_cnn_layer} mô tả tầng tích chập với ba bộ lọc.
 	\begin{figure}
 		\centering
-		\includegraphics[width=\textwidth]{cnn_layer}
+		\includegraphics[width=.8\textwidth]{cnn_layer}
 		\caption[Tầng tích chập với ba bộ lọc]{Hình mô tả tầng tích chập với ba bộ lọc học đặc trưng từ ảnh đầu vào.
 		Mỗi bộ lọc lúc này học một bộ trọng số $w$ và giá trị ``bias'' $b$ khác nhau.
 		Do các bộ lọc có cùng kích thước ($5\times5$) nên ``bức hình'' kết quả cũng có cùng kích thước.
@@ -179,49 +178,49 @@ Chương này trình bày hai phần:
 	\end{figure}
 	
 	CNN là một mô hình học sâu.
-	Vì vậy để học được những đặc trưng có tính trừu tượng cao, CNN áp dụng phương pháp tổng hợp đặc trưng phức tạp từ những đặc trưng đơn giản hơn.
+	Vì vậy để học được những đặc trưng có tính trừu tượng cao, CNN áp dụng phương pháp tổng hợp đặc trưng trừu tượng từ những đặc trưng đơn giản hơn.
 	Để tổng hợp đặc trưng, ta chỉ việc coi ``bức hình kết quả'' như là bức ảnh đầu vào và thêm tầng tích chập mới học đặc trưng từ bức hình này.
 	Do kết quả của tầng tích chập trước mang thông tin về đặc trưng được học bởi các bộ lọc, tầng tích chập tiếp theo thực hiện việc học từ các đặc trưng đã học ở tầng trước.
-	Nhờ vậy, việc thêm vào các tầng tích chập tiếp theo sẽ giúp mô hình học được những đặc trưng ngày càng phức tạp hơn.
+	Nhờ vậy, việc thêm vào các tầng tích chập tiếp theo sẽ giúp mô hình học được những đặc trưng ngày càng trừu tượng hơn.
 	
 	Phần tiếp theo sẽ trình bày cách sử dụng CNN như là một công cụ xấp xỉ hàm hỗ trợ cho các thuật toán học tăng cường.
 	Do có khả năng học đặc trưng tự động, ta có thể thiết kế một công cụ xấp xỉ hàm ``đa năng'': vừa học đặc trưng từ hình ảnh, vừa xấp xỉ hàm mong muốn từ những hình ảnh đó.
 
 %-----------------------------------------------------------------------------
 \subsection{Sử dụng mạng nơ-ron để xấp xỉ hàm}
-	Việc sử dụng mạng nơ-ron tích chập (hoặc mạng nơ-ron nói chung) để xấp xỉ hàm giá trị mang lại ba lợi ích quan trọng:
+	Việc sử dụng mạng nơ-ron để xấp xỉ hàm giá trị mang lại ba lợi ích quan trọng:
 	\begin{itemize}
 		\item Mạng nơ-ron có khả năng học được những đặc trưng phức tạp từ dữ liệu thô.
 		\item Mạng nơ-ron có thể xấp xỉ hàm giá trị phức tạp.
-		\item Mạng nơ-ron có thể tổng quát hoá từ trạng thái đã biết sang trạng thái chưa biết.
+		\item Mạng nơ-ron có thể tổng quát hoá từ trạng thái đã gặp sang trạng thái chưa gặp.
 	\end{itemize}
 	
-	Mạng nơ-ron là một mô hình học sâu nên có thể học được những đặc trưng phức tạp từ dữ liệu thô như đã nói ở phần trên.
-	Cụ thể hơn trong bài toán tự động chơi game, ta có thể đưa dữ liệu đầu vào là các ``frame hình'' RGB thẳng vào ``input'' của mạng nơ-ron để tính ra giá trị tương ứng.
-	Nhờ vậy, ta không cần phải thiết kế các đặc trưng bằng tay để biễu diễn cho từng trạng thái của game.
-	Ngoài ra, do qua trình học đặc trưng là hoàn toàn tự động, thuật toán học tăng cường lúc này có thể áp dụng cho bất kỳ game nào mà không cần phải thay đổi cách rút trích đặc trưng.
+	Mạng nơ-ron là một mô hình học sâu nên có thể học được những đặc trưng trừu tượng từ dữ liệu thô như đã nói ở phần trên.
+	Cụ thể hơn trong bài toán tự động chơi game, ta có thể đưa dữ liệu đầu vào là các ``frame'' hình RGB thẳng vào ``input'' của mạng nơ-ron để tính ra giá trị tương ứng.
+	Nhờ vậy, ta không cần phải thiết kế các đặc trưng bằng tay để biễu diễn lại từng trạng thái của game.
+	Ngoài ra, do quá trình học đặc trưng là hoàn toàn tự động, thuật toán học tăng cường lúc này \textbf{có thể áp dụng cho bất kỳ game} nào mà không cần phải thay đổi cách rút trích đặc trưng.
 	Với một mô hình cố định lúc này, ta có thể học chơi được nhiều game.
 	Đây cũng chính là mục đích của bài toán tự động chơi game: xây dựng mô hình có khả năng tự động học chơi \textit{tốt} nhiều game chứ không chỉ chơi \textit{``hoàn hảo''} một game.
 	
 	Với bài toán tự động chơi game, giá trị của một trạng thái bất kỳ rất khó xác định do một màn game thường rất dài.
-	Vì thế, hàm giá trị của bài toán này là một hàm phi tuyến phức tạp và không liên tục.
+	Vì thế, \textbf{hàm giá trị của bài toán này là một hàm phi tuyến phức tạp} và không liên tục.
 	Công cụ xấp xỉ hàm giá trị phải có khả năng xấp xỉ những hàm phức tạp như vậy thì thuật toán học tăng cường mới đạt được hiệu quả.
 	Với cách nhìn nhận mạng nơ-ron như là một công cụ xấp xỉ hàm, ta có thể thấy mạng nơ-ron rất linh hoạt với khả năng xấp xỉ hàm đích bất kỳ.
 	
-	Một tính chất quan trọng khác của mạng nơ-ron chính là khả năng tổng quát hoá (generalization) từ trạng thái đã biết sang trạng thái chưa biết.
-	Nhờ đặc điểm này mà quá trình học tăng cường được tăng tốc đáng kể.
-	Thay vì phải duyệt qua từng trạng thái (thậm chí phải duyệt nhiều lần) để tính hàm giá trị tại đó, mạng nơ-ron có khả năng ``dự đoán'' giá trị của một trạng thái chưa từng thấy dựa vào những trạng thái đã thấy.
-	Như trong bài toán tự động chơi game thì các ``frame hình'' liên tiếp thường rất giống nhau và các trạng thái này thường cũng có giá trị tương đương nhau.
-	Vì vậy, khi học xong cách chơi một game nào đó, thuật toán học tăng cường vẫn hoạt động tốt trong quá trình kiểm thử khi gặp những tình huống game chưa từng thấy trong lúc huấn luyện.
+	Một tính chất quan trọng khác của mạng nơ-ron chính là khả năng tổng quát hoá (generalization) từ trạng thái đã gặp sang trạng thái chưa gặp \cite{mnihdqn2015}.
+	Nhờ đặc điểm này mà quá trình học được tăng tốc đáng kể.
+	Thay vì phải duyệt qua từng trạng thái (thậm chí phải duyệt nhiều lần) để tính hàm giá trị tại đó, mạng nơ-ron có khả năng \textbf{``dự đoán'' giá trị} của một trạng thái chưa từng thấy dựa vào những trạng thái đã thấy.
+	Như trong bài toán tự động chơi game thì các ``frame'' hình liên tiếp thường rất giống nhau và các trạng thái này thường cũng có giá trị tương đương nhau.
+	Vì vậy, khi học xong cách chơi một game nào đó, hệ thống vẫn hoạt động tốt trong quá trình kiểm thử khi gặp những tình huống game chưa từng thấy trong lúc huấn luyện.
 	
 	Các thuật toán học tăng cường ở chương 2 đều lưu hàm giá trị dưới dạng bảng (lookup table).
 	Để sử dụng mạng nơ-ron như một công cụ xấp xỉ hàm, lúc này ta coi hàm giá trị là một hàm có tham số (parameterized function) và đi tìm các tham số này:
 	\begin{align}
-		\hat{v}(s;\theta) &\approx v_{\pi}(s)\\
-		\hat{q}(s,a;\theta) &\approx q_{\pi}(s,a)
-		\label{eq_DefVhatQhat}
+		\hat{v}(s;\theta) &\approx v_{\pi}(s) \label{eq_DefVhat}\\
+		\hat{q}(s,a;\theta) &\approx q_{\pi}(s,a) \label{eq_DefQhat}
 	\end{align}
 	$\theta$ là bộ trọng số của mạng nơ-ron mà ta cần học.
+	Công thức (\ref{eq_DefVhat}) được dùng khi ta muốn xấp xỉ hàm giá trị trạng thái và công thức (\ref{eq_DefQhat}) là để xấp xỉ hàm giá trị hành động.
 	Để học được bộ trọng số xấp xỉ tốt hàm đích ($v_{\pi}(s)$ hoặc $q_{\pi}(s,a)$), ta cung cấp các mẫu dữ liệu (data sample).
 	Mỗi mẫu bao gồm dữ liệu đầu vào của mạng nơ-ron (tức trạng thái $s$ hoặc bộ trạng thái, hành động $s, a$) cùng với giá trị đích mong muốn (tức $v_{\pi}(s)$ hoặc $q_{\pi}(s,a)$).
 	Khi ta cung cấp đủ nhiều mẫu dữ liệu cho mạng nơ-ron, các bộ tham số sẽ được thay đổi để mạng xấp xỉ được hàm đích mong muốn.
@@ -238,13 +237,13 @@ Chương này trình bày hai phần:
 	Trong khi đó nếu chính sách đang xét là ``đứng yên'' (không thay đổi trạng thái) thì $s$ chỉ có thể có một trạng thái duy nhất đó là trạng thái bắt đầu.
 	Giá trị nằm trong kỳ vọng là độ lỗi bình phương giữa giá trị xấp xỉ và giá trị đích.
 	Với hàm lỗi bình phương, có thể thấy khi $J(\theta)$ càng nhỏ thì bộ trọng số $\theta$ giúp cho mạng nơ-ron xấp xỉ hàm đích càng tốt.
-	Lý do chính ta chọn độ lỗi bình phương (ví dụ thay vì độ lỗi theo trị tuyệt đối) là vì việc tính toán (như đạo hàm) trên hàm bình phương khá dễ dàng.
+	Lý do chính ta chọn độ lỗi bình phương (ví dụ thay vì độ lỗi theo trị tuyệt đối) là vì việc tính toán (như đạo hàm) trên hàm bình phương dễ dàng hơn.
 	
 	Lưu ý là ở đây, hàm lỗi $J(\theta)$ là hàm theo $\theta$; tức là lúc này, ta cố định bộ trọng số $\theta$ để tìm ra ``sai số'' mà bộ trọng số này gây ra.
 	Nếu ta có hai bộ trọng số $\theta_1$ và $\theta_2$, ta có thể so sánh khả năng xấp xỉ hàm đích của chúng bằng cách so sánh giá trị $J(\theta_1)$ và $J(\theta_2)$ tương ứng.
 	
 	Tuy nhiên ta không thể tính độ lỗi trên mọi điểm dữ liệu đầu vào theo công thức (\ref{eq_ExpectedErrorV}) và (\ref{eq_ExpectedErrorQ}) được vì số lượng trạng thái là rất lớn.
-	Vậy ta có thể xấp xỉ giá trị $J(\theta)$ bằng cách chỉ xét độ lỗi trên một ``tập huấn luyện'' (hay còn gọi là ``Batch'') các trạng thái mà ta biết được giá trị đích.
+	Vậy ta có thể xấp xỉ giá trị $J(\theta)$ bằng cách chỉ xét độ lỗi trên một tập huấn luyện nhỏ (hay còn gọi là ``batch'') các trạng thái mà ta biết được giá trị đích.
 	Khi đó, kỳ vọng $\mathbb{E}_{s \sim \pi}$ được thay thế bằng giá trị trung bình độ lỗi trên từng mẫu dữ liệu của ``batch'':
 	\begin{align}
 		\label{eq_BatchErrorV}
@@ -270,10 +269,10 @@ Chương này trình bày hai phần:
 	\begin{itemize}
 		\item $\theta_{t}$ là bộ trọng số tại bước thứ $t$.
 		\item $\alpha$ là hệ số học (learning rate); giá trị này dùng để điều khiển độ lớn của ``bước đi''.
-		\item $\nabla_{\theta}J(\theta)$ là véc-tơ đạo hàm riêng của hàm $J(\theta)$ tại vị trí $\theta$
+		\item $\nabla_{\theta}J(\theta)$ là véc-tơ đạo hàm riêng của hàm $J(\theta)$ tại vị trí $\theta$.
 	\end{itemize}
-	Do ta chỉ ``nhìn'' cục bộ tại ví trí hiện tại nên nếu ta đi một bước quá dài (hệ số học $\alpha$ lớn) thì giá trị hàm lỗi $J$ tại điểm đến sẽ không chắc là sẽ giảm;
-	còn nếu bước đi quá ngắn thì mỗi bước chỉ giảm $J$ một ít, khi đó ta sẽ tốn rất nhiều thời gian để $J$ đạt giá trị cực tiểu.
+	Do ta chỉ ``nhìn'' cục bộ tại vị trí hiện tại nên nếu ta đi một bước quá dài (hệ số học $\alpha$ lớn) thì giá trị hàm lỗi $J$ tại điểm đến sẽ không chắc là luôn giảm;
+	còn nếu bước đi quá ngắn thì mỗi bước chỉ giảm $J(\theta)$ một ít, khi đó ta sẽ tốn rất nhiều thời gian để $J(\theta)$ đạt giá trị cực tiểu.
 	
 	Một thuật toán cải tiến của BGD hay được sử dụng đó là ``Stochastic Gradient Descent'' (SGD).
 	Điểm yếu của thuật toán BGD là ta cần phải tính véc-tơ đạo hàm riêng cho \textbf{tất cả} các mẫu trong ``batch'' để cập nhật được một lần cho bộ trọng số.
@@ -284,24 +283,24 @@ Chương này trình bày hai phần:
 	Khi tập huấn luyện càng lớn thì lợi thế của thuật toán SGD càng rõ.
 	Với tập huấn luyện gồm 1000 mẫu thì thuật toán BGD chỉ cập nhật trọng số được \textbf{một} lần sau khi duyệt qua hết dữ liệu; trong khi đó, thuật toán SGD với kích thước ``mini-batch'' là 10 có thể cập nhật được 100 lần.
 	Kích thước của ``mini-batch'' lúc này ảnh hưởng đến độ chính xác của véc-tơ đạo hàm riêng của $J(\theta)$.
-	Nếu kích thước quá nhỏ thì véc-tơ đạo hàm riêng trung bình trên ``mini-batch'' sẽ không xấp xỉ tốt véc-tơ đạo hàm riêng trung bình trên toàn bộ tập huấn luyện.
+	Nếu kích thước quá nhỏ thì véc-tơ đạo hàm riêng trung bình trên ``mini-batch'' sẽ không còn là một xấp xỉ tốt.
 	Nếu kích thước quá lớn thì lợi thế về tốc độ của SGD so với BGD sẽ không còn cao.
 	
 	Như đã đề cập ở chương 2, để cải tiến chính sách khi không có đầy đủ thông tin về môi trường (tức không có các ma trận của MDP) ta cần xấp xỉ $q_{\pi}$ thay vì $v_{\pi}$. Áp dụng thuật toán SGD để cực tiểu hoá hàm lỗi (\ref{eq_BatchErrorQ}), công thức cập nhật bộ trọng số tại thời điểm $t$ có dạng:
 	\begin{align}
-		\theta_{t + 1} &= \theta_t - \Delta \theta_t\\
-		&= \theta_t - \alpha \nabla_{\theta_t} J(\theta_t)\\
-		&= \theta_t - \alpha \nabla_{\theta_t} \left( \frac{1}{B} \sum_{i = 1}^{B}(q_{\pi}(S_i,A_i) - \hat{q}(S_i,A_i;\theta_t))^2 \right)\\
+		\theta_{t + 1} &= \theta_t - \Delta \theta_t \nonumber \\
+		&= \theta_t - \alpha \nabla_{\theta_t} J(\theta_t) \nonumber \\
+		&= \theta_t - \alpha \nabla_{\theta_t} \left( \frac{1}{B} \sum_{i = 1}^{B}(q_{\pi}(S_i,A_i) - \hat{q}(S_i,A_i;\theta_t))^2 \right) \nonumber\\
 		\label{eq_SGDTrueQ_Update}
 		&= \theta_t - \alpha \frac{1}{B} \sum_{i = 1}^{B}(q_{\pi}(S_i,A_i) - \hat{q}(S_i,A_i;\theta_t)) \nabla_{\theta_t} \hat{q}(S_i, A_i;\theta_t)
 	\end{align}
 	Ở đây:
 	\begin{itemize}
-		\item $\Delta \theta$ là giá trị cập nhật tại cho một ``mini-batch''.
-		\item $B$ là kích thước của ``mini-batch''
-		\item $q_{\pi}(S_i,A_i)$ là giá trị \textbf{thật sự} của hành động $A_i$ tại trạng thái $S_i$ khi thực hiện theo chính sách $\pi$
-		\item $\hat{q}(S_i,A_i;\theta_t)$ là giá trị \textbf{xấp xỉ} của hành động $A_i$ tại trạng thái $S_i$ khi thực hiện theo chính sách $\pi$
-		\item $\nabla_{\theta_t} \hat{q}(S_i, A_i;\theta_t)$ là véc-tơ đạo hàm riêng của hàm $\hat{q}$ tại trạng thái $S_i$ và hành động $A_i$
+		\item $\Delta \theta_t$ là giá trị cập nhật bộ trọng số $\theta_t$ với một ``mini-batch''.
+		\item $B$ là kích thước của ``mini-batch''.
+		\item $q_{\pi}(S_i,A_i)$ là giá trị \textbf{thật sự} của hành động $A_i$ tại trạng thái $S_i$.
+		\item $\hat{q}(S_i,A_i;\theta_t)$ là giá trị \textbf{xấp xỉ} (với bộ trọng số $\theta_t$) của hành động $A_i$ tại trạng thái $S_i$.
+		\item $\nabla_{\theta_t} \hat{q}(S_i, A_i;\theta_t)$ là véc-tơ đạo hàm riêng theo $\theta_t$ của hàm $\hat{q}$ tại trạng thái $S_i$ và hành động $A_i$.
 	\end{itemize}
 	Công thức trên bao gồm một tổng các số hạng có thể được tính riêng lẻ cho từng mẫu dữ liệu.
 	Vậy để đơn giản hoá công thức, ta viết lại công thức trên cho duy nhất một mẫu dữ liệu; khi cần thiết lập công thức tổng quát cho một ``mini-batch'', ta chỉ việc tính giá trị trung bình của nhiều mẫu.
@@ -313,8 +312,8 @@ Chương này trình bày hai phần:
 	
 %-----------------------------------------------------------------------------
 \subsection{Học tăng cường kết hợp với xấp xỉ hàm}
-	Áp dụng thuật toán SGD để tối ưu hàm lỗi $J$ theo công thức (\ref{eq_SGDTrueQ_Update}) thì ta sẽ cực tiểu hoá được độ khác biệt giữa hai hàm $q_{\pi}$ và $\hat{q}$.
-	Tuy nhiên, giá trị đích thực sự mà ta mong muốn là $q_{\pi}(s,a)$ ta không biết được mà chỉ có một số \textbf{mẫu} $S_t, A_i$ khi tương tác với môi trường.
+	Áp dụng thuật toán SGD để tối ưu hàm lỗi bình phương theo công thức (\ref{eq_SGDTrueQ_Update}) thì ta sẽ cực tiểu hoá được độ khác biệt giữa hai hàm $q_{\pi}$ và $\hat{q}$.
+	Tuy nhiên, giá trị đích thực sự mà ta mong muốn là $q_{\pi}(s,a)$ ta không biết được mà chỉ có một số \textbf{mẫu} $S_t, A_t$ khi tương tác với môi trường.
 	Các thuật toán học tăng cường chính là kỹ thuật giúp ta có được một ước lượng đơn giản của giá trị đích này.
 	Như ở chương 2, ta có hai thuật toán để ước lượng hàm giá trị: thuật toán ``Monte-Carlo'' (MC) và thuật toán ``Temporal Difference'' (TD).
 	
@@ -333,24 +332,24 @@ Chương này trình bày hai phần:
 		\label{eq_SGD_MC_Update}
 		\theta_{t+1} = \theta_t - \alpha (G_t - \hat{q}(S,A;\theta_t)) \nabla_{\theta_t} \hat{q}(S, A;\theta_t)
 	\end{equation}
-	$G_t$ ở đây là tổng điểm thưởng (tức ``Returns'') nhận được khi thực hiện hành động $A$ tại trạng thái $S$.
+	$G_t$ ở đây là tổng điểm thưởng (đã giảm điểm) nhận được khi thực hiện hành động $A$ tại trạng thái $S$.
 	Kết hợp thuật toán MC với thuật toán SGD để cực tiểu hoá hàm lỗi của mạng nơ-ron, ta có được một thuật toán học tăng cường kết hợp học sâu hoàn chỉnh để giải các bài toán có số trạng thái lớn.
 	
 	Với ý tưởng tương tự, để sử dụng mạng nơ-ron để xấp xỉ hàm giá trị cho thuật toán ``Q-learning'', ta sử dụng tổng điểm thưởng được ``bootstrap'' để ước lượng $q_{\pi}(s,a)$.
 	Cụ thể hơn, ta sẽ thay thế giá trị $q_{\pi}(s,a)$ trong công thức (\ref{eq_q_def}) bằng $R_{t+1}+ \gamma \max_{a}\hat{q}(S_{t+1}, a;\theta)$.
 	Có thể thấy rằng, giá trị ``bootstrap'' này là một ước lượng chệch của $q_{\pi}(s,a)$.
-	Tuy vậy, ước lượng này chỉ gồm tổng của hai số hạng $R_{t+1}$ và $\gamma \max_{a}\hat{q}(S_{t+1}, a;\theta)$ nên có phương sai thấp hơn nhiều so với ước lượng của MC (gồm tổng của nhiều số hạng $R_{t+1}$, $R_{t+2}$, ...).
+	Tuy vậy, ước lượng này chỉ gồm tổng của hai số hạng $R_{t+1}$ và $\gamma \max_{a}\hat{q}(S_{t+1}, a;\theta)$ nên có phương sai thấp hơn nhiều so với ước lượng của MC (gồm tổng của nhiều số hạng $R_{t+1}$, $\gamma R_{t+2}$, ...).
 	Đây cũng chính là một sự ``thoả hiệp'' (trade-off) giữa hai giá trị ``bias'' và ``variance'' của hai thuật toán MC và ``Q-learning''.
-	Thuật toán MC sử dụng một ước lượng không chệch nên có ``bias'' bằng không nhưng ``variance'' (tức phương sai) càng cao; khi đó tổng điểm thưởng của cùng một bộ $(S, A)$ sẽ thay đổi rất nhiều.
-	Khi các giá trị này thay đổi quá nhanh thì mạng nơ-ron sẽ học chậm hơn.
+	Thuật toán MC sử dụng một ước lượng không chệch nên có ``bias'' bằng không nhưng ``variance'' (tức phương sai) cao; khi đó tổng điểm thưởng của cùng một bộ $(S, A)$ sẽ thay đổi rất nhiều.
+	Khi các giá trị này thay đổi quá nhanh thì mạng nơ-ron sẽ khó học được hơn.
 	Trong khi đó ``Q-learning'' sử dụng một ước lượng chệch nên có ``bias'' lớn nhưng phương sai lại nhỏ; khi đó giá trị ``bootstrap'' của cùng một bộ $(S, A)$ sẽ ít thay đổi trong những lần duyệt đến khác nhau.
 	Tương tự như thuật toán MC, công thức cập nhật bộ trọng số trong (\ref{eq_SGDTrueQ_Single_Update}) được thay bằng:
 	\begin{equation}
 		\label{eq_SGD_Q_learning_Update}
-		\theta_{t+1} = \theta_t - \alpha (R_{t+1} + \gamma \max_{a}\hat{q}(S_{t+1}, a;\theta) - \hat{q}(S,A;\theta_t)) \nabla_{\theta_t} \hat{q}(S, A;\theta_t)	
+		\theta_{t+1} = \theta_t - \alpha \left[ R_{t+1} + \gamma \max_{a}\hat{q}(S, a;\theta_t) - \hat{q}(S,A;\theta_t) \right] \nabla_{\theta_t} \hat{q}(S, A;\theta_t)	
 	\end{equation}
 	
-	Mã giả của thuật toán ``Q-learning'' với xấp xỉ hàm được trình bày ở (\ref{alg_FA_Q_learning}).
+	Mã giả của thuật toán ``Q-learning'' với xấp xỉ hàm được trình bày ở bảng \ref{alg_FA_Q_learning}.
 	\begin{algorithm}
 		\newalgname{Thuật toán}
 		\caption{``Q-learning'' kết hợp với xấp xỉ hàm}
@@ -367,7 +366,7 @@ Chương này trình bày hai phần:
 			\Operation
 			\State Khởi tạo ngẫu nhiên bộ trọng số $\theta$ của mạng nơ-ron
 			\Repeat
-				\State Tương tác với môi trường dựa vào chính sách có hàm giá trị được xấp xỉ bởi $\hat{q}(;\theta)$ đến khi kết thúc ``episode'' để có được tập các mẫu dữ liệu $S_1, A_1, R_2, S_2, A_2, R_3, ..., S_{T-1}, A_{T-1}, R_{T}$
+				\State Tương tác với môi trường dựa vào chính sách có hàm giá trị được xấp xỉ bởi $\hat{q}(s, a;\theta)$ đến khi kết thúc ``episode'' để có được tập các mẫu dữ liệu $S_1, A_1, R_2, S_2, A_2, R_3, ..., S_{T-1}, A_{T-1}, R_{T}$
 				\State Chia tập dữ liệu trên thành các ``mini-batch'' gồm $B$ mẫu dữ liệu có dạng $S_i, A_i, R_{i+1}$
 				\For{mỗi ``mini-batch'' của tập dữ liệu}
 					\State Cập nhật $\theta$ theo công thức (\ref{eq_SGD_Q_learning_Update}) cho toàn bộ các phần tử trong ``mini-batch''
@@ -395,7 +394,7 @@ Chương này trình bày hai phần:
 	Một điểm quan trọng trong bài toán tự động chơi game là hình ảnh tại mội thời điểm không mô tả hết thông tin cần thiết.
 	Ví dụ như khi có hình của một quả bóng, ta không biết hướng và vận tốc hiện tại của quả bóng.
 	Để giải quyết điều này, ta có thể ghép hình ảnh của nhiều thời điểm liên tiếp lại theo thứ tự thời gian.
-	Khi đó một trạng thái $S_t$ sẽ gồm nhiều hình ảnh của các thời điểm liên nhau và chứa luôn cả thông tin về thời gian.
+	Khi đó một trạng thái $S_t$ sẽ gồm nhiều hình ảnh của các thời điểm liên tiếp nhau và chứa luôn cả thông tin về thời gian.
 	
 	Với cách thiết kế mạng nơ-ron thông thường, ta cần cung cấp trạng thái $S$ và hành động $A$ để tính được giá trị xấp xỉ $\hat{q}(S, A;\theta)$.
 	Cách thiết kế này không phù hợp cho thuật toán ``Q-learning'': ta cần phải lan truyền tiến nhiều lần để tính giá trị $\max_{a}\hat{q}(S, a;\theta)$ trong công thức (\ref{eq_SGD_Q_learning_Update}).
@@ -407,12 +406,12 @@ Chương này trình bày hai phần:
 	Các tầng tích chập có chức năng tìm kiếm các đặc trưng cục bộ cần thiết còn tầng ``fully-connected'' có nhiệm vụ tổng hợp các đặc trưng đó trên \textbf{toàn ảnh}.
 	Tầng ``output'' cũng là một tầng ``fully-connected'' với số nơ-ron là số hành động có thể có.
 	Lưu ý là do tầng này trả về kết quả là giá trị của từng hành động nên ta không áp dụng hàm kích hoạt tại đây.
-	Hình (\ref{fig_dqn_nature}) mô tả cấu trúc mạng ``Deep Q-Network''.
+	Hình \ref{fig_dqn_nature} mô tả cấu trúc mạng ``Deep Q-Network''.
 	\begin{figure}
 		\centering
 		\includegraphics[width=\textwidth]{dqn}
 		\caption[Cấu trúc mạng ``Deep Q-Network'']{Hình mô tả cấu trúc mạng ``Deep Q-Network'' \cite{mnihdqn2015}.
-		Hai tầng ẩn đầu tiên là tầng tích chập với hàm kích hoạt ``rectified linear''.
+		Các tầng ẩn đầu tiên là tầng tích chập với hàm kích hoạt ``rectified linear''.
 		Tầng ẩn tiếp theo là tầng ``fully-connected'' có nhiệm vụ tổng hợp đặc trưng trên toàn ảnh của tầng trước.
 		Tầng ``output'' cũng là tầng ``fully-connected'' trả về kết quả là giá trị của từng hành động ứng với trạng thái đầu vào.
 		Tầng ``output'' không có hàm kích hoạt.}
@@ -421,7 +420,7 @@ Chương này trình bày hai phần:
 
 %-----------------------------------------------------------------------------
 \subsection{Kỹ thuật làm tăng tính ổn định}
-	Đặc điểm của thuật toán ``Q-learning'' khi áp dụng xấp xỉ hàm đó là thuật toán không chắc sẽ hội tụ \cite{sutton1998introduction}.
+	Đặc điểm của thuật toán ``Q-learning'' khi kết hợp với xấp xỉ hàm đó là thuật toán không chắc sẽ hội tụ \cite{sutton1998introduction}.
 	Hội tụ ở đây ý chỉ sau một số bước cập nhật hữu hạn, giá trị hành động của trạng thái sẽ hội tụ về giá trị nhất định.
 	Do đặc điểm này, nếu ta huấn luyện mạng nơ-ron bằng thuật toán SGD thông thường thì nhiều khả năng ``Q-learning'' sẽ không hội tụ dẫn đến chính sách tương ứng sẽ không được tốt.
 	Để giải quyết vấn đề này, chúng em áp dụng hai kỹ thuật giúp tăng tính ổn định và khả năng hội tụ: kỹ thuật ``Experience replay'' \cite{lin1993reinforcement} và kỹ thuật cố định ``Q-target'' \cite{mnih2013playing}.
@@ -436,7 +435,7 @@ Chương này trình bày hai phần:
 	Khi các mẫu dữ liệu có tương quan lớn và phân bố dữ liệu thay đổi nhanh thì ``Q-learning'' sẽ khó hội tụ \cite{mnihdqn2015}.
 	
 	Kỹ thuật ``experience replay'' \cite{lin1993reinforcement} giải quyết vấn đề này bằng cách lưu trữ lại một tập các mẫu dữ liệu nhận được gần đây nhất.
-	Sau đó, mỗi lần muốn cập nhật bộ trọng số, ta chỉ việc lấy một ngẫu nhiên một ``mini-batch'' từ tập dữ liệu này để học.
+	Sau đó, mỗi lần muốn cập nhật bộ trọng số, ta chỉ việc lấy ngẫu nhiên một ``mini-batch'' từ tập dữ liệu này để học.
 	Ý tưởng của kỹ thuật này giống như việc ta ``gợi nhớ'' lại các kinh nghiệm đã có từ trước đó và học lại từ chúng.
 	Cách làm này cũng mang tính ``củng cố'' lại những kinh nghiệm mà hệ thống học được trong quá khứ.
 	Do việc lấy ngẫu nhiên nên các mẫu dữ liệu trong ``mini-batch'' sẽ không còn tương quan lớn với nhau.
@@ -461,7 +460,7 @@ Chương này trình bày hai phần:
 	Để có cái nhìn trực quan hơn về kỹ thuật này, ta có thể lấy ví dụ về việc xây một căn nhà.
 	Do quá trình thiết kế ban đầu chưa tính trước đến những trường hợp phát sinh (như thiếu vật liệu, thợ không đủ trình độ...) trong lúc xây dựng nên ta phải điều chỉnh thiết kế lại liên tục.
 	Ta có thể vừa xây dựng căn nhà (ứng với việc thay đổi trọng số mạng nơ-ron) vừa điều chỉnh lại thiết kế căn nhà cho phù hợp (ứng với việc thay đổi chính sách mục tiêu).
-	Tuy nhiên, khi thiết kế căn nhà thay đổi quá nhanh và liên tục thì việc xây dựng theo sẽ gặp nhiều khó khăn và có khả năng khi hoàn thành kết quả sẽ không tốt.
+	Tuy nhiên, khi thiết kế căn nhà thay đổi quá nhanh và liên tục thì việc xây dựng sẽ gặp nhiều khó khăn và có khả năng khi hoàn thành kết quả sẽ không tốt.
 	Kỹ thuật cố định ``Q-target'' tương tự với việc ta cố gắng xây dựng hoàn tất một phần của căn nhà (tức xấp xỉ tốt hàm giá trị một chính sách cũ) trước khi thay đổi thiết kế.
 	Cứ như vậy, mỗi khi hoàn tất một phần, ta thay đổi thiết kế (ứng với việc thay đổi hàm mục tiêu) rồi lại xây dựng tiếp.
 	Cách làm này giống như tạo dựng một số các ``điểm kiểm soát'' (checkpoint) với những mục tiêu xác định.
@@ -473,11 +472,11 @@ Chương này trình bày hai phần:
 	Vì vậy, ta cần phải chọn một giá trị vừa phải, phù hợp với bài toán tự động chơi game.
 
 %-----------------------------------------------------------------------------
-\subsection{Vấn đề ``đánh giá quá cao'' của thuật toán ``Q-learning''}
-	Thuật toán ``Q-learning'' cải tiến từ thuật toán ``Sarsa(0)'' bằng cách lấy $\max$ giá trị các hành động của trạng thái tiếp theo.
+\subsection{Vấn đề đánh giá quá cao của thuật toán ``Q-learning''}
+	Thuật toán ``Q-learning'' thực hiện việc lấy $\max$ giá trị các hành động của trạng thái tiếp theo.
 	Nhắc lại công thức cập nhật của ``Q-learning'' là:
 	\begin{equation}
-		\theta_{t+1} = \theta_t - \alpha \left[ R_{t+1} + \gamma \max_{a}\hat{q}(S_{t+1}, a;\theta) - \hat{q}(S,A;\theta_t) \right] \nabla_{\theta_t} \hat{q}(S, A;\theta_t)	
+		\theta_{t+1} = \theta_t - \alpha \left[ R_{t+1} + \gamma \max_{a}\hat{q}(S, a;\theta_t) - \hat{q}(S,A;\theta_t) \right] \nabla_{\theta_t} \hat{q}(S, A;\theta_t)	
 	\end{equation}
 	Nhờ việc lấy $\max$ mà thuật toán ``Q-learning'' hội tụ nhanh hơn \cite{sutton1998introduction}: ta luôn ước lượng giá trị của trạng thái tiếp theo dựa vào hành động tốt nhất tại đó.
 	Đây có thể hiểu là một cách nhìn ``lạc quan'' về tương lai: nếu có nhiều trường hợp tốt, xấu khác nhau thì ta luôn giả sử điều tốt nhất sẽ xảy ra.
@@ -487,12 +486,11 @@ Chương này trình bày hai phần:
 	Nhất là khi áp dụng xấp xỉ hàm, giá trị ước lượng hiện tại của mạng nơ-ron chưa được chính xác.
 	Khi đó nếu mạng nơ-ron ước lượng cao hơn giá trị thật sự thì vấn đề đánh giá quá cao sẽ xảy ra nhiều hơn.
 	Mặc dù vậy, ta vẫn cần đặt ra câu hỏi: liệu việc đánh giá quá cao có gây ảnh hưởng đến kết quả của chính sách cuối cùng hay không?
-	Rõ ràng là nếu tất cả hành động đều bị đánh giá quá cao (ví dụ như tăng một lượng bằng nhau $C$) thì việc lựa chọn hành động không bị ảnh hưởng (do ta vẫn chọn hành động tốt nhất theo thuật toán greedy).
-	Tuy nhiên, nghiên cứu \cite{thrun1993issues} chỉ ra rằng thuật toán ``Q-learning'' với xấp xỉ hàm gặp hiện tượng đánh giá quá cao không đồng đều.
+	Rõ ràng là nếu tất cả hành động đều bị đánh giá quá cao (ví dụ như tăng một lượng bằng nhau $C$) thì việc lựa chọn hành động không bị ảnh hưởng (do ta vẫn chọn hành động tốt nhất bằng cách tham lam).
+	Tuy nhiên, thuật toán ``Q-learning'' với xấp xỉ hàm gặp hiện tượng đánh giá quá cao không đồng đều \cite{van2015deep}.
 	Điều này làm cho kết quả của một số bài toán cụ thể bị ảnh hưởng lớn.
-	Trong nghiên cứu này, các tác giả đã giả sử sai số do xấp xỉ hàm là do công cụ xấp xỉ hàm không đủ linh hoạt.
-	Sau đó, nghiên cứu của \cite{hasselt2010double} cho thấy sai số do môi trường gây ra cũng gây ảnh hưởng đến việc xấp xỉ hàm và gây nên hiện tượng đánh giá quá cao.
-	Các nghiên cứu trên đều cho thấy vấn đề này có ảnh hưởng lớn đến chính sách tìm được của thuật toán ``Q-learning''.
+	Nghiên cứu của \cite{hasselt2010double} cho thấy sai số do môi trường gây ra cũng gây ảnh hưởng đến việc xấp xỉ hàm và gây nên hiện tượng đánh giá quá cao.
+	Các nghiên cứu trên cho thấy vấn đề này có ảnh hưởng lớn đến chính sách tìm được của thuật toán ``Q-learning''.
 	
 	Để khắc phục vấn đề đánh giá quá cao, thuật toán ``Double Q-learning'' \cite{hasselt2010double} ra đời và được áp dụng vào bài toán tự động chơi game \cite{van2015deep}.
 	Đây là một thuật toán cải tiến của ``Q-learning'' bằng cách thay đổi lại cách ước lượng giá trị của trạng thái tiếp theo.
@@ -503,16 +501,16 @@ Chương này trình bày hai phần:
 	\end{equation}
 	
 	Ta có thể tách việc lấy $\max$ giá trị ra thành hai bước: chọn hành động tối ưu và đánh giá hành động đó.
-	Bước chọn hành động được thực hiện bằng cách chọn hành động cho giá trị cao nhất tại trạng thái: $a^{'} = \argmax_{a}\hat{q}(S_{t+1}, a;\theta)$.
-	Bước đánh giá hành động được thực hiện bằng cách lấy lại giá trị của hành động tốt nhất: $\hat{q}(S_{t+1}, a^{'};\theta)$.
-	Ghép hai bước này lại ta có công cách ước lượng giá trị của thuật toán ``Q-learning'':
+	Bước chọn hành động được thực hiện bằng cách chọn hành động cho giá trị cao nhất tại trạng thái đó: $a_{*} = \argmax_{a}\hat{q}(S_{t+1}, a;\theta)$.
+	Bước đánh giá hành động được thực hiện bằng cách lấy lại giá trị của hành động tốt nhất: $\hat{q}(S_{t+1}, a_{*};\theta)$.
+	Ghép hai bước này lại ta có cách ước lượng giá trị của thuật toán ``Q-learning'':
 	\begin{equation}
 		\label{eq_q_argmax_target}
 		R_{t+1} + \gamma \hat{q}(S_{t+1}, \argmax_{a}\hat{q}(S_{t+1}, a;\theta); \theta)
 	\end{equation}
 	Lưu ý rằng công thức (\ref{eq_q_argmax_target}) chỉ là một cách nhìn khác của công thức (\ref{eq_q_max_target}) và hai công thức này hoàn toàn tương đương nhau.
 	
-	Thuật toán ``Double Q-learning'' giảm thiểu vấn đề đánh giá quá cao bằng cách đánh giá hành động tốt nhất bằng hàm giá trị của chính sách khác với chính sách hiện tại.
+	Thuật toán ``Double Q-learning'' giải quyết vấn đề đánh giá quá cao bằng cách đánh giá hành động tốt nhất bằng hàm giá trị của chính sách khác với chính sách hiện tại.
 	Cụ thể hơn, ta cần học hai mạng nơ-ron với hai bộ tham số $\theta$ và $\theta^{-}$.
 	Khi cần cập nhật bộ tham số $\theta$ của mạng đầu tiên, ta áp dụng công thức:
 	\begin{equation}
@@ -531,7 +529,7 @@ Chương này trình bày hai phần:
 	Trong khi với thuật toán ``Double Q-learning'', gọi hành động được chọn theo bộ tham số $\theta$ là $a_{*}$.
 	Khi đó, xác suất để $a_{*}$ cũng có sai số dương theo bộ tham số $\theta^{-}$ là thấp (do hai bộ tham số học từ dữ liệu khác nhau).
 	Nhờ vậy, việc phân tách hai bước chọn và đánh giá hành động giúp làm giảm vấn đề đánh giá quá cao.
-	Xem hình (\ref{fig_q_learning_plot}) và (\ref{fig_double_q_learning_plot}) mô tả một ví dụ đơn giản để hiểu hơn về vấn đề đánh giá quá cao trong hai thuật toán ``Q-learning'' và ``Double Q-learning''.
+	Xem hình \ref{fig_q_learning_plot} và \ref{fig_double_q_learning_plot} mô tả một ví dụ đơn giản để hiểu hơn về vấn đề đánh giá quá cao trong hai thuật toán ``Q-learning'' và ``Double Q-learning''.
 	\begin{figure}
 		\centering
 		\includegraphics[width=\textwidth]{q_learning}
