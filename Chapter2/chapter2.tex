@@ -698,7 +698,7 @@ với $s \in \mathcal{S}$ và $v_{0}$ được khởi tạo ngẫu nhiên. Qua n
 Cách thức cập nhật của phương pháp lặp giá trị dựa trên phương trình Bellman của hàm giá trị trạng thái tối ưu \ref{eq:bellman_optimal_state}. Mô hình cập nhật của phương pháp lặp giá trị tương tự mô hình cập nhật của phương pháp lặp chính sách \ref{fig:Update_Value_DP} ngoại trừ nó yêu cầu giá trị cực đại (maximum) được chọn qua các hành động. Thêm vào đó quá trình cập nhật của lặp chính sách để tính hàm giá trị trạng thái $v_{\pi}$ của chính sách $\pi$ hiện tại, trong khi đó quá trình cập nhật của lặp giá trị để tính hàm giá trị trạng thái tối ưu $v_*$. Các bước thực hiện trong phương pháp lặp giá trị được mô tả trong thuật toán \ref{alg_val_iteration}.
 \begin{algorithm}
 	\newalgname{Thuật toán}
-	\caption{Phương pháp lặp giá trị}
+	\caption{Phương pháp lặp giá trị trên hàm giá trị trạng thái}
 	\label{alg_val_iteration}
 	\begin{algorithmic}[1]
 		\renewcommand{\algorithmicrequire}{\textbf{Đầu vào:}}
@@ -721,6 +721,91 @@ Cách thức cập nhật của phương pháp lặp giá trị dựa trên phư
 		\Until $\Delta < \theta$ (Một lượng đủ nhỏ)
 	\end{algorithmic}
 \end{algorithm}
+
+\textbf{Ví dụ: Bài toán di chuyển trên lưới $4 \times 4$} Hệ thống có thể thực hiện 4 hành động: lên, xuống, qua trái, qua phải. Vị trí đích là góc trái trên của lưới. Hệ thống sẽ dừng nếu di chuyển ra ngoài lưới. Mỗi hành động của hệ thống đều nhận được kiểm thưởng là -1. Và nhận được điểm thưởng +7 khi hệ thống về đích. Mục tiêu của hệ thống là tìm được đường về vị trí đích.
+Giả sử có nhiễu trong quá trình hệ thống di chuyển: 70\% hệ thống sẽ di chuyển theo hướng trùng với hành động đã thực hiện, 30\% hệ thống sẽ di chuyển khác hướng với hành động thực hiện. Ví dụ nếu hệ thống thực hiện hành động đi lên thì 70\% hệ thống sẽ di chuyển đi lên, 10\% hệ thống di chuyển sang trái, 10\% hệ thống di chuyển sang phải, và 10\% hệ thống di chuyển xuống dưới. Hệ số $\gamma = 1$. Hình \ref{grid_problem} minh họa bài toán này.
+\begin{figure}
+	\centering
+	\includegraphics[width=60mm, height =60mm]{baitoan.PNG}
+	\caption[Bài toán di chuyển trên lưới]{Bài toán di chuyển trên lưới}
+	\label{grid_problem}
+\end{figure}
+
+Qua ví dụ \ref{fig:VI_process} minh họa quá trình tìm hàm giá trị trạng thái tối ưu bằng quá trình lặp giá trị, ta có thể thấy hàm giá trị trạng thái dần hội tụ về hàm giá trị $q_*$ thông qua những chính sách tương ứng của mỗi lần cập nhật.
+\begin{figure*}[t!]
+	\centering
+	\begin{tabular}{c}
+		\begin{subfigure}[t]{0.5\textwidth}
+			\centering
+			\includegraphics[height=50mm]{1}
+			\caption{Khởi tạo hàm giá trị $V$}
+		\end{subfigure}%
+		~ 
+		\begin{subfigure}[t]{0.5\textwidth}
+			\centering
+			\includegraphics[height=50mm]{2}
+			\caption{Cập nhật hàm giá trị lần 1, và chính sách tham lam trên hàm giá trị hiện tại}
+		\end{subfigure} \\~\\
+		\begin{subfigure}[t]{0.5\textwidth}
+			\centering
+			\includegraphics[height=50mm]{3}
+			\caption{Cập nhật hàm giá trị lần 2, và chính sách tham lam trên hàm giá trị hiện tại}
+		\end{subfigure}%
+		~ 
+		\begin{subfigure}[t]{0.5\textwidth}
+			\centering
+			\includegraphics[height=50mm]{4}
+			\caption{Cập nhật hàm giá trị lần 3, và chính sách tham lam trên hàm giá trị hiện tại}
+		\end{subfigure} \\~\\
+		\begin{subfigure}[t]{0.5\textwidth}
+			\centering
+			\includegraphics[height=45mm]{5}
+			\caption{Cập nhật hàm giá trị lần 4, và chính sách tham lam trên hàm giá trị hiện tại}
+		\end{subfigure}%
+		~ 
+		\begin{subfigure}[t]{0.5\textwidth}
+			\centering
+			\includegraphics[height=50mm]{6}
+			\caption{Cập nhật hàm giá trị lần 5, và chính sách tham lam trên hàm giá trị hiện tại}
+		\end{subfigure}
+	\end{tabular}
+	\caption[Minh họa quy trình lặp giá trị]{Quy trình cập nhật hàm giá trị trạng thái bằng phương pháp lặp giá trị}
+	\label{fig:VI_process}
+\end{figure*}
+
+Trong nhiều trường hợp việc sử dụng hàm giá trị hành động trở nên khả thi hơn hàm giá trị trạng thái. Thực vậy, với việc có được mô hình MDP của môi trường , hàm giá trị trạng thái là đủ để xác định chính sách tối ưu nhưng việc xác định này phải qua một bước trung gian thông qua ma trận chuyển trạng thái. Nói cách khác để xác định chính sách tối ưu trên hàm giá trị trạng thái, hệ thống phải xác định những trạng thái tiếp theo có thể đến thông qua ma trận chuyển trạng thái, sau đó chọn hành động mà giúp cho hệ thống có thể đến được trạng thái tiếp theo có giá trị lớn nhất. Tuy nhiên trong một số bài toán hệ thống không biết mô hình MDP của môi trường thì hàm giá trị trạng thái là không đủ để xác định chính sách tối ưu. Ngược lại, có được hàm giá trị hành động là đủ để xác định chính sách tối ưu trong cả hai trường hợp biết và không biết MDP. Mặc dù khi biết được mô hình MDP của môi trường, việc xác định chính sách tối ưu bằng hàm giá trị hành động được cho là tốn kém trong việc lưu trữ nhưng những phương pháp tìm chính sách tối ưu vẫn thường sử dụng loại hàm giá trị này do nó có thể sử dụng trong cả hai trường hợp. Trong phương pháp lặp giá trị, ta cũng có thể xác định hàm giá trị hành động tối ưu qua nhiều lần lặp. Phương trình \ref{eq:q_val_iteration} minh họa cách thức cập nhật ước lượng của hàm giá trị $q_*$
+\begin{align}
+q_{k+1}(s,a) = {} & \mathbb{E}\left[\mathit{R}_{t+1} + \gamma \max_{a'}q_{k}(\mathit{S}_{t+1},a') \mid \mathit{S}_{t} = s, \mathit{A}_t = a\right] \notag \\
+= {} & \sum_{s' \in \mathcal{S}}\mathcal{P}_{ss'}^{a}\left[\mathit{R}_{t+1} + \gamma \max_{a'}q_{k}(s',a')\right] \label{eq:q_val_iteration}
+\end{align}
+với $s \in \mathcal{S}, a \in \mathcal{A}(s)$. Thuật toán \ref{alg_qval_iteration} minh họa các bước thực hiện lặp giá trị cho hàm hành động.
+
+\begin{algorithm}
+	\newalgname{Thuật toán}
+	\caption{Phương pháp lặp giá trị trên hàm giá trị hành động}
+	\label{alg_qval_iteration}
+	\begin{algorithmic}[1]
+		\renewcommand{\algorithmicrequire}{\textbf{Đầu vào:}}
+		\renewcommand{\algorithmicensure}{\textbf{Đầu ra:}}
+		\algnewcommand\algorithmicoperation{\textbf{Thao tác:}}
+		\algnewcommand\Operation{\item[\algorithmicoperation]}
+		
+		\Require
+		\Ensure Hàm giá trị $Q$ xấp xỉ hàm giá trị tối ưu $q_{*}$
+		
+		\Operation
+		\State Khởi tạo ngẫu nhiên $Q(s,a)$ cho tất cả các cặp trạng thái $s$ và hành động $a$ với $s$ không phải trạng thái kết thúc. Nếu $s$ là trạng thái kết thúc, $Q(s,a) = 0$
+		\Repeat
+		\State $\Delta \leftarrow 0$ \%\% Tính độ khác biệt giữa hàm giá trị cũ và giá trị mới. Độ lớn của $\Delta$ được xác định là độ khác biệt lớn nhất giữa giá trị cũ và giá trị mới của một trạng thái trong tất cả các trạng thái.
+		\For{$s \in \mathcal{S}$} \%\% Với mỗi trạng thái
+		\State $q \leftarrow Q(s,a)$ \%\% Lưu giá trị hiện tại của cặp trạng thái, hành động $(s,a)$
+		\State $Q(s,a) \leftarrow \sum_{s' \in \mathcal{S}}\mathcal{P}_{ss'}^{a}\left[\mathcal{R}_{s}^{a} + \gamma \max_{a'}Q(s',a')\right]$ \%\% Thực hiện cập nhật
+		\State $\Delta \leftarrow \max(\Delta,|q - Q(s,a)|)$
+		\EndFor
+		\Until $\Delta < \theta$ (Một lượng đủ nhỏ)
+	\end{algorithmic}
+\end{algorithm}
+
 
 %\section{Tìm chính sách tối ưu bằng phương pháp lặp chính sách trong bài toán thực tế}
 %Trong nhiều bài toán thực tế thông thường chúng ta không có kiến thức đầy đủ về môi trường như ma trận chuyển trạng thái $\mathcal{P}$, ma trận điểm thưởng $\mathcal{R}$, tập các trạng thái $\mathcal{A}$. Do đó một yêu cầu được đặt ra là hệ thống phải có khả năng học từ những thông tin mà nó tiếp nhận được qua việc tương tác với môi trường. Các thông tin này thường ở dạng chuỗi (trạng thái, hành động, điểm thưởng)
