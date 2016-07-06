@@ -7,9 +7,9 @@
 \begin{quote}
 	\textit{Trong chương này, chúng em trình bày kết quả thực nghiệm của bài toán tự động chơi game.
 	Đầu tiên, môi trường giả lập của bài toán tự động chơi game cùng với các thiết lập thực nghiệm được giới thiệu.
-	Phần tiếp theo, chúng em trình bày về kết quả thực nghiệm của thuật toán ``Q-learning'' để chứng minh tính khả thi của việc kết hợp học tăng cường với học sâu vào bài toán tự động chơi game.
-	Kế tiếp, chúng em phân tích mức độ ảnh hưởng của vấn đề đánh giá quá cao và kết quả của thuật toán ``Double Q-learning''.
-	Phần cuối cùng là một thực nghiệm nhằm phân tích ý nghĩa hàm giá trị học được.}
+	Phần tiếp theo, chúng em trình bày về kết quả thực nghiệm của thuật toán ``Q-learning''; kết quả thực nghiệm này cho thấy việc kết hợp học tăng cường với học sâu vào bài toán này giúp xây dựng một hệ thống có khả năng tự động chơi game với điểm số rất cao.
+	Kế tiếp, chúng em trình bày kết quả thực nghiệm thuật toán ``Double Q-learning''; phân tích kết quả thực nghiệm này cho thấy, thuật toán ``Double Q-learning'' giải quyết tốt vấn đề đánh giá quá cao và cải tiến kết quả điểm số rất nhiều so với ``Q-learning''.
+	Phần cuối cùng là một thực nghiệm cho thấy hàm giá trị hành động học được đánh giá đúng các tình huống game cụ thể.}
 \end{quote}
  
 \section{Giới thiệu Arcade Learning Environment}
@@ -39,12 +39,12 @@ Cuối cùng, ALE hỗ trợ khá nhiều game (hơn 50 game) để ta có thể
 	
 	Để giảm bớt tính toán của mô hình, khung ảnh RGB đầu vào được chuyển về ảnh mức xám (grayscale) và được giảm kích thước về $84\times84$.
 	Để lưu thông tin về sự di chuyển và tốc độ của các đối tượng trong ảnh, ta ghép bốn khung ảnh liên tiếp nhau lại thành một trạng thái.
-	Vậy một trạng thái lúc này sẽ gồm bốn ảnh mức xám $84\times84$ và được đưa trực tiếp vào input của mạng nơ-ron.
+	Vậy một trạng thái lúc này sẽ gồm bốn ảnh mức xám $84\times84$ và được đưa trực tiếp vào input của CNN.
 	Ngoài ra, do các khung hình gần nhau thường không thay đổi nhiều, một kỹ thuật đơn giản để tăng tốc độ huấn luyện đó là ta lặp lại một hành động cho $k$ khung hình liên tiếp.
 	Nhờ kỹ thuật này, ta có thể huấn luyện nhiều hơn $k$ lần so với khi không áp dụng.
-	Trong thực nghiệm này, chúng em chọn $k$ bằng 4 theo đề xuất của (\cite{mnih2013playing}).
+	Trong thực nghiệm này, chúng em chọn $k$ bằng 4 theo đề xuất của \cite{mnih2013playing}.
 	
-	Cấu trúc mạng nơ-ron tích chập được dùng để xấp xỉ hàm giá trị là ``Deep Q-Network'' (\cite{mnihdqn2015}).
+	Cấu trúc CNN được dùng để xấp xỉ hàm giá trị là ``Deep Q-Network'' \cite{mnihdqn2015}.
 	Mạng này bao gồm bốn tầng ẩn với ba tầng đầu là tầng tích chập và tầng cuối là tầng ``Fully-connected''.
 	Tầng tích chập đầu tiên gồm $32$ bộ lọc với kích thước $8\times8$ và bước dịch chuyển (stride) là $4\times4$.
 	Tầng tích chập thứ hai gồm $64$ bộ lọc với kích thước $4\times4$ và bước dịch chuyển là $2\times2$.
@@ -54,21 +54,21 @@ Cuối cùng, ALE hỗ trợ khá nhiều game (hơn 50 game) để ta có thể
 	Tầng này sẽ trả về giá trị hành động tương ứng cho trạng thái đầu vào.
 	Hàm kích hoạt của tất cả các tầng ẩn là hàm ``Rectified'': $\sigma(x) = \max(0, x)$.
 	
-	Để huấn luyện mạng nơ-ron này, chúng em áp dụng thuật toán ``RMSprop'' (\cite{tieleman2012lecture}) để tối tiểu hàm lỗi bình phương.
-	Đây là một thuật toán cải tiến của SGD với ý tưởng chọn một hệ số học khác nhau cho từng trọng số của mạng nơ-ron.
+	Để huấn luyện CNN, chúng em áp dụng thuật toán ``RMSprop'' \cite{tieleman2012lecture} để tối tiểu hàm lỗi bình phương.
+	Đây là một thuật toán cải tiến của SGD với ý tưởng chọn một hệ số học khác nhau cho từng trọng số của CNN.
 	Hệ số học của mỗi trọng số sẽ phụ thuộc vào giá trị đạo hàm của hàm lỗi đối với trọng số này ở các bước cập nhật trước.
 	Cụ thể hơn, nếu trọng số này được cập nhật ít ở những lần cập nhật trước thì hệ số học sẽ được tăng lên; trọng số được cập nhật nhiều thì sẽ có hệ số học giảm đi.
 	Nhờ thuật toán này mà mức độ thay đổi của các trọng số là tương đương nhau.
 	
-	Chúng em sử dụng Python (kết hợp với framework ``Theano'' (\cite{2016arXiv160502688short})) làm ngôn ngữ lập trình chính.
-	Do việc huấn luyện đòi hỏi sức mạnh tính toán rất lớn nên chúng em thực hiện cài đặt tính toán song song trên GPU để tăng tốc.
+	Chúng em sử dụng Python (kết hợp với framework \textit{Theano} \cite{2016arXiv160502688short}) làm ngôn ngữ lập trình chính.
+	Do việc huấn luyện đòi hỏi sức mạnh tính toán rất lớn nên chúng em thực hiện cài đặt tính toán song song trên GPU (Graphics Processing Unit) để tăng tốc.
 	GPU được dùng là NVIDIA GTX 980.
 	
 	Với các thiết lập thực nghiệm trên, chúng em tiến hành huấn luyện ba trò chơi với hai thuật toán ``Q-learning'' và ``Double Q-learning''.
 	Mỗi trò chơi với mỗi thuật toán được huấn luyện $50$ triệu hành động.
 	Thời gian huấn luyện là khoảng 50 giờ cho mỗi trò chơi với mỗi thuật toán.
 	
-\section{Thuật toán ``Q-learning''}
+\section{Kết quả của thuật toán ``Q-learning''}
 	Để thực nghiệm khả năng học và tự động chơi game, chúng em thực hiện thử nghiệm thuật toán ``Q-learning'' kết hợp với học sâu.
 	Chúng em sử dụng chính sách $\epsilon$-greedy để làm chính sách khám phá không gian trạng thái và không gian hành động.
 	$\epsilon$-greedy được chọn ở đây là vì chính sách này đơn giản cho việc cài đặt mà vẫn đảm bảo khả năng khám phá không gian cũng như khai thác kiến thức đã học của mô hình.
@@ -79,13 +79,13 @@ Cuối cùng, ALE hỗ trợ khá nhiều game (hơn 50 game) để ta có thể
 	Để tiện cho việc quan sát kết quả và thử nghiệm hệ thống, chúng em chia quá trình huấn luyện $50$ triệu hành động ra thành $200$ ``epoch'' (tức mỗi ``epoch'' bao gồm $250000$ hành động).
 	Sau mỗi ``epoch'', chúng em kiểm thử bộ trọng số học được trên $30$ màn chơi và lưu lại điểm số trung bình.
 	Kết quả điểm số cuối cùng được báo cáo của mỗi trò chơi là giá trị điểm số lớn nhất của $200$ epoch.
-	Các thiết lập trên tương đồng với (\cite{mnihdqn2015}) để việc so sánh là công bằng nhất.
+	Các thiết lập trên tương đồng với \cite{mnihdqn2015} để việc so sánh là công bằng nhất.
 	
 	Một đặc điểm của bài toán tự động chơi game đó là kết quả điểm thưởng sau từng ``epoch'' thường rất nhiễu.
-	Giá trị của các trọng số mạng nơ-ron có thể thay đổi ít sau mỗi ``epoch'' nhưng hàm giá trị tương ứng sẽ thay đổi nhiều.
+	Giá trị các trọng số của CNN có thể thay đổi ít sau mỗi ``epoch'' nhưng hàm giá trị tương ứng sẽ thay đổi nhiều.
 	Điều này dẫn đến chính sách tương ứng cũng thay đổi nhiều làm cho điểm thưởng nhận được khi chơi game của các chính sách này sẽ rất khác nhau.
 	Vì vậy nếu ta chỉ quan sát đồ thị điểm thưởng của quá trình kiểm thử sau mỗi ``epoch'', ta sẽ không biết chắc là hệ thống có đang chơi tốt lên hơn không.
-	Một cách khác để quan sát quá trình học được đề xuất bởi (\cite{mnih2013playing}) đó là ta quan sát đồ thị giá trị của một tập trạng thái sau từng ``epoch''.
+	Một cách khác để quan sát quá trình học được đề xuất bởi \cite{mnih2013playing} đó là ta quan sát đồ thị giá trị của một tập trạng thái sau từng ``epoch''.
 	Đầu tiên, ta thực hiện chơi game một cách ngẫu nhiên và lưu lại một tập các trạng thái gặp được trong quá trình chơi này (gọi là tập ``hold-out'').
 	Trong quá trình huấn luyện, sau mỗi ``epoch'', ta tính trung bình giá trị hành động tốt nhất của các trạng thái trong tập ``hold-out''.
 	Một chính sách chơi tốt thì thường sẽ đánh giá các hành động của các trạng thái trong tập ``hold-out'' cao hơn so với các chính sách chơi không tốt.
@@ -138,7 +138,7 @@ Cuối cùng, ALE hỗ trợ khá nhiều game (hơn 50 game) để ta có thể
 		\end{tabular}		
 	\end{table}
 
-\section{Thuật toán ``Double Q-learning''}
+\section{Thuật toán ``Double Q-learning'' và vấn đề đánh giá quá cao}
 	Chúng em thực hiện cài đặt và thử nghiệm lại thuật toán ``Double Q-learning'' \cite{hasselt2010double}, \cite{van2015deep} để giải quyết vấn đề đánh giá quá cao.
 	Các thiết lập thực nghiệm đều giống như khi thực nghiệm thuật toán ``Q-learning''.
 	Tuy nhiên, để tương đồng với cài đặt của bài báo \cite{van2015deep}, chúng em giảm hệ số $\epsilon$ từ $1.0$ xuống $0.01$ (thay vì $0.1$ như ở phần thực nghiệm ``Q-learning'') trong $1$ triệu hành động đầu tiên của quá trình huấn luyện.
@@ -187,13 +187,13 @@ Cuối cùng, ALE hỗ trợ khá nhiều game (hơn 50 game) để ta có thể
 		\label{fig_double_compare}
 	\end{figure}
 		
-\section{Phân tích hàm giá trị hành động}
-	Để thấy rõ hơn khả năng xấp xỉ hàm giá trị của mạng nơ-ron, ta có thể xem xét giá trị của một số trạng thái trong quá trình chơi game.
-	Cụ thể hơn, chúng em thực hiện lưu một số frame ảnh trong quá trình chơi cùng với giá trị của chúng được tính từ mạng nơ-ron (với thuật toán ``Q-learning'').
+\section{Phân tích mối tương quan giữa hàm giá trị hành động và các tình huống game cụ thể}
+	Để thấy rõ hơn khả năng xấp xỉ hàm giá trị của CNN, ta có thể xem xét giá trị của một số trạng thái trong quá trình chơi game.
+	Cụ thể hơn, chúng em thực hiện lưu một số frame ảnh trong quá trình chơi cùng với giá trị của chúng được tính từ CNN (với thuật toán ``Q-learning'').
 	
 	Hình \ref{seaquest:frames} và đồ thị \ref{fig_seaquest_frames} thể hiện các frame ảnh và giá trị của các trạng thái tương ứng.
-	Quan sát giá trị tương đối của các trạng thái liên tiếp nhau trong một lần chơi, ta có thể thấy mạng nơ-ron học được một hàm giá trị phức tạp và có ý nghĩa cao.
-	Nhờ hàm giá trị được xấp xỉ tốt, chính sách chơi game mới lựa chọn hành động hợp lý để nhận được điểm thưởng cao nhất có thể.
+	Quan sát giá trị tương đối của các trạng thái liên tiếp nhau trong một lần chơi, ta có thể thấy CNN học được một hàm giá trị phức tạp và có ý nghĩa cao.
+	Hàm giá trị học được có mối tương quan lớn với các trạng thái game nên chính sách chơi game mới lựa chọn hành động hợp lý để nhận được nhiều điểm thưởng.
 	
 	\begin{figure}
 		\begin{subfigure}{.5\textwidth}

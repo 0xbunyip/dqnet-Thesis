@@ -10,22 +10,29 @@
 	Tiếp đó, chúng em tìm hiểu vấn đề đánh giá quá cao của thuật toán ``Q-learning''.
 	Vấn đề này được đề cập bởi \cite{hasselt2010double, van2015deep}.
 	Theo các nghiên cứu này, vấn đề đánh giá quá cao ảnh hưởng lớn đến kết quả bài toán tự động chơi game.
-	Do đó, nhóm đã cài đặt lại và thực nghiệm thuật toán ``Double Q-learning'' được đề xuất bởi \cite{van2015deep}.
+	Do đó, chúng em đã cài đặt lại và thực nghiệm thuật toán ``Double Q-learning'' được đề xuất bởi \cite{van2015deep}.
 	Đây là một cải tiến đơn giản của ``Q-learning'' giúp hạn chế vấn đề đánh giá quá cao.
 	Kết quả thực nghiệm cho thấy, thuật toán ``Double Q-learning'' giải quyết vấn đề này và giúp cải thiện 	rất nhiều cho hệ thống tự động chơi game.
-	Tương tự như với ``Q-learning'', kết quả thực nghiệm của nhóm cũng không hoàn toàn tương đồng với \cite{van2015deep} vì cách cài đặt và hệ thống giả lập game khác nhau.
+	Tương tự như với ``Q-learning'', kết quả thực nghiệm của chúng em cũng không hoàn toàn tương đồng với \cite{van2015deep} vì cách cài đặt và hệ thống giả lập game khác nhau.
 
 \section{Hướng phát triển}
 	Các kết quả thực nghiệm cho thấy hệ thống có khả năng chơi và đạt được điểm số cao nhưng việc thực nghiệm chỉ mới trên ba game khác nhau; số lượng game thực nghiệm còn nhỏ nên vẫn chưa thể rút ra kết luận chặt chẽ cho hướng tiếp cận này.
-	Lý do nhóm không thực nghiệm trên nhiều game hơn là vì thời gian huấn luyện quá lâu (hơn hai ngày huấn luyện liên tục cho mỗi game và mỗi thuật toán).
+	Lý do chúng em không thực nghiệm trên nhiều game hơn là vì thời gian huấn luyện quá lâu (hơn hai ngày huấn luyện liên tục cho mỗi game và mỗi thuật toán).
 	Đây cũng là một nhược điểm lớn của hướng tiếp cận kết hợp học tăng cường với học sâu.
-	Những hướng phát triển tiếp theo của đề tài có thể tập trung vào việc tăng tốc độ huấn luyện của mô hình.
-	Cụ thể hơn, nhóm xác định có hai hướng chính để cải tiến hướng tiếp cận này:
+	
+	Trong quá trình thực nghiệm, chúng em cũng đã thử nghiệm sơ bộ kỹ thuật học chuyển tiếp (Transfer learning).
+	Ý tưởng của kỹ thuật này là sử dụng thông tin của một mô hình cũ đã học để làm giá trị khởi tạo cho mô hình mới.
+	Cụ thể hơn, chúng em thử nghiệm kỹ thuật này bằng cách sử dụng bộ trọng số của CNN đã được huấn luyện xong của một game để huấn luyện game khác.
+	Tuy nhiên, hiệu quả của kỹ thuật này lại không rõ ràng: trong hai game được huấn luyện thử với kỹ thuật học chuyển tiếp thì có một game tốt hơn hẳn và một game kém hơn hẳn khi không dùng học chuyển tiếp.
+	Mặc dù vậy, số lượng game thử nghiệm cũng còn ít nên hiệu quả của kỹ thuật học chuyển tiếp cần phải được thử nghiệm thêm.
+
+	Hướng phát triển tiếp theo của đề tài có thể tập trung vào việc tăng tốc độ huấn luyện của mô hình bằng những cách khác.
+	Cụ thể hơn, chúng em xác định có hai hướng chính để cải thiện tốc độ huấn luyện của hướng tiếp cận này:
 	\begin{itemize}
 		\item \textbf{Tăng tốc việc huấn luyện mạng nơ-ron}: sử dụng các kỹ thuật tiên tiến của học sâu (như ``Weight normalization'', ``Dropout'', ...) để mạng nơ-ron xấp xỉ hàm đích nhanh hơn và chính xác hơn.
 		Thực tế cho thấy, phần lớn thời gian huấn luyện là để cập nhật trọng số của mạng nơ-ron. 
 		Khi mạng nơ-ron xấp xỉ hàm càng nhanh thì tốc độ chung của toàn mô hình càng được cải thiện.
-		Còn nếu mạng nơ-ron xấp xỉ hàm chính xác hơn thì ta có thể giảm số ``frame'' ảnh huấn luyện.
+		Còn nếu mạng nơ-ron xấp xỉ hàm chính xác hơn thì ta có thể giảm số frame ảnh huấn luyện.
 		Khi đó, ta có thể thử nhiều game hơn trong cùng một khoảng thời gian.
 		\item \textbf{Cải thiện thuật toán học tăng cường}: thử nghiệm các thuật toán khác của học tăng cường (như thuật toán ``Expected Sarsa'', ``Policy Gradient'', ...) để tìm chính sách tốt hơn.
 		Các thuật toán khác của học tăng cường có thể tìm được những chính sách tốt hơn thuật toán ``Q-learning'' trong bài toán tự động chơi game.
