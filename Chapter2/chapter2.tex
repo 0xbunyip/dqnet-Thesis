@@ -1147,64 +1147,106 @@ Cách thức cập nhật của phương pháp lặp giá trị dựa trên phư
 %\label{eq:n_Sarsa_update}
 %\end{equation}
 
+\section{Áp dụng phương pháp lặp giá trị khi không có đầy đủ thông tin của môi trường}
+\subsection{Bài toán học tăng cường khi không có đầy đủ thông tin của môi trường}
+Trong thực tế, việc có đầy đủ thông tin về cách hoạt động của môi trường dưới dạng các ma trận xác suất chuyển trạng thái $\mathcal{P}$ hay ma trận điểm thưởng $\mathcal{R}$ là không thể.
+Ví dụ như để xây dựng một robot tìm đường đi tự động, có rất nhiều yếu tố ảnh hưởng đến sự di chuyển của robot như gió, va chạm, ...
+Ta không thể tổng hợp hết tất cả các yếu tố này để xây dựng các ma trận xác suất như trên được.
+Tuy nhiên, điều mà ta có thể làm đó là tự học những thông tin cần thiết thông qua việc tương tác với môi trường.
+Ví dụ trong bài toán chơi cờ vua ta mong muốn xây dựng hệ thống có xác suất thắng cao nhất (điểm thưởng là 1 sau khi thắng và -1 sau khi thua mỗi trận).
+Khi đó, hệ thống có thể không biết hành động ``khai cuộc bằng quân mã'' sẽ cho bao nhiêu điểm thưởng (tức không biết xác suất thắng) nhưng khi chơi nhiều lần và thử ``khai cuộc bằng quân mã'', hệ thống có thể ước lượng được giá trị điểm thưởng này.
+Đây cũng chính là ý tưởng chính của các thuật toán học tăng cường trong những bài toán thực tế: tương tác với môi trường để \textbf{lấy mẫu (sampling)} và ước lượng hàm giá trị dựa vào các mẫu này.
+Theo đó, các mẫu dữ liệu lúc này sẽ là các bộ ba ($\mathit{S}_t, \mathit{A}_t, \mathit{R}_{t+1}$) tương ứng với trạng thái thời điểm $t$, hành động thời điểm $t$ và điểm thưởng nhận được ngay sau đó.
 
+Cách lấy mẫu dữ liệu trên dẫn đến một vấn đề: ta nên phân bố việc ``thử và sai'' này như thế nào?
+Như trong bài toán cờ vua, ta có rất nhiều cách khai cuộc nên nếu ta chỉ thử ``khai cuộc bằng quân mã'' thì ta sẽ không thử được những chiến thuật chơi khác.
+Ngoài ra, nếu như ta thử ``khai cuộc bằng quân mã'' và thấy đây là một hành động tốt (cho xác suất thắng cao), liệu ta có nên thử những cách khai cuộc khác không hay là tập trung tối ưu ở những nước cờ sau?
+Đây chính là một ví dụ của vấn đề quan trọng trong học tăng cường: \textbf{vấn đề khám phá và khai thác (exploration vs exploitation)}.
+Do ta chỉ có thể tương tác với môi trường một số lần hữu hạn, ta cần phải cân bằng giữa việc khám phá không gian trạng thái với việc khai thác những kiến thức đã biết để xây dựng chính sách tốt hơn.
+Nếu như ta khám phá quá nhiều mà không khai thác, ta chỉ khám phá được những trạng thái ``không tốt'' do chính sách của ta không tốt nên khó gặp những trạng thái ``tốt''.
+Điều này dẫn đến việc khám phá sẽ không hiệu quả.
+Trong khi đó, nếu ta khai thác quá nhiều mà không khám phá, ta chỉ tận dụng những kiến thức đã biết (tức hành động theo chính sách hiện tại) nên ít khi nào gặp được những trạng thái mới (có thể là trạng thái ``tốt hơn'').
 
-\section{Tìm chính sách tối ưu bằng phương pháp lặp giá trị trong bài toán thực tế}
-Những bài toán thực tế không có tính chất MDP của môi trường hay nói cách khác những thông tin như: tập những trạng thái có thể có, xác suất chuyển từ trạng thái này sang trạng thái khác, cũng như tất cả điểm thưởng mà hệ thống có khả năng nhận được của một hành động $a$ tại trạng thái $s$. Do đó một yêu cầu được đặt ra là hệ thống phải có khả năng học từ những thông tin mà nó tiếp nhận được qua việc tương tác với môi trường. Các thông tin này thường được thiết kế ở dạng chuỗi (trạng thái, hành động, điểm thưởng)
-$\mathit{S}_1, \mathit{A}_1, \mathit{R}_2, \mathit{S}_2, \mathit{A}_2, \mathit{R}_3, \dots, \mathit{S}_T$. Với $T$ là thời điểm kết thúc việc tương tác của hệ thống với môi trường. Chính vì lý do đó phương pháp lặp giá trị áp dụng trong bài toán thực tế sẽ cố gắng xấp xỉ hàm giá trị hành động tối ưu $q_{*}$ khác với trong mô hình MDP.
+Một trong những cách đơn giản nhất để giải quyết vấn đề này đó là ta thực hiện khai thác phần lớn thời gian và thỉnh thoảng chèn vào đó một số hành động ngẫu nhiên để khám phá.
+Kỹ thuật này có tên gọi là ``$\epsilon$-greedy''.
+Theo đó, mỗi khi cần lựa chọn hành động, với xác suất rất nhỏ (nhưng vẫn lớn hơn không) $\epsilon$, ta thực hiện việc khám phá bằng cách chọn hành động ngẫu nhiên.
+Phần còn lại (tức là với xác suất $1 - \epsilon$), ta thực hiện việc khai thác kiến thức đã biết bằng cách chọn hành động mà có giá trị hành động cao nhất (tức chọn $a^{'} = \underset{a \in A}{\operatorname{argmax}}Q(s,a)$).
+Thông thường, $\epsilon$ được chọn là một giá trị nhỏ như $0.1$ hay $0.01$.
 
-%\subsubsection*{Phương pháp $\epsilon$-greedy}
-%Thông thường các mẫu thực nghiệm được tạo ra bằng chính sách thực hiện tham lam trên hàm giá trị hành động đang có hay nói cách khác trong quá trình lấy mẫu, tại mỗi trạng thái hệ thống ``gặp'', nó chỉ chọn thực hiện hành động có giá trị lớn nhất dựa trên hàm giá trị hiện tại. Một vấn đề có thể xảy ra của phương pháp lấy mẫu này là một số trạng thái sẽ không bao giờ xuất hiện trong quá trình lấy mẫu dẫn đến hệ thống có thể chỉ tìm ra được chính sách chỉ tối ưu trên tập những trạng thái đã ``gặp''. Ngược lại nếu không thực hiện tham lam trên hàm giá trị hành động, hệ thống sẽ khó khăn trong việc tìm lời 
-%
-%Ý tưởng của phương pháp $\epsilon$-greedy đảm bảo luôn khám phá kiến thức mới trong quá trình khai thác. Trong bài toán cải thiện chính sách, giả sử chúng có hàm giá trị hành động $Q$, phương pháp $\epsilon$-greedy đảm bảo các hành động luôn có khả năng được chọn thực hiện tại mỗi trạng thái. Phương pháp $\epsilon$-greedy sẽ thực hiện hoàn toàn ngẫu nhiên mà không quan tâm đến hàm giá trị hành động với xác suất $\epsilon$ tại mỗi trạng thái; ngược lại $\epsilon$-greedy sẽ chọn thực hiện hành động dựa trên tham lam hàm giá trị hành động với xác suất $1 - \epsilon$. Qua đó, ta thấy được nếu tại một trạng thái $s$ có thể thực hiện được $m$ hành động khác nhau thì xác xuất để chọn một hành động bất kỳ được chọn mà không quan tâm đến giá trị của chúng là $\epsilon/m$. Từ \ref{eq:epsilon-greedy}, tại một trạng thái $s$, hành động có giá trị lớn nhất sẽ có xác suất được chọn thực hiện là $\epsilon/m + 1 - \epsilon$, ngược lại một hành động không có giá lớn nhất cũng có xác suất được chọn là $\epsilon/m$. 
-%\begin{equation}
-%\pi(a|s) =
-%\left\{\begin{matrix}
-%\epsilon/m + 1 - \epsilon & \text{nếu }a = \underset{a \in A}{\operatorname{argmax}}Q(s,a)\\ 
-%\epsilon/m & \text{ngược lại}s
-%\end{matrix}\right.
-%\label{eq:epsilon-greedy}
-%\end{equation}
-%Câu hỏi đặt một chính sách $\pi'$ thực hiện $\epsilon$-greedy trên hàm giá trị hành động của  chính sách $\pi$ có tốt hơn chính sách $\pi$ không? Theo định lý tối ưu: Với chính sách thực hiện theo phương pháp $\epsilon$-greedy $\pi$ bất kỳ, một chính sách khác $\pi'$ thực hiện $\epsilon$-greedy trên hàm giá trị hành động của chính sách $\pi$, $q_{\pi}$, luôn là một chính sách tốt hơn hoặc bằng chính sách $\pi$, $v_{\pi'}(s) \geq v_{\pi'}(s), \forall s \in \mathcal{S}$.
+\subsection{Thuật toán ``Q-learning''}
+Thuật toán ``Q-learning'' là một trong những thuật toán quan trọng nhất và được ứng dụng rộng rãi nhất trong học tăng cường \cite{sutton1998introduction}.
+Thuật toán này nói một cách đơn giản đó là áp dụng phương pháp lặp giá trị cho hàm giá trị hành động khi không có đầy đủ thông tin của môi trường.
+Chữ \textit{``Q''} trong tên thuật toán cũng nói lên rằng thuật toán này sẽ học ra hàm giá trị hành động.
+Cụ thể hơn, do phương pháp lặp giá trị sẽ tìm được hàm giá trị \textbf{tối ưu} nên thuật toán ``Q-learning'' sẽ tìm thẳng ra hàm giá trị hành động tối ưu $q_*$.
 
-\subsection{Phương pháp Q-learning}
-\paragraph*{On-policy và off-policy}
-Ý tưởng của on-policy là dựa trên những kinh nghiệm thực tế của chính hệ thống, nó có thể tự cải thiện trở nên tốt hơn. Những phương pháp thực hiện theo \textit{on-policy} là những phương pháp đánh giá và cải thiện chính sách $\pi$ dựa trên những mẫu dữ liệu có được qua việc tương tác với môi trường theo chính chính sách đó. Các phương pháp quy hoạch động, MC, TD, Sarsa là những phương pháp thực hiện theo on-policy.
-Ngược lại với on-policy, ý tưởng của off-policy là hệ thống có thể cải thiện chính sách của nó dựa trên những kinh nghiệm thực tế của một hệ thống có một chính sách thực hiện khác. Những phương pháp thực hiện theo \textit{off-policy} đánh giá và cải thiện chính sách $\pi$ dựa trên những mẫu dữ liệu có được qua việc tương tác với môi trường theo một chính sách $\pi'$ khác. Ngoài ra, những phương pháp thực hiện theo off-policy có thể tận dụng lại những mẫu dữ liệu cũ để tiếp tục cải thiện chính sách.
+Ý tưởng của thuật toán này rất đơn giản.
+Ta có công thức cập nhật của phương pháp lặp giá trị cho hàm giá trị hành động là:
+\begin{align}
+	q_{k+1}(s,a) = \mathcal{R}_{s}^{a} + \gamma \sum_{s' \in \mathcal{S}} \mathcal{P}_{ss'}^{a} \max_{a' \in \mathcal{A}} q_{k}(s', a')
+	\label{eq:q_val_iteration_2}
+\end{align}
+Với công thức này, ta dễ dàng tương tác với môi trường để lấy mẫu cho biểu thức bên phải dấu $=$ của (\ref{eq:q_val_iteration_2}).
+Phân tích cụ thể hơn, biểu thức này bao gồm:
+\begin{itemize}
+	\item $\mathcal{R}_{s}^{a}$: đây là kỳ vọng điểm thưởng nhận được ngay lập tức khi thực hiện hành động $a$ tại trạng thái $s$.
+	Do bây giờ ta không biết thông tin này, ta cần phải tương tác với môi trường để lấy mẫu.
+	Giả sử việc tương tác môi trường ở thời điểm $t$ gặp trạng thái $S_t$ và ta thực hiện hành động $A_t$.
+	Khi đó, \textbf{điểm thưởng $R_{t+1}$} nhận được ngay tiếp theo chính là một ước lượng không chệch của $\mathcal{R}_{s}^{a}$.
+	Lý do là theo định nghĩa, kỳ vọng của $R_{t+1}$ chính là $\mathcal{R}_{s}^{a}$.
+	
+	\item $\sum_{s' \in \mathcal{S}} \mathcal{P}_{ss'}^{a} \max_{a' \in \mathcal{A}} q_{k}(s', a')$: biểu thức này mang ý nghĩa là \textit{trung bình (theo trạng thái tiếp theo $s'$) của giá trị hành động tốt nhất tại trạng thái tiếp theo}.
+	Khi tương tác với môi trường, ta không thể lấy trung bình theo trạng thái tiếp theo được vì khi thực hiện một hành động $A_t$ thì ta sẽ sang trạng thái $S_{t+1}$ (ta không thể quay lại trạng thái $S_t$ để thử lại).
+	Tuy nhiên, khi thực hiện hành động đó, trạng thái $S_{t+1}$ mà ta đến trong một lần thực hiện hành động $A_t$ ở trạng thái $S_t$ chính là một mẫu của các trạng thái có thể có tiếp theo.
+	Như vậy, ta hoàn toàn có thể sử dụng $\max_{a' \in \mathcal{A}} q_{k}(S_{t+1}, a')$ làm một ước lượng của biểu thức trên.
+\end{itemize}
+Ghép hai thành phần này lại, ta có công thức cập nhật hàm giá trị hành động của thuật toán ``Q-learning'' khi tương tác với môi trường:
+\begin{align}
+	q_{k+1}(S_t,A_t) = R_{t+1} + \gamma \max_{a' \in \mathcal{A}} q_{k}(S_{t+1}, a')
+	\label{eq:q_learning_update}
+\end{align}
+Hình \ref{fig:Q_learning_Alg} mô tả cách hoạt động của thuật toán ``Q-learning''.
 
-\paragraph*{Phương pháp off-policy Q-learning}
- Một trong những đột phá quan trọng nhất trong học tăng cường được phát triển dựa trên phương pháp TD được biết đến chính là Q-learning \cite{sutton1998introduction}. Tương tự như những phương pháp ở trên, phương pháp Q-learning xác định giá trị của một cặp trạng thái và hành động bằng cách cập nhật giá trị ước lượng của nó qua nhiều lần lặp:
- \begin{equation}
-	 Q(\mathit{S}_t, \mathit{A}_t) \leftarrow Q(\mathit{S}_t, \mathit{A}_t) + \alpha \left[\mathit{R}_{t+1} + \gamma\max_{a}Q(\mathit{S}_{t+1}, a) - Q(\mathit{S}_t, \mathit{A}_t)\right]
- \end{equation}
-Mục tiêu cập nhật giá trị của cặp trạng thái, hành động $(\mathit{S}_{t}, \mathit{A}_{t})$ bằng phương pháp Q-learning dựa trên giá trị điểm thưởng nhận được $\mathit{R}_{t+1}$ và giá trị của hành động lớn nhất ở trạng thái kế tiếp $\mathit{S}_{t+1}$. Hình \ref{fig:Q_learning_Alg} minh họa cho cách thức xác định mục tiêu cập nhật của Q-learning. 
-Một điểm khác biệt của phương pháp Q-learning so với các phương pháp trên là nó xấp xỉ trực tiếp hàm giá trị hành động tối ưu $q_*$, mà không phải phụ thuộc quá nhiều vào chính sách mà nó đang theo. Ảnh hưởng của chính sách mà hệ thông đang theo đối với phương pháp này là: nó xác định cặp trạng thái và hành động nào được xuất hiện trong các mẫu thực nghiệm. Tuy nhiên để đảm bảo xác định được giá trị hành động tối ưu, một yêu cầu tối thiểu là các cặp trạng thái và hành động đều được xuất hiện trong quá trình đánh giá chính sách và giá trị các cặp trạng thái, hành động đều được cập nhật liên tục. Từng bước thực hiện của phương pháp Q-learning được trình bày trong thuật toán \ref{alg_Q_learning}.
-\begin{algorithm}
-	\newalgname{Thuật toán}
-	\caption{Xác định hàm giá trị hành động tối ưu bằng Q-learning}
-	\label{alg_Q_learning}
-	\begin{algorithmic}[1]
-		\renewcommand{\algorithmicrequire}{\textbf{Đầu vào:}}
-		\renewcommand{\algorithmicensure}{\textbf{Đầu ra:}}
-		\algnewcommand\algorithmicoperation{\textbf{Thao tác:}}
-		\algnewcommand\Operation{\item[\algorithmicoperation]}
-		
-		\Require
-		\Ensure Hàm giá trị $Q$ xấp xỉ hàm giá trị $q_{*}$
-		
-		\Operation
-		\Repeat
-		\State Tạo một mẫu thực nghiệm $E$ bằng chính sách bất kỳ $\pi'$
-		\State Khởi tạo trạng thái $S$
-		\For{mỗi bước trong $E$}
-		\State Chọn một hành động $A$ tại trạng thái $S$ theo chính sách $\pi'$
-		\State Thực hiện hành động $A$; quan sát điểm thưởng $R$ nhận được, và trạng thái tiếp theo $S'$
-		\State $Q(S,A) \leftarrow Q(S,A) + \alpha \left[R + \gamma\max_{a}Q(S', a) - Q(S,A)\right]$ \%\% Thực hiện cập nhật giá trị cho cặp trạng thái, hành động $S,A$
-		\State $S \leftarrow S'$
-		\EndFor
-		\Until thỏa điều kiện dừng
-	\end{algorithmic}
-\end{algorithm}
+Tuy nhiên, công thức trên gặp một vấn đề: nếu như ta gặp bộ trạng thái - hành động $(S_t,A_t)$ nhiều lần thì ta sẽ cập nhật đè lên giá trị $q(S_t,A_t)$ cũ.
+Điều này làm cho những lần cập nhật trước là vô nghĩa.
+Ngoài ra, cách cập nhật này sẽ không đúng với ``tinh thần'' của việc ước lượng bằng cách lấy mẫu (đó là lấy trung bình của nhiều mẫu dữ liệu lại).
+Vì vậy, ta chỉ việc thay đổi nhỏ thuật toán ``Q-learning'' bằng cách thay vì cập nhật $q(S_t,A_t)$ bằng giá trị của lần gặp mới nhất, ta sẽ lấy trung bình của tất cả các lần gặp.
+Cách cập nhật này tuy đúng về mặt toán học nhưng về mặt thực tiễn vẫn gặp một vấn đề nhỏ: việc lấy trung bình đồng nghĩa với việc coi tất cả các lần gặp đều có ý nghĩa ngang nhau.
+Một cách trực quan, ta có thể thấy những lần gặp càng mới thì càng có ý nghĩa.
+Ví dụ như trong bài toán mà môi trường có thể thay đổi theo thời gian, thông tin của những lần cập nhật cũ nhiều khả năng không còn đúng; những lần cập nhật càng mới thì thông tin càng có nhiều khả năng là chính xác.
+Để giải quyết điều này, ta chỉ việc sử dụng một phần thông tin của những lần gặp trước cùng với một phần thông tin của lần gặp mới.
+\begin{align}
+	q_{k+1}(S_t, A_t) &= \alpha \left[ R_{t+1} + \gamma \max_{a' \in \mathcal{A}} q_{k}(S_{t+1}, a') \right] + (1 - \alpha) q_{k}(S_t, A_t) \nonumber \\
+	&= q_{k}(S_t, A_t) - \alpha \left[ R_{t+1} + \gamma \max_{a' \in \mathcal{A}} q_{k}(S_{t+1}, a') - q_{k}(S_t, A_t) \right]
+	\label{eq:q_learning_update_small}
+\end{align}
+Hệ số $\alpha$ trong này điều khiển mức độ thông tin của lần gặp mới nhất mà ta mong muốn sử dụng.
+$\alpha$ có giá trị trong khoảng $(0,1)$.
+$\alpha$ càng lớn thì ta càng sử dụng nhiều thông tin của lần gặp mới nhất (tức giá trị $R_{t+1} + \gamma \max_{a' \in \mathcal{A}} q_{k}(S_{t+1}, a')$) và giữ lại ít thông tin của những lần gặp cũ (tức giá trị $q_{k}(S_t, A_t)$).
+Khi $\alpha$ bằng $1$ thì ta sẽ ``quên'' những lần cập nhật cũ và sử dụng hoàn toàn thông tin của lần gặp mới nhất.
+Trường hợp này tương đương với cách cập nhật của công thức (\ref{eq:q_learning_update}).
+
+Thuật toán ``Q-learning'' có một điểm khác biệt so với những thuật toán học tăng cường khác đó là việc hành động $A_{t+1}$ tại trạng thái $S_{t+1}$ không được dùng để cập nhật $q(S_t, A_t)$.
+Điều này có nghĩa là các hành động được thực hiện để tương tác với môi trường chỉ giúp cho ``Q-learning'' có được những bộ (trạng thái, hành động) cùng với giá trị điểm thưởng tương ứng để cập nhật hàm giá trị.
+Hành động $A_{t+1}$ không xuất hiện ở biểu thức cập nhật cho thấy chính sách thực hiện hành động tương tác với môi trường không ảnh hưởng đến việc cập nhật hàm giá trị hành động (ngoại trừ việc cung cấp các bộ trạng thái - hành động).
+Như vậy, hàm giá trị mà thuật toán ``Q-learning'' học được ứng với chính sách nào?
+Hàm giá trị mà thuật toán ``Q-learning'' học được chính là hàm giá trị tối ưu và chính sách tương ứng là chính sách tối ưu.
+Một cách để hiểu tại sao ``Q-learning'' hội tụ đến hàm giá trị tối ưu, ta có thể so sánh với phương pháp lặp giá trị.
+Phương pháp lặp giá trị hội tụ đến hàm giá trị tụ đến hàm giá trị tối ưu.
+Mà thuật toán ``Q-learning'' cũng chính là cách áp dụng phương pháp lặp giá trị cho hàm giá trị hành động khi không có đầy đủ thông tin của môi trường.
+Thuật toán ``Q-learning'' chỉ đơn giản là lấy mẫu thực tế thay cho các giá trị xác suất, kỳ vọng điểm thưởng của môi trường.
+
+Thuật toán ``Q-learning'' học ra hàm giá trị của một chính sách khác với chính sách tương tác với môi trường.
+Các thuật toán có cùng tính chất này được gọi là thuật toán ``off-policy''.
+Ngược lại, nhưng thuật toán học ra hàm giá trị của chính sách đang tương tác với môi trường được gọi là ``on-policy''.
+Nhờ việc học ``off-policy'', ``Q-learning'' cố thể được dùng để học lại những mẫu dữ liệu cũ.
+Rõ ràng là ta hoàn toàn có thể dùng công thức cập nhật (\ref{eq:q_learning_update_small}) của ``Q-learning'' cho những mẫu dữ liệu cũ $S_{t-1}, A_{t-1}, S_{t-2}, A_{t-2}, ...$.
+Các thuật toán ``on-policy'' không thể thực hiện việc cập nhật như vậy vì những mẫu dữ liệu cũ này được sinh ra bởi một chính sách khác (tức chính sách cũ nếu như ta cập nhật chính sách sau mỗi lần cập nhật hàm giá trị).
+
+Vậy ta nên chọn chính sách nào để tương tác với môi trường trong thuật toán ``Q-learning''?
+Rõ ràng là nếu chính sách này không gặp những trạng thái hoặc không thực hiện một số hành động thì ``Q-learning'' không thể cập nhật giá trị cho các trạng thái và hành động này được.
+Về mặt lý thuyết, thuật toán ``Q-learning'' luôn hội tụ đến hàm giá trị tối ưu nếu như mọi cặp \textit{trạng thái - hành động} luôn được thăm \cite{sutton1998introduction}.
+Trong thực tế, một trong những chính sách thường được sử dụng đó là ``$\epsilon$-greedy''.
+Lúc này, ta chỉ việc chọn hành động tham lam theo hàm giá trị hành động đang được cập nhật của ``Q-learning'' hoặc chọn hành động ngẫu nhiên với một xác suất nhỏ.
 
 \begin{figure}
 	\centering
@@ -1237,6 +1279,8 @@ Một điểm khác biệt của phương pháp Q-learning so với các phươn
 	edge (s1);	
 	\end{scope}
 	\end{tikzpicture}
-	\caption[Minh họa phương pháp Q-learning]{Đồ thị minh họa cập nhật hàm giá trị hành động bằng phương pháp Q-learning. Q-learning xác định mục tiêu cập nhật cho giá trị của cặp trạng thái, hành động $(\mathit{S}_{t}, \mathit{A}_t)$ bằng tổng giữa điểm thưởng $\mathit{R}_{t+1}$ nhận được khi thực hiện hành động $\mathit{A}_t$ tại trạng thái $\mathit{S}_{t}$ và giá trị hành động $a$ lớn nhất tại trạng thái kế tiếp $\mathit{S}_{t+1}$ đã nhân với hệ số $\gamma$.}
+	\caption[Minh họa phương pháp Q-learning]{
+	Đồ thị minh họa cách cập nhật hàm giá trị hành động bằng thuật toán ``Q-learning''. 
+	``Q-learning'' xác định mục tiêu cập nhật cho giá trị của cặp trạng thái, hành động $(\mathit{S}_{t}, \mathit{A}_t)$ bằng tổng của điểm thưởng $\mathit{R}_{t+1}$ nhận được ngay lập tức và giá trị hành động lớn nhất tại trạng thái kế tiếp $\mathit{S}_{t+1}$.}
 	\label{fig:Q_learning_Alg}
 \end{figure}
