@@ -40,15 +40,15 @@ Chương này trình bày hai phần:
 %-----------------------------------------------------------------------------
 \subsection{Học sâu}
 \subsubsection*{Lý do cần áp dụng học sâu}
-	Những thuật toán học tăng cường được trình bày trong chương trước đều tìm chính sách tối ưu dựa vào hàm giá trị. 
-	Việc tính \textbf{đúng} và \textbf{nhanh} hàm giá trị ảnh hưởng rất nhiều đến kết quả của bài toán. 
-	Các thuật toán học tăng cường cổ điển như ``Monte Carlo'' (MC) hay ``Temporal-Difference'' (TD) đều đã được chứng minh là luôn hội tụ trong những điều kiện nhất định \cite{sutton1998introduction}. 
-	Ngoài ra, khi áp dụng vào các bài toán kinh điển của học tăng cường thì các thuật toán này đều hội tụ khá nhanh.
+	Thuật toán ``Q-learning'' được trình bày trong chương trước tìm chính sách tối ưu dựa vào việc tìm hàm giá trị tối ưu. 
+	Việc tính đúng và nhanh hàm giá trị ảnh hưởng rất nhiều đến kết quả của bài toán. 
+	Theo đó, hàm giá trị hành động tối ưu được cập nhật dần dần bằng cách lưu trữ lại các ma trận $q_{k}$.
+	Do hàm giá trị hành động có input là trạng thái $s$ và hành động $a$ nên ma trận này sẽ có kích thước là số trạng thái có thể có nhân với số hành động có thể có.
 	
-	Tuy nhiên, với những bài toán thực tế với số trạng thái rất lớn thì việc lưu véc-tơ hàm giá trị trạng thái $v_{\pi}$ (hoặc ma trận hàm giá trị hành động $q_{\pi}$) là việc không thể. 
+	Với những bài toán thực tế với số trạng thái rất lớn thì việc lưu ma trận hàm giá trị hành động là việc không thể. 
 	Ví dụ như frame hình của bài toán tự động chơi game có kích thước $210\times160\times3=100800$ điểm ảnh; mỗi điểm ảnh có giá trị trong khoảng $[0, 127]$ nên số trạng thái có thể có lên đến $128^{100800}$.
 	Vì vậy, việc lưu trữ hàm giá trị dưới dạng bảng là không khả thi về mặt bộ nhớ.
-	Còn về mặt tốc độ tính toán thì các thuật toán học tăng cường trên đều tính hàm giá trị \textbf{rời rạc} cho từng trạng thái.
+	Còn về mặt tốc độ tính toán thì thuật toán ``Q-learning'' được trình bày ở chương 2 tính hàm giá trị một cách \textbf{rời rạc} cho từng trạng thái.
 	Với số trạng thái quá lớn như trên thì ta không thể duyệt lần lượt từng trạng thái để tính được.
 	
 	Những lý do trên dẫn đến việc sử dụng một phương pháp xấp xỉ hàm là bắt buộc cho các bài toán học tăng cường với số trạng thái lớn.
@@ -188,15 +188,15 @@ Chương này trình bày hai phần:
 
 %-----------------------------------------------------------------------------
 \subsection{Sử dụng mạng nơ-ron để xấp xỉ hàm}
-	Việc sử dụng mạng nơ-ron để xấp xỉ hàm giá trị mang lại ba lợi ích quan trọng:
+	Việc sử dụng mạng nơ-ron tích chập (CNN) để xấp xỉ hàm giá trị mang lại ba lợi ích quan trọng:
 	\begin{itemize}
-		\item Mạng nơ-ron có khả năng học được những đặc trưng phức tạp từ dữ liệu thô.
-		\item Mạng nơ-ron có thể xấp xỉ hàm giá trị phức tạp.
-		\item Mạng nơ-ron có thể tổng quát hoá từ trạng thái đã gặp sang trạng thái chưa gặp.
+		\item CNN có khả năng học được những đặc trưng phức tạp từ dữ liệu thô.
+		\item CNN có thể xấp xỉ hàm giá trị phức tạp.
+		\item CNN có thể tổng quát hoá từ trạng thái đã gặp sang trạng thái chưa gặp.
 	\end{itemize}
 	
-	Mạng nơ-ron là một mô hình học sâu nên có thể học được những đặc trưng trừu tượng từ dữ liệu thô như đã nói ở phần trên.
-	Cụ thể hơn trong bài toán tự động chơi game, ta có thể đưa dữ liệu đầu vào là các frame hình RGB thẳng vào input của mạng nơ-ron để tính ra giá trị tương ứng.
+	CNN là một mô hình học sâu nên có thể học được những đặc trưng trừu tượng từ dữ liệu thô như đã nói ở phần trên.
+	Cụ thể hơn trong bài toán tự động chơi game, ta có thể đưa dữ liệu đầu vào là các frame hình RGB thẳng vào input của CNN để tính ra giá trị tương ứng.
 	Nhờ vậy, ta không cần phải thiết kế các đặc trưng bằng tay để biễu diễn lại từng trạng thái của game.
 	Ngoài ra, do quá trình học đặc trưng là hoàn toàn tự động, thuật toán học tăng cường lúc này \textbf{có thể áp dụng cho bất kỳ game} nào mà không cần phải thay đổi cách rút trích đặc trưng.
 	Với một mô hình cố định lúc này, ta có thể học chơi được nhiều game.
@@ -205,58 +205,53 @@ Chương này trình bày hai phần:
 	Với bài toán tự động chơi game, giá trị của một trạng thái bất kỳ rất khó xác định do một màn game thường rất dài.
 	Vì thế, \textbf{hàm giá trị của bài toán này là một hàm phi tuyến phức tạp} và không liên tục.
 	Công cụ xấp xỉ hàm giá trị phải có khả năng xấp xỉ những hàm phức tạp như vậy thì thuật toán học tăng cường mới đạt được hiệu quả.
-	Với cách nhìn nhận mạng nơ-ron như là một công cụ xấp xỉ hàm, ta có thể thấy mạng nơ-ron rất linh hoạt với khả năng xấp xỉ hàm đích bất kỳ.
+	Với cách nhìn nhận CNN như là một công cụ xấp xỉ hàm, ta có thể thấy CNN rất linh hoạt với khả năng xấp xỉ hàm đích bất kỳ.
 	
-	Một tính chất quan trọng khác của mạng nơ-ron chính là khả năng tổng quát hoá (generalization) từ trạng thái đã gặp sang trạng thái chưa gặp \cite{mnihdqn2015}.
+	Một tính chất quan trọng khác của CNN chính là khả năng tổng quát hoá (generalization) từ trạng thái đã gặp sang trạng thái chưa gặp \cite{mnihdqn2015}.
 	Nhờ đặc điểm này mà quá trình học được tăng tốc đáng kể.
-	Thay vì phải duyệt qua từng trạng thái (thậm chí phải duyệt nhiều lần) để tính hàm giá trị tại đó, mạng nơ-ron có khả năng \textbf{``dự đoán'' giá trị} của một trạng thái chưa từng thấy dựa vào những trạng thái đã thấy.
+	Thay vì phải duyệt qua từng trạng thái (thậm chí phải duyệt nhiều lần) để tính hàm giá trị tại đó, mạng nơ-ron tích chập có khả năng \textbf{``dự đoán'' giá trị} của một trạng thái chưa từng thấy dựa vào những trạng thái đã thấy.
 	Như trong bài toán tự động chơi game thì các frame hình liên tiếp thường rất giống nhau và các trạng thái này thường cũng có giá trị tương đương nhau.
 	Vì vậy, khi học xong cách chơi một game nào đó, hệ thống vẫn hoạt động tốt trong quá trình kiểm thử khi gặp những tình huống game chưa từng thấy trong lúc huấn luyện.
 	
 	Các thuật toán học tăng cường ở chương 2 đều lưu hàm giá trị dưới dạng bảng (lookup table).
-	Để sử dụng mạng nơ-ron như một công cụ xấp xỉ hàm, lúc này ta coi hàm giá trị là một hàm có tham số (parameterized function) và đi tìm các tham số này:
+	Để sử dụng CNN như một công cụ xấp xỉ hàm, lúc này ta coi hàm giá trị là một hàm có tham số (parameterized function) và đi tìm các tham số này:
 	\begin{align}
-		\hat{v}(s;\theta) &\approx v_{\pi}(s) \label{eq_DefVhat}\\
-		\hat{q}(s,a;\theta) &\approx q_{\pi}(s,a) \label{eq_DefQhat}
+		\hat{q}(s,a;\theta) &\approx q_{*}(s,a) \label{eq_DefQhat}
 	\end{align}
-	$\theta$ là bộ trọng số của mạng nơ-ron mà ta cần học.
-	Công thức (\ref{eq_DefVhat}) được dùng khi ta muốn xấp xỉ hàm giá trị trạng thái và công thức (\ref{eq_DefQhat}) là để xấp xỉ hàm giá trị hành động.
-	Để học được bộ trọng số xấp xỉ tốt hàm đích ($v_{\pi}(s)$ hoặc $q_{\pi}(s,a)$), ta cung cấp các mẫu dữ liệu (data sample).
-	Mỗi mẫu bao gồm dữ liệu đầu vào của mạng nơ-ron (tức trạng thái $s$ hoặc bộ trạng thái, hành động $s, a$) cùng với giá trị đích mong muốn (tức $v_{\pi}(s)$ hoặc $q_{\pi}(s,a)$).
-	Khi ta cung cấp đủ nhiều mẫu dữ liệu cho mạng nơ-ron, các bộ tham số sẽ được thay đổi để mạng xấp xỉ được hàm đích mong muốn.
-	Số lượng mẫu dữ liệu càng lớn thì mạng nơ-ron càng ``thấy'' được nhiều giá trị tại nhiều vị trí khác nhau của hàm đích hơn, khi đó mạng nơ-ron càng có khả năng xấp xỉ hàm đích tốt hơn.	
-	Để xét xem mạng nơ-ron có xấp xỉ tốt hàm đích hay chưa, ta có thể tính độ ``khác biệt'' của giá trị đích với giá trị xấp xỉ trên cả không gian đầu vào:
+	$\theta$ là bộ trọng số của CNN mà ta cần học.
+	Để học được bộ trọng số xấp xỉ tốt hàm đích (tức hàm $q_{*}(s,a)$), ta cung cấp các mẫu dữ liệu (data sample).
+	Mỗi mẫu bao gồm dữ liệu đầu vào của CNN (tức trạng thái $s$ hoặc bộ trạng thái, hành động $s, a$) cùng với giá trị đích mong muốn là $q_{*}(s,a)$.
+	Khi ta cung cấp đủ nhiều mẫu dữ liệu cho CNN, các bộ tham số sẽ được thay đổi để mạng xấp xỉ được hàm đích mong muốn.
+	Số lượng mẫu dữ liệu càng lớn thì mạng nơ-ron càng ``thấy'' được nhiều giá trị tại nhiều vị trí khác nhau của hàm đích hơn, khi đó CNN càng có khả năng xấp xỉ hàm đích tốt hơn.	
+	Để xét xem CNN có xấp xỉ tốt hàm đích hay chưa, ta có thể tính độ ``khác biệt'' của giá trị đích với giá trị xấp xỉ trên cả không gian đầu vào:
 	\begin{align}
-		\label{eq_ExpectedErrorV}
-		J(\theta) &= \mathbb{E}_{s \sim \pi}[(v_{\pi}(s) - \hat{v}(s;\theta))^2]\\
 		\label{eq_ExpectedErrorQ}
-		J(\theta) &= \mathbb{E}_{s,a \sim \pi}[(q_{\pi}(s,a) - \hat{q}(s,a;\theta))^2]
+		J(\theta) &= \mathbb{E}_{s,a \sim \pi}[(q_{*}(s,a) - \hat{q}(s,a;\theta))^2]
 	\end{align}
-	Kỳ vọng $\mathbb{E}_{s \sim \pi}$ ý chỉ kỳ vọng với biến ngẫu nhiên là trạng thái $s$ được lấy từ phân bố do chính sách $\pi$ tạo nên.
-	Ví dụ như ta cần xấp xỉ hàm giá trị của một chính sách chỉ luôn ``đi qua trái'' thì $s$ sẽ là những trạng thái mà khi đi theo chính sách này, ta có thể gặp được $s$.
-	Trong khi đó nếu chính sách đang xét là ``đứng yên'' (không thay đổi trạng thái) thì $s$ chỉ có thể có một trạng thái duy nhất đó là trạng thái bắt đầu.
+	Ở đây, ta tạm gọi chính sách tương tác với môi trường là $\pi$.
+	Kỳ vọng $\mathbb{E}_{s, \sim \pi}$ ý chỉ kỳ vọng với biến ngẫu nhiên là trạng thái $s$ và hành động $a$ được lấy bằng cách tuân theo $\pi$.
+	Ví dụ như chính sách tương tác với môi trường là một chính sách chỉ luôn ``đi qua trái'' thì $s$ sẽ là những trạng thái mà khi thực hiện hành động đi qua trái, ta có thể gặp được $s$.
+	Trong khi đó nếu chính sách $\pi$ là ``đứng yên'' (không thay đổi trạng thái) thì $s$ chỉ có thể có một trạng thái duy nhất đó là trạng thái bắt đầu.
 	Giá trị nằm trong kỳ vọng là độ lỗi bình phương giữa giá trị xấp xỉ và giá trị đích.
-	Với hàm lỗi bình phương, có thể thấy khi $J(\theta)$ càng nhỏ thì bộ trọng số $\theta$ giúp cho mạng nơ-ron xấp xỉ hàm đích càng tốt.
+	Với hàm lỗi bình phương, có thể thấy khi $J(\theta)$ càng nhỏ thì bộ trọng số $\theta$ giúp cho CNN xấp xỉ hàm đích càng tốt.
 	Lý do chính ta chọn độ lỗi bình phương (ví dụ thay vì độ lỗi theo trị tuyệt đối) là vì việc tính toán (như đạo hàm) trên hàm bình phương dễ dàng hơn.
 	
 	Lưu ý là ở đây, hàm lỗi $J(\theta)$ là hàm theo $\theta$; tức là lúc này, ta cố định bộ trọng số $\theta$ để tìm ra ``sai số'' mà bộ trọng số này gây ra.
 	Nếu ta có hai bộ trọng số $\theta_1$ và $\theta_2$, ta có thể so sánh khả năng xấp xỉ hàm đích của chúng bằng cách so sánh giá trị $J(\theta_1)$ và $J(\theta_2)$ tương ứng.
 	
-	Tuy nhiên ta không thể tính độ lỗi trên mọi điểm dữ liệu đầu vào theo công thức (\ref{eq_ExpectedErrorV}) và (\ref{eq_ExpectedErrorQ}) được vì số lượng trạng thái là rất lớn.
+	Tuy nhiên ta không thể tính độ lỗi trên mọi điểm dữ liệu đầu vào theo công thức (\ref{eq_ExpectedErrorQ}) được vì số lượng trạng thái có thể có là rất lớn.
 	Vậy ta có thể xấp xỉ giá trị $J(\theta)$ bằng cách chỉ xét độ lỗi trên một tập huấn luyện nhỏ (hay còn gọi là ``batch'') các trạng thái mà ta biết được giá trị đích.
-	Khi đó, kỳ vọng $\mathbb{E}_{s \sim \pi}$ được thay thế bằng giá trị trung bình độ lỗi trên từng mẫu dữ liệu của ``batch'':
+	Khi đó, kỳ vọng $\mathbb{E}_{s,a \sim \pi}$ được thay thế bằng giá trị trung bình độ lỗi trên từng mẫu dữ liệu của ``batch'':
 	\begin{align}
-		\label{eq_BatchErrorV}
-		J(\theta) &= \frac{1}{N} \sum_{i = 1}^{N}(v_{\pi}(S_{i}) - \hat{v}(S_{i};\theta))^2\\
 		\label{eq_BatchErrorQ}
-		J(\theta) &= \frac{1}{N} \sum_{i = 1}^{N}(q_{\pi}(S_i,A_i) - \hat{q}(S_i,A_i;\theta))^2		
+		J(\theta) &= \frac{1}{N} \sum_{i = 1}^{N}(q_{*}(S_i,A_i) - \hat{q}(S_i,A_i;\theta))^2		
 	\end{align}
 	Trong đó:
 	\begin{itemize}
 		\item N là số mẫu dữ liệu trong ``batch''.
 		\item $S_i$, $A_i$ tương ứng là trạng thái và hành động của mẫu dữ liệu thứ $i$ của ``batch''.
 	\end{itemize}
-	Với một tập huấn luyện, ta mong muốn tìm được bộ trọng số giúp cho mạng nơ-ron xấp xỉ tốt hàm đích trên các mẫu dữ liệu thuộc tập huấn luyện này.
+	Với một tập huấn luyện, ta mong muốn tìm được bộ trọng số giúp cho CNN xấp xỉ tốt hàm đích trên các mẫu dữ liệu thuộc tập huấn luyện này.
 	Một thuật toán đơn giản và hay được sử dụng để tìm bộ trọng số này đó là ``Batch Gradient Descent'' (BGD).
 	Để cực tiểu hoá hàm $J(\theta)$, thuật toán BGD thực hiện lặp lại nhiều ``bước đi'' nhỏ để thay đổi bộ trọng số $\theta$ dần dần; mỗi bước đi sẽ giúp cho hàm $J(\theta)$ giảm đi một ít.
 	Để chọn ``hướng đi'' (tức cách cập nhật $\theta$) thì BGD sẽ ``nhìn'' xung quanh vị trí hiện tại và đi theo hướng nào giúp giảm $J(\theta)$ nhiều nhất có thể.
@@ -286,19 +281,19 @@ Chương này trình bày hai phần:
 	Nếu kích thước quá nhỏ thì véc-tơ đạo hàm riêng trung bình trên ``mini-batch'' sẽ không còn là một xấp xỉ tốt.
 	Nếu kích thước quá lớn thì lợi thế về tốc độ của SGD so với BGD sẽ không còn cao.
 	
-	Như đã đề cập ở chương 2, để cải tiến chính sách khi không có đầy đủ thông tin về môi trường (tức không có các ma trận của MDP) ta cần xấp xỉ $q_{\pi}$ thay vì $v_{\pi}$. Áp dụng thuật toán SGD để cực tiểu hoá hàm lỗi (\ref{eq_BatchErrorQ}), công thức cập nhật bộ trọng số tại thời điểm $t$ có dạng:
+	Áp dụng thuật toán SGD để cực tiểu hoá hàm lỗi (\ref{eq_BatchErrorQ}), công thức cập nhật bộ trọng số tại thời điểm $t$ có dạng:
 	\begin{align}
 		\theta_{t + 1} &= \theta_t - \Delta \theta_t \nonumber \\
 		&= \theta_t - \alpha \nabla_{\theta_t} J(\theta_t) \nonumber \\
-		&= \theta_t - \alpha \nabla_{\theta_t} \left( \frac{1}{B} \sum_{i = 1}^{B}(q_{\pi}(S_i,A_i) - \hat{q}(S_i,A_i;\theta_t))^2 \right) \nonumber\\
+		&= \theta_t - \alpha \nabla_{\theta_t} \left( \frac{1}{B} \sum_{i = 1}^{B}(q_{*}(S_i,A_i) - \hat{q}(S_i,A_i;\theta_t))^2 \right) \nonumber\\
 		\label{eq_SGDTrueQ_Update}
-		&= \theta_t - \alpha \frac{1}{B} \sum_{i = 1}^{B}(q_{\pi}(S_i,A_i) - \hat{q}(S_i,A_i;\theta_t)) \nabla_{\theta_t} \hat{q}(S_i, A_i;\theta_t)
+		&= \theta_t - \alpha \frac{1}{B} \sum_{i = 1}^{B}(q_{*}(S_i,A_i) - \hat{q}(S_i,A_i;\theta_t)) \nabla_{\theta_t} \hat{q}(S_i, A_i;\theta_t)
 	\end{align}
 	Ở đây:
 	\begin{itemize}
 		\item $\Delta \theta_t$ là giá trị cập nhật bộ trọng số $\theta_t$ với một ``mini-batch''.
 		\item $B$ là kích thước của ``mini-batch''.
-		\item $q_{\pi}(S_i,A_i)$ là giá trị \textbf{thật sự} của hành động $A_i$ tại trạng thái $S_i$.
+		\item $q_{*}(S_i,A_i)$ là giá trị \textbf{thật sự} của hành động $A_i$ tại trạng thái $S_i$.
 		\item $\hat{q}(S_i,A_i;\theta_t)$ là giá trị \textbf{xấp xỉ} (với bộ trọng số $\theta_t$) của hành động $A_i$ tại trạng thái $S_i$.
 		\item $\nabla_{\theta_t} \hat{q}(S_i, A_i;\theta_t)$ là véc-tơ đạo hàm riêng theo $\theta_t$ của hàm $\hat{q}$ tại trạng thái $S_i$ và hành động $A_i$.
 	\end{itemize}
@@ -307,46 +302,22 @@ Chương này trình bày hai phần:
 	Lúc này, công thức mới sẽ ứng với trường hợp kích thước ``mini-batch'' đúng bằng một nên ta có thể bỏ chỉ số $i$ của từng mẫu dữ liệu:
 	\begin{equation}
 		\label{eq_SGDTrueQ_Single_Update}
-		\theta_{t+1} = \theta_t - \alpha (q_{\pi}(S,A) - \hat{q}(S,A;\theta_t)) \nabla_{\theta_t} \hat{q}(S, A;\theta_t)
+		\theta_{t+1} = \theta_t - \alpha (q_{*}(S,A) - \hat{q}(S,A;\theta_t)) \nabla_{\theta_t} \hat{q}(S, A;\theta_t)
 	\end{equation}
 	
 %-----------------------------------------------------------------------------
 \subsection{Học tăng cường kết hợp với xấp xỉ hàm}
-	Áp dụng thuật toán SGD để tối ưu hàm lỗi bình phương theo công thức (\ref{eq_SGDTrueQ_Update}) thì ta sẽ cực tiểu hoá được độ khác biệt giữa hai hàm $q_{\pi}$ và $\hat{q}$.
-	Tuy nhiên, giá trị đích thực sự mà ta mong muốn là $q_{\pi}(s,a)$ ta không biết được mà chỉ có một số \textbf{mẫu} $S_t, A_t$ khi tương tác với môi trường.
+	Áp dụng thuật toán SGD để tối ưu hàm lỗi bình phương theo công thức (\ref{eq_SGDTrueQ_Single_Update}) thì ta sẽ cực tiểu hoá được độ khác biệt giữa hai hàm $q_{*}$ và $\hat{q}$.
+	Tuy nhiên, giá trị đích thực sự mà ta mong muốn là $q_{*}(s,a)$ ta không biết được mà chỉ có một số \textbf{mẫu} $S_t, A_t$ khi tương tác với môi trường.
 	Các thuật toán học tăng cường chính là kỹ thuật giúp ta có được một ước lượng đơn giản của giá trị đích này.
-	Như ở chương 2, ta có hai thuật toán để ước lượng hàm giá trị: thuật toán ``Monte-Carlo'' (MC) và thuật toán ``Temporal Difference'' (TD).
 	
-	Với thuật toán MC, ta chỉ việc thay thế $q_{\pi}(s,a)$ bằng một ước lượng không chệch của giá trị này.
-	Theo định nghĩa:
-	\begin{equation}
-		\label{eq_q_def}
-		q_{\pi}(s,a) = \mathbb{E}_{\pi}\left [R_{t+1} + \gamma R_{t + 2} + ... + \gamma^{T-t-1}R_T \middle|\ \mathit{S}_t=s, \mathit{A}_t=a\right ]
-	\end{equation}
-	Vậy ta có thể lấy $R_{t+1} + \gamma R_{t + 2} + ... + \gamma^{T-t-1}R_T$ làm một ước lượng cho $q_{\pi}(s,a)$.
-	Giá trị này có thể dễ dàng có được bằng cách cho hệ thống tương tác với môi trường đến khi kết thúc một màn (tức một ``episode'').
-	Sau đó với mỗi trạng thái $S_t$ của ``episode'', ta chỉ cần tính tổng điểm thưởng đến cuối ``episode'' để có giá trị ước lượng mong muốn.
-	Đây là một ước lượng không chệch do kỳ vọng của biểu thức này bằng đúng $q_{\pi}(s,a)$.
-	Vậy công thức cập nhật bộ trọng số trong (\ref{eq_SGDTrueQ_Single_Update}) được thay bằng:
-	\begin{equation}
-		\label{eq_SGD_MC_Update}
-		\theta_{t+1} = \theta_t - \alpha (G_t - \hat{q}(S,A;\theta_t)) \nabla_{\theta_t} \hat{q}(S, A;\theta_t)
-	\end{equation}
-	$G_t$ ở đây là tổng điểm thưởng (đã giảm điểm) nhận được khi thực hiện hành động $A$ tại trạng thái $S$.
-	Kết hợp thuật toán MC với thuật toán SGD để cực tiểu hoá hàm lỗi của mạng nơ-ron, ta có được một thuật toán học tăng cường kết hợp học sâu hoàn chỉnh để giải các bài toán có số trạng thái lớn.
-	
-	Với ý tưởng tương tự, để sử dụng mạng nơ-ron để xấp xỉ hàm giá trị cho thuật toán ``Q-learning'', ta sử dụng tổng điểm thưởng được ``bootstrap'' để ước lượng $q_{\pi}(s,a)$.
-	Cụ thể hơn, ta sẽ thay thế giá trị $q_{\pi}(s,a)$ trong công thức (\ref{eq_q_def}) bằng $R_{t+1}+ \gamma \max_{a}\hat{q}(S_{t+1}, a;\theta)$.
-	Có thể thấy rằng, giá trị ``bootstrap'' này là một ước lượng chệch của $q_{\pi}(s,a)$.
-	Tuy vậy, ước lượng này chỉ gồm tổng của hai số hạng $R_{t+1}$ và $\gamma \max_{a}\hat{q}(S_{t+1}, a;\theta)$ nên có phương sai thấp hơn nhiều so với ước lượng của MC (gồm tổng của nhiều số hạng $R_{t+1}$, $\gamma R_{t+2}$, ...).
-	Đây cũng chính là một sự ``thoả hiệp'' (trade-off) giữa hai giá trị ``bias'' và ``variance'' của hai thuật toán MC và ``Q-learning''.
-	Thuật toán MC sử dụng một ước lượng không chệch nên có ``bias'' bằng không nhưng ``variance'' (tức phương sai) cao; khi đó tổng điểm thưởng của cùng một bộ $(S, A)$ sẽ thay đổi rất nhiều.
-	Khi các giá trị này thay đổi quá nhanh thì mạng nơ-ron sẽ khó học được hơn.
-	Trong khi đó ``Q-learning'' sử dụng một ước lượng chệch nên có ``bias'' lớn nhưng phương sai lại nhỏ; khi đó giá trị ``bootstrap'' của cùng một bộ $(S, A)$ sẽ ít thay đổi trong những lần duyệt đến khác nhau.
-	Tương tự như thuật toán MC, công thức cập nhật bộ trọng số trong (\ref{eq_SGDTrueQ_Single_Update}) được thay bằng:
+	Để sử dụng CNN để xấp xỉ hàm giá trị cho thuật toán ``Q-learning'', ta thực hiện việc lấy mẫu giá trị điểm thưởng để ước lượng $q_{*}(s,a)$.
+	Cụ thể hơn, ta sẽ thay thế giá trị $q_{*}(S,A)$ trong công thức (\ref{eq_SGDTrueQ_Single_Update}) bằng $R + \gamma \max_{a}\hat{q}(S', a;\theta_t)$.
+	Trong đó, bộ bốn thành phần $S$, $A$, $R$, $S'$ là một mẫu dữ liệu (sample) lấy được bằng cách tương tác với môi trường (thực hiện hành động $A$ tại trạng thái $S$ để có được điểm thưởng $R$ và đi đến trạng thái tiếp theo $S'$).
+	Như vậy, công thức cập nhật bộ trọng số trong (\ref{eq_SGDTrueQ_Single_Update}) được thay bằng:
 	\begin{equation}
 		\label{eq_SGD_Q_learning_Update}
-		\theta_{t+1} = \theta_t - \alpha \left[ R_{t+1} + \gamma \max_{a}\hat{q}(S, a;\theta_t) - \hat{q}(S,A;\theta_t) \right] \nabla_{\theta_t} \hat{q}(S, A;\theta_t)	
+		\theta_{t+1} = \theta_t - \alpha \left[ R + \gamma \max_{a}\hat{q}(S', a;\theta_t) - \hat{q}(S,A;\theta_t) \right] \nabla_{\theta_t} \hat{q}(S, A;\theta_t)	
 	\end{equation}
 	
 	Mã giả của thuật toán ``Q-learning'' với xấp xỉ hàm được trình bày ở bảng \ref{alg_FA_Q_learning}.
@@ -360,18 +331,16 @@ Chương này trình bày hai phần:
 			\algnewcommand\algorithmicoperation{\textbf{Thao tác:}}
 			\algnewcommand\Operation{\item[\algorithmicoperation]}
 			
-			\Require Số ``episode'' cần thực hiện để cập nhật bộ trọng số mạng nơ-ron
-			\Ensure Bộ trọng số $\theta$ của mạng nơ-ron
+			\Require Số episode cần thực hiện để cập nhật bộ trọng số của CNN
+			\Ensure Bộ trọng số $\theta$ của CNN
 			
 			\Operation
-			\State Khởi tạo ngẫu nhiên bộ trọng số $\theta$ của mạng nơ-ron
+			\State Khởi tạo ngẫu nhiên bộ trọng số $\theta$ của CNN
 			\Repeat
-				\State Tương tác với môi trường dựa vào chính sách có hàm giá trị được xấp xỉ bởi $\hat{q}(s, a;\theta)$ đến khi kết thúc ``episode'' để có được tập các mẫu dữ liệu $S_1, A_1, R_2, S_2, A_2, R_3, ..., S_{T-1}, A_{T-1}, R_{T}$
-				\State Chia tập dữ liệu trên thành các ``mini-batch'' gồm $B$ mẫu dữ liệu có dạng $S_i, A_i, R_{i+1}$
-				\For{mỗi ``mini-batch'' của tập dữ liệu}
-					\State Cập nhật $\theta$ theo công thức (\ref{eq_SGD_Q_learning_Update}) cho toàn bộ các phần tử trong ``mini-batch''
+				\State Sử dụng chính sách tương tác với môi trường để thực hiện hành động và thu được một mẫu dữ liệu gồm 4 thành phần $S$, $A$, $R$, $S'$
+				\State Cập nhật $\theta$ theo công thức (\ref{eq_SGD_Q_learning_Update})
 				\EndFor
-			\Until Thực hiện đủ số ``episode''
+			\Until Thực hiện đủ số episode
 		\end{algorithmic}
 	\end{algorithm}
 	
@@ -385,28 +354,29 @@ Chương này trình bày hai phần:
 	
 %-----------------------------------------------------------------------------
 \subsection{``Deep Q-Network''}
-	Để có được cấu trúc mạng ``Deep Q-Network'' \cite{mnihdqn2015} hoàn chỉnh và hoạt động tốt cho bài toán tự động chơi game, ta kết hợp thuật toán ``Q-learning'' với mạng nơ-ron tích chập có cấu trúc phù hợp với bài toán.
+	Để có được cấu trúc mạng ``Deep Q-Network'' \cite{mnihdqn2015} hoàn chỉnh và hoạt động tốt cho bài toán tự động chơi game, ta kết hợp thuật toán ``Q-learning'' với mạng nơ-ron tích chập (CNN) có cấu trúc phù hợp với bài toán.
 	Trong bài toán tự động chơi game, dữ liệu đầu vào mà hệ thống nhận được từ môi trường tại mỗi thời điểm là một ảnh RGB có kích thước $210\times160$.
-	Ta có thể đưa cả hình ảnh này làm dữ liệu đầu vào cho mạng nơ-ron tích chập; tuy nhiên với kích thước khá lớn như vậy, việc huấn luyện hệ thống sẽ tốn nhiều thời gian.
+	Ta có thể đưa cả hình ảnh này làm dữ liệu đầu vào CNN; tuy nhiên với kích thước khá lớn như vậy, việc huấn luyện hệ thống sẽ tốn nhiều thời gian.
 	Để tăng tốc độ huấn luyện lên, ta có thể thực hiện việc thu nhỏ (scale) ảnh về kích thước nhỏ hơn.
 	Việc tiền xử lý ảnh bằng cách thu nhỏ có thể làm mất mát thông tin, tuy nhiên thực nghiệm cho thấy hệ thống vẫn có độ chính xác cao.
 	
 	Một điểm quan trọng trong bài toán tự động chơi game là hình ảnh tại mội thời điểm không mô tả hết thông tin cần thiết.
 	Ví dụ như khi có hình của một quả bóng, ta không biết hướng và vận tốc hiện tại của quả bóng.
 	Để giải quyết điều này, ta có thể ghép hình ảnh của nhiều thời điểm liên tiếp lại theo thứ tự thời gian.
-	Khi đó một trạng thái $S_t$ sẽ gồm nhiều hình ảnh của các thời điểm liên tiếp nhau và chứa luôn cả thông tin về thời gian.
-	
-	Với cách thiết kế mạng nơ-ron thông thường, ta cần cung cấp trạng thái $S$ và hành động $A$ để tính được giá trị xấp xỉ $\hat{q}(S, A;\theta)$.
-	Cách thiết kế này không phù hợp cho thuật toán ``Q-learning'': ta cần phải lan truyền tiến nhiều lần để tính giá trị $\max_{a}\hat{q}(S, a;\theta)$ trong công thức (\ref{eq_SGD_Q_learning_Update}).
-	Để khắc phục nhược điểm này, ta chỉnh lại cấu trúc mạng để input là trạng thái $S$ và output là giá trị của mọi hành động tại trạng thái này: $\hat{q}(S, a;\theta), \forall a$.
-	Với cấu trúc này, ta chỉ việc lan truyền tiến một lần và lấy $\max$ giá trị output của mạng nơ-ron.
-	Như vậy, số nơ-ron của tầng output là số lượng hành động có thể có.
+	Khi đó một trạng thái $S$ sẽ gồm nhiều hình ảnh của các thời điểm liên tiếp nhau và chứa luôn cả thông tin về thời gian.
 	
 	Để tổng hợp các đặc trưng được học từ các tầng tích chập, các tầng ẩn cuối cùng của mạng nơ-ron sẽ là các tầng ``fully-connected''.
 	Các tầng tích chập có chức năng tìm kiếm các đặc trưng cục bộ cần thiết còn tầng ``fully-connected'' có nhiệm vụ tổng hợp các đặc trưng đó trên \textbf{toàn ảnh}.
 	Tầng output cũng là một tầng ``fully-connected'' với số nơ-ron là số hành động có thể có.
 	Lưu ý là do tầng này trả về kết quả là giá trị của từng hành động nên ta không áp dụng hàm kích hoạt tại đây.
+	
+	Với cách thiết kế mạng nơ-ron thông thường, ta cần cung cấp trạng thái $S$ và hành động $A$ để tính được giá trị xấp xỉ $\hat{q}(S, A;\theta)$.
+	Cách thiết kế này không phù hợp cho thuật toán ``Q-learning'': ta cần phải lan truyền tiến nhiều lần để tính giá trị $\max_{a}\hat{q}(S, a;\theta)$ trong công thức (\ref{eq_SGD_Q_learning_Update}).
+	Để khắc phục nhược điểm này, ta chỉnh lại cấu trúc mạng để input là trạng thái $S$ và output là giá trị của mọi hành động tại trạng thái này: $\hat{q}(S, a;\theta), \forall a$.
+	Với cấu trúc này, ta chỉ việc lan truyền tiến một lần và lấy $\max$ giá trị output của CNN.
+	Như vậy, số nơ-ron của tầng output là số lượng hành động có thể có.
 	Hình \ref{fig_dqn_nature} mô tả cấu trúc mạng ``Deep Q-Network''.
+	
 	\begin{figure}
 		\centering
 		\includegraphics[width=\textwidth]{dqn}
@@ -426,10 +396,10 @@ Chương này trình bày hai phần:
 	Để giải quyết vấn đề này, chúng em áp dụng hai kỹ thuật giúp tăng tính ổn định và khả năng hội tụ: kỹ thuật ``Experience replay'' \cite{lin1993reinforcement} và kỹ thuật cố định ``Q-target'' \cite{mnih2013playing}.
 	
 \subsubsection*{``Experience replay''}
-	Thuật toán ``Q-learning'' kết hợp với xấp xỉ hàm cho phép ta học ``online'': sau mỗi bước tương tác với môi trường và nhận được dữ liệu mới, ta có thể cập nhật ngay bộ trọng số mạng nơ-ron.
+	Thuật toán ``Q-learning'' kết hợp với xấp xỉ hàm cho phép ta học ``online'': sau mỗi bước tương tác với môi trường và nhận được dữ liệu mới, ta có thể cập nhật ngay bộ trọng số của CNN.
 	Tuy nhiên, cách học này có thể gây ra vấn đề không hội tụ.
 	Lý do là các mẫu dữ liệu liên tiếp nhau thường có tương quan (correlation) với nhau rất lớn.
-	Ngoài ra, các mẫu dữ liệu phía sau bị ảnh hưởng bởi chính sách (tương ứng với bộ trọng số mạng nơ-ron) ngay trước đó.
+	Ngoài ra, các mẫu dữ liệu phía sau bị ảnh hưởng bởi chính sách (tương ứng với bộ trọng số của CNN) ngay trước đó.
 	Ví dụ như chính sách hiện tại là ``luôn qua trái'' thì các mẫu dữ liệu liên tiếp sẽ lấy từ phân bố ``qua trái''.
 	Khi chính sách thay đổi sang ``luôn qua phải'' thì tất cả các mẫu dữ liệu mới sẽ lấy từ phân bố ``qua phải''.
 	Khi các mẫu dữ liệu có tương quan lớn và phân bố dữ liệu thay đổi nhanh thì ``Q-learning'' sẽ khó hội tụ \cite{mnihdqn2015}.
@@ -441,50 +411,50 @@ Chương này trình bày hai phần:
 	Do việc lấy ngẫu nhiên nên các mẫu dữ liệu trong ``mini-batch'' sẽ không còn tương quan lớn với nhau.
 	Ngoài ra, việc lưu trữ lại giúp các mẫu dữ liệu có thể được học lại nhiều lần.
 	Điều này giúp hệ thống học được nhiều hơn mà không phải tương tác với môi trường quá nhiều.
+	Đây cũng chính là một lý do để ta chọn thuật toán ``Q-learning'' chứ không phải một thuật toán học tăng cường khác.
+	Do ``Q-learning'' là thuật toán ``off-policy'' nên có thể dễ dàng học từ dữ liệu cũ.
 	
 \subsubsection*{Cố định ``Q-target''}
-	Mỗi khi mạng nơ-ron được cập nhật bộ trọng số thì chính sách hiện tại sẽ thay đổi.
-	Khi chính sách thay đổi thì hàm $q_{\pi}$ mục tiêu cũng thay đổi theo.
-	Thực tế cho thấy, việc thay đổi nhỏ của bộ trọng số sẽ gây ra thay đổi lớn của chính sách \cite{mnih2013playing}.
-	Để thấy được điều này, ta có thể thay đổi trọng số ở những tầng đầu tiên của mạng nơ-ron.
-	Khi đó, trọng số này sẽ ảnh hưởng dây chuyền đến những tầng sau làm cho output của mạng nơ-ron bị thay đổi nhiều.
-	Do vậy, mỗi khi cập nhật bộ trọng số, hàm mục tiêu $q_{\pi}$ tại một bộ trạng thái $s$ và hành động $a$ nhiều khả năng sẽ thay đổi lớn.
-	Do giá trị mục tiêu của việc xấp xỉ hàm thay đổi quá nhiều và liên tục, mạng nơ-ron có thể không xấp xỉ được hàm giá trị như ta mong muốn.
+	Một vấn đề của việc sử dụng CNN để xấp xỉ hàm đó là việc giá trị đích (target) của việc cập nhật là $R + \gamma \max_{a}\hat{q}(S', a;\theta_t)$ cũng phụ thuộc vào bộ trọng số $\theta$ như là giá trị hiện tại $\hat{q}(S, A;\theta_t)$.
+	Mỗi khi CNN được cập nhật bộ trọng số thì giá trị đích cũng thay đổi.
+	Thực tế cho thấy, việc thay đổi nhỏ của bộ trọng số sẽ gây ra thay đổi lớn của giá trị ước lượng \cite{mnih2013playing}.
+	Để thấy được điều này, ta có thể thay đổi trọng số ở những tầng đầu tiên của CNN.
+	Khi đó, trọng số này sẽ ảnh hưởng dây chuyền đến những tầng sau làm cho output của CNN bị thay đổi nhiều.
+	Do vậy, mỗi khi cập nhật bộ trọng số, giá trị đích tại một bộ trạng thái $s$ và hành động $a$ nhiều khả năng sẽ thay đổi lớn.
+	Do giá trị mục tiêu thay đổi quá nhiều và liên tục, CNN có thể không xấp xỉ được hàm giá trị như ta mong muốn.
 	
 	Một kỹ thuật được đề xuất bởi \cite{mnihdqn2015} có tên \textbf{cố định ``Q-target''} (fix Q-target) nhằm giải quyết vấn đề này.
-	Thay vì thay đổi giá trị mục tiêu một cách liên tục, ta có thể cố định lại hàm mục tiêu $q_{\pi}$ trong một số bước cập nhật trọng số để mạng nơ-ron xấp xỉ tốt hàm này.
-	Sau một khoảng thời gian, ta mới thay đổi hàm mục tiêu thành hàm ứng với chính sách hiện tại.
-	Các lần cập nhật trọng số tiếp theo lại tiếp tục cố gắng xấp xỉ tốt hàm mục tiêu mới.
+	Thay vì thay đổi giá trị mục tiêu một cách liên tục, ta có thể sử dụng một bộ trọng số khác là $\theta^{-}$ để lưu giá trị đích.
+	Khi đó, việc cập nhật bộ trọng số $\theta$ chỉ ảnh hưởng đến đến giá trị hiện tại chứ không ảnh hưởng đến giá trị đích.
+	Sau một khoảng thời gian, ta mới thay đổi bộ trọng số $\theta^{-}$ để giá trị đích trở nên chính xác hơn.
+	Các lần cập nhật trọng số tiếp theo lại tiếp tục cố gắng xấp xỉ tốt giá trị đích mới.
 	Quá trình này được lặp lại nhiều lần để hàm mục tiêu cuối cùng mà ta có cũng chính là hàm giá trị tối ưu.
 	
 	Để có cái nhìn trực quan hơn về kỹ thuật này, ta có thể lấy ví dụ về việc xây một căn nhà.
 	Do quá trình thiết kế ban đầu chưa tính trước đến những trường hợp phát sinh (như thiếu vật liệu, thợ không đủ trình độ...) trong lúc xây dựng nên ta phải điều chỉnh thiết kế lại liên tục.
-	Ta có thể vừa xây dựng căn nhà (ứng với việc thay đổi trọng số mạng nơ-ron) vừa điều chỉnh lại thiết kế căn nhà cho phù hợp (ứng với việc thay đổi chính sách mục tiêu).
+	Ta có thể vừa xây dựng căn nhà vừa điều chỉnh lại thiết kế căn nhà cho phù hợp (ứng với việc cập nhật một bộ trọng số chung cho cả giá trị đích và giá trị hiện tại là $\theta$).
 	Tuy nhiên, khi thiết kế căn nhà thay đổi quá nhanh và liên tục thì việc xây dựng sẽ gặp nhiều khó khăn và có khả năng khi hoàn thành kết quả sẽ không tốt.
-	Kỹ thuật cố định ``Q-target'' tương tự với việc ta cố gắng xây dựng hoàn tất một phần của căn nhà (tức xấp xỉ tốt hàm giá trị một chính sách cũ) trước khi thay đổi thiết kế.
-	Cứ như vậy, mỗi khi hoàn tất một phần, ta thay đổi thiết kế (ứng với việc thay đổi hàm mục tiêu) rồi lại xây dựng tiếp.
+	Kỹ thuật cố định ``Q-target'' tương tự với việc ta cố gắng xây dựng (tức cập nhật $\theta$) hoàn tất một phần của căn nhà (tức xấp xỉ tốt giá trị đích của một bộ trọng số cũ) trước khi thay đổi thiết kế.
+	Cứ như vậy, mỗi khi hoàn tất xong một phần, ta thay đổi thiết kế (ứng với việc thay đổi bộ trọng số $\theta^{-}$ của giá trị đích) rồi lại xây dựng tiếp.
 	Cách làm này giống như tạo dựng một số các ``điểm kiểm soát'' (checkpoint) với những mục tiêu xác định.
 	Do các ``điểm kiểm soát'' này cố định nên việc thay đổi kiến trúc căn nhà sẽ không quá nhiều, dẫn đến quá trình xây dựng sẽ dễ dàng đạt được mục tiêu hơn.
 	
-	Tuy nhiên, kỹ thuật này dẫn đến một vấn đề là ta cần phải thay đổi hàm mục tiêu sau bao nhiêu lần cập nhật trọng số mạng nơ-ron (tức tần suất thay đổi hàm mục tiêu)?
-	Nếu tần suất quá cao (tức thay đổi hàm quá nhiều) thì kỹ thuật này không mang lại được nhiều hiệu quả.
-	Nếu tần suất quá thấp (tức ít khi thay đổi hàm mục tiêu) thì việc học sẽ rất chậm do ta phải cập nhật trọng số rất nhiều để xấp xỉ một hàm giá trị cũ; khi cập nhật hàm mục tiêu thì chính sách mới chỉ tốt lên một chút so với chính sách cũ.
+	Tuy nhiên, kỹ thuật này dẫn đến một vấn đề là ta cần phải cập nhật $\theta^{-}$ sau bao nhiêu lần cập nhật bộ trọng số $\theta$ (tức tần suất thay đổi giá trị đích)?
+	Nếu tần suất quá cao (tức thay đổi giá trị đích quá nhiều) thì kỹ thuật này không mang lại được nhiều hiệu quả.
+	Nếu tần suất quá thấp (tức ít khi thay đổi giá trị đích) thì việc học sẽ rất chậm do ta phải cập nhật trọng số $\theta$ rất nhiều để xấp xỉ một hàm giá trị cũ; lúc này, ta tốn rất nhiều công sức chỉ để xấp xỉ một giá trị đích không chính xác.
 	Vì vậy, ta cần phải chọn một giá trị vừa phải, phù hợp với bài toán tự động chơi game.
 
 %-----------------------------------------------------------------------------
 \subsection{Vấn đề đánh giá quá cao của thuật toán ``Q-learning''}
 	Thuật toán ``Q-learning'' thực hiện việc lấy $\max$ giá trị các hành động của trạng thái tiếp theo.
-	Nhắc lại công thức cập nhật của ``Q-learning'' là:
+	Nhắc lại công thức cập nhật của ``Q-learning'' khi có một mẫu một bộ bốn $S$, $A$, $R$ và $S'$ (thực hiện hành động $A$ tại trạng thái $S$ để được điểm thưởng $R$ và đi tới trạng thái $S'$) là:
 	\begin{equation}
-		\theta_{t+1} = \theta_t - \alpha \left[ R_{t+1} + \gamma \max_{a}\hat{q}(S, a;\theta_t) - \hat{q}(S,A;\theta_t) \right] \nabla_{\theta_t} \hat{q}(S, A;\theta_t)	
+		\theta_{t+1} = \theta_t - \alpha \left[ R + \gamma \max_{a}\hat{q}(S', a;\theta_t) - \hat{q}(S,A;\theta_t) \right] \nabla_{\theta_t} \hat{q}(S, A;\theta_t)	
 	\end{equation}
-	Nhờ việc lấy $\max$ mà thuật toán ``Q-learning'' hội tụ nhanh hơn \cite{sutton1998introduction}: ta luôn ước lượng giá trị của trạng thái tiếp theo dựa vào hành động tốt nhất tại đó.
-	Đây có thể hiểu là một cách nhìn ``lạc quan'' về tương lai: nếu có nhiều trường hợp tốt, xấu khác nhau thì ta luôn giả sử điều tốt nhất sẽ xảy ra.
-	Tuy việc giả sử này có thể không đúng trong mọi tình huống, do các trạng thái tiếp theo sau đó cũng được cập nhật lại giá trị nên thuật toán ``Q-learning'' vẫn hội tụ chính xác về chính sách tối ưu.
-	
-	Rõ ràng là cách nhìn ``lạc quan'' này cũng có điểm xấu: ta sẽ có cái nhìn quá ``lạc quan'' (optimistic) về tương lại và dễ dẫn đến khả năng đánh giá quá cao (overestimation) giá trị của trạng thái kế tiếp.
-	Nhất là khi áp dụng xấp xỉ hàm, giá trị ước lượng hiện tại của mạng nơ-ron chưa được chính xác.
-	Khi đó nếu mạng nơ-ron ước lượng cao hơn giá trị thật sự thì vấn đề đánh giá quá cao sẽ xảy ra nhiều hơn.
+	Trong công thức này, ta thực hiện lấy mẫu $R + \gamma \max_{a}\hat{q}(S', a;\theta_t)$ để ước lượng giá trị $\mathcal{R}_{S}^{A} + \gamma \sum_{S' \in \mathcal{S}} \mathcal{P}_{SS'}^{A} \max_{A' \in \mathcal{A}} q_{*}(S', A')$.
+	Việc lấy $\max$ trong ước lượng của ta làm cho đây một ước lượng chệch \cite{hasselt2010double}.
+	Ước lượng này được chính minh là thường \textbf{cao hơn giá trị thật sự} - vấn đề này được gọi là \textit{đánh giá quá cao} (overestimation).
+	Nhất là khi áp dụng xấp xỉ hàm, giá trị ước lượng hiện tại của CNN chưa được chính xác nên vấn đề đánh giá quá cao càng xảy ra nhiều hơn.
 	Mặc dù vậy, ta vẫn cần đặt ra câu hỏi: liệu việc đánh giá quá cao có gây ảnh hưởng đến kết quả của chính sách cuối cùng hay không?
 	Rõ ràng là nếu tất cả hành động đều bị đánh giá quá cao (ví dụ như tăng một lượng bằng nhau $C$) thì việc lựa chọn hành động không bị ảnh hưởng (do ta vẫn chọn hành động tốt nhất bằng cách tham lam).
 	Tuy nhiên, thuật toán ``Q-learning'' với xấp xỉ hàm gặp hiện tượng đánh giá quá cao không đồng đều \cite{van2015deep}.
@@ -497,16 +467,16 @@ Chương này trình bày hai phần:
 	Cụ thể hơn, giá trị này theo ``Q-learning'' là: 
 	\begin{equation}
 		\label{eq_q_max_target}
-		R_{t+1} + \gamma \max_{a}\hat{q}(S_{t+1}, a;\theta)
+		R + \gamma \max_{a}\hat{q}(S', a;\theta)
 	\end{equation}
 	
 	Ta có thể tách việc lấy $\max$ giá trị ra thành hai bước: chọn hành động tối ưu và đánh giá hành động đó.
-	Bước chọn hành động được thực hiện bằng cách chọn hành động cho giá trị cao nhất tại trạng thái đó: $a_{*} = \argmax_{a}\hat{q}(S_{t+1}, a;\theta)$.
-	Bước đánh giá hành động được thực hiện bằng cách lấy lại giá trị của hành động tốt nhất: $\hat{q}(S_{t+1}, a_{*};\theta)$.
+	Bước chọn hành động được thực hiện bằng cách chọn hành động cho giá trị cao nhất tại trạng thái đó: $a_{*} = \argmax_{a}\hat{q}(S', a;\theta)$.
+	Bước đánh giá hành động được thực hiện bằng cách lấy lại giá trị của hành động tốt nhất: $\hat{q}(S', a_{*};\theta)$.
 	Ghép hai bước này lại ta có cách ước lượng giá trị của thuật toán ``Q-learning'':
 	\begin{equation}
 		\label{eq_q_argmax_target}
-		R_{t+1} + \gamma \hat{q}(S_{t+1}, \argmax_{a}\hat{q}(S_{t+1}, a;\theta); \theta)
+		R + \gamma \hat{q}(S', \argmax_{a}\hat{q}(S', a;\theta); \theta)
 	\end{equation}
 	Lưu ý rằng công thức (\ref{eq_q_argmax_target}) chỉ là một cách nhìn khác của công thức (\ref{eq_q_max_target}) và hai công thức này hoàn toàn tương đương nhau.
 	
@@ -515,13 +485,13 @@ Chương này trình bày hai phần:
 	Khi cần cập nhật bộ tham số $\theta$ của mạng đầu tiên, ta áp dụng công thức:
 	\begin{equation}
 		\label{eq_dq_argmax_target}
-		R_{t+1} + \gamma \hat{q}(S_{t+1}, \argmax_{a}\hat{q}(S_{t+1}, a;\theta); \theta^{-})
+		R + \gamma \hat{q}(S', \argmax_{a}\hat{q}(S', a;\theta); \theta^{-})
 	\end{equation}
 	Công thức trên chỉ khác với công thức (\ref{eq_q_argmax_target}) ở chỗ ta đánh giá hành động được chọn bằng một mạng nơ-ron khác.
-	Nhờ việc ``phân tách'' (decouple) hai bước trên, ``Double Q-learning'' làm giảm khả năng bị đánh giá quá cao mà ``Q-learning'' gặp phải (\cite{hasselt2010double}).
+	Nhờ việc tách biệt hai bước trên, ``Double Q-learning'' làm giảm khả năng bị đánh giá quá cao mà ``Q-learning'' gặp phải (\cite{hasselt2010double}).
 	Vậy tại sao cách cập nhật này lại không gặp vấn đề nêu trên?
 	Trong ``Q-learning'', ta cần tính $\max$ của giá trị của nhiều hành động.
-	Do mỗi giá trị hành động tính được đều là xấp xỉ nên sẽ có sai số nhất định (tức sai số giữa giá trị xấp xỉ và giá trị thực $\hat{q}(s, a;\theta) - q_{\pi}(s, a)$).
+	Do mỗi giá trị hành động tính được đều là xấp xỉ nên sẽ có sai số nhất định (tức sai số giữa giá trị xấp xỉ và giá trị thực $\hat{q}(s, a;\theta) - q_{*}(s, a)$).
 	Giả sử sai số này là ``uniform'' trong đoạn $[-\epsilon, \epsilon]$ với $\epsilon$ là một giá trị dương nhỏ.
 	Khi lấy $\max$ giá trị nhiều hành động lại thì nhiều khả năng hành động được chọn sẽ có sai số dương (do các hành động có sai số âm thì giá trị xấp xỉ bị giảm so với giá trị đúng nên khả năng được chọn thấp hơn).
 	Khi càng có nhiều hành động thì khả năng hành động đó có sai số dương lại càng cao hơn.
