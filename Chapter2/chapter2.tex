@@ -729,14 +729,27 @@ Hình \ref{fig:policy_iteration_MDP} minh họa quá trình hội tụ của quy
 \end{figure}
 
 \subsection{Phương pháp lặp giá trị}
-Một nhược điểm của phương pháp lặp chính sách nằm ở giai đoạn đánh giá chính sách của phương pháp này. Bản thân giai đoạn này cũng là một quá trình lặp để tìm ra hàm giá trị của chính sách $\pi$ đang theo. Ngoài ra, giai đoạn này cũng đã được chứng minh sẽ tìm được chính xác hàm giá trị $v_{\pi}$ khi lặp vô hạn lần. Câu hỏi đặt ra là: Để tìm chính sách tối ưu, chúng ta có cần phải xác định chính xác hàm giá trị $v_{\pi}$ của chính sách $\pi$ hiện tại hay không? \cite{smallwood1973optimal} đã đề xuất một phương pháp có thể tìm đươc chính sách tối ưu mà không cần xác định hàm giá trị $v_{\pi}$, được gọi là phương pháp lặp giá trị. Trong phương pháp lặp chính sách, tại mỗi vòng lặp một ước lượng $V$ cho hàm giá trị $v_{\pi}$ được cập nhật nhiều lần để đạt chính xác hàm $v_{\pi}$ trước khi thực hiện cải thiện chính sách. Ngược lại, phương pháp lặp giá trị thực hiện duy nhất một lần cập nhật ước lượng kết hợp với tối ưu bằng toán tử $\max$ ngay trong mỗi vòng lặp của nó. Chính vì vậy mà phương pháp lặp giá trị không tách biệt hai giai đoạn rõ ràng như phương pháp lặp chính sách và mục tiêu của phương pháp này là tìm được hàm giá trị tối ưu $v_*$. Phương trình \ref{eq:val_iteration} mô tả cách thức cập nhật hàm giá trị cũng như tối ưu trong một lần lặp. Ý nghĩa của phương trình này là dùng giá trị hành động lớn nhất cập nhật giá trị cho một trạng thái $s$.
+Một nhược điểm của phương pháp lặp chính sách nằm ở giai đoạn đánh giá chính sách của phương pháp này. 
+Bản thân giai đoạn này cũng là một quá trình lặp để tìm ra hàm giá trị của chính sách $\pi$ hiện tại. 
+Câu hỏi đặt ra là: để tìm chính sách tối ưu, chúng ta có cần phải xác định chính xác hàm giá trị $v_{\pi}$ của chính sách $\pi$ hiện tại hay không? 
+Câu trả lời là không.
+Trong giai đoạn đánh giá chính sách, ta có thể chỉ thực hiện vòng lặp cập nhật hàm giá trị một vài lần để tìm ra một hàm giá trị ``thô'' và thực hiện ngay việc cải tiến chính sách.
+Cách làm này vẫn hội tụ đến chính sách tối ưu và hàm giá trị tối ưu \cite{sutton1998introduction}.
+Trong trường hợp đặc biệt nhất, ta chỉ thực hiện việc cập nhật hàm giá trị đúng một lần rồi cải tiến chính sách ngay.
+Lúc này, ta có phương pháp lặp giá trị.
+Do việc cập nhật đặc biệt như vậy, ta có thể kết hợp hai giai đoạn đánh giá và cải thiện chính sách lại thành một công thức duy nhất.
+Công thức (\ref{eq:val_iteration}) mô tả cách thức cập nhật hàm giá trị trạng thái theo phương pháp lặp giá trị.
 \begin{align}
 	v_{k+1}(s) = {} & \max_{a}\mathbb{E}\left[\mathit{R}_{t+1} + \gamma v_{k}(\mathit{S}_{t+1}) \mid \mathit{S}_{t} = s, \mathit{A}_t = a\right] \notag \\
 	= {} & \max_{a}\sum_{s' \in \mathcal{S}}\mathcal{P}_{ss'}^{a}\left[\mathit{R}_{t+1} + \gamma v_{k}(s')\right] \label{eq:val_iteration}
 \end{align}
-với $s \in \mathcal{S}$ và $v_{0}$ được khởi tạo ngẫu nhiên. Qua nhiều cập nhật chuỗi $\{v_{k}\}$ sẽ hội tụ về hàm giá trị tối ưu $v_*$.
+với $s \in \mathcal{S}$ và $v_{0}$ được khởi tạo ngẫu nhiên. 
+Qua nhiều cập nhật, chuỗi $\{v_{k}\}$ sẽ hội tụ về hàm giá trị tối ưu $v_*$ \cite{sutton1998introduction}.
 
-Cách thức cập nhật của phương pháp lặp giá trị dựa trên phương trình Bellman của hàm giá trị trạng thái tối ưu \ref{eq:bellman_optimal_state}. Mô hình cập nhật của phương pháp lặp giá trị tương tự mô hình cập nhật của phương pháp lặp chính sách \ref{fig:Update_Value_DP} ngoại trừ nó yêu cầu giá trị cực đại (maximum) được chọn qua các hành động. Thêm vào đó quá trình cập nhật của lặp chính sách để tính hàm giá trị trạng thái $v_{\pi}$ của chính sách $\pi$ hiện tại, trong khi đó quá trình cập nhật của lặp giá trị để tính hàm giá trị trạng thái tối ưu $v_*$. Các bước thực hiện trong phương pháp lặp giá trị được mô tả trong thuật toán \ref{alg_val_iteration}.
+Cách thức cập nhật của phương pháp lặp giá trị dựa trên phương trình Bellman của hàm giá trị trạng thái tối ưu \ref{eq:bellman_optimal_state}. 
+Mô hình cập nhật của phương pháp lặp giá trị tương tự mô hình cập nhật của phương pháp lặp chính sách \ref{fig:Update_Value_DP} ngoại trừ nó yêu cầu giá trị cực đại (maximum) được chọn qua các hành động. 
+Thêm vào đó, quá trình cập nhật của lặp chính sách sẽ tính ra hàm giá trị trạng thái $v_{\pi}$ của chính sách $\pi$ hiện tại, trong khi đó quá trình cập nhật của lặp giá trị sẽ tính thẳng ra hàm giá trị trạng thái tối ưu $v_*$. 
+Các bước thực hiện trong phương pháp lặp giá trị được mô tả trong thuật toán \ref{alg_val_iteration}.
 \begin{algorithm}
 	\newalgname{Thuật toán}
 	\caption{Phương pháp lặp giá trị trên hàm giá trị trạng thái}
@@ -747,32 +760,44 @@ Cách thức cập nhật của phương pháp lặp giá trị dựa trên phư
 		\algnewcommand\algorithmicoperation{\textbf{Thao tác:}}
 		\algnewcommand\Operation{\item[\algorithmicoperation]}
 		
-		\Require
-		\Ensure Hàm giá trị $V$ xấp xỉ hàm giá trị tối ưu $v_{*}$
+		\Require sai số chấp nhận được $\theta$
+		\Ensure hàm giá trị $V$ xấp xỉ hàm giá trị tối ưu $v_{*}$
 		
 		\Operation
-		\State Khởi tạo ngẫu nhiên $V(s)$ cho tất cả trạng thái $s$ không phải trạng thái kết thúc. Nếu $s$ là trạng thái kết thúc, $V(s) = 0$
+		\State Khởi tạo ngẫu nhiên $V(s)$ cho tất cả trạng thái
 		\Repeat
-		\State $\Delta \leftarrow 0$ \%\% Tính độ khác biệt giữa hàm giá trị cũ và giá trị mới. Độ lớn của $\Delta$ được xác định là độ khác biệt lớn nhất giữa giá trị cũ và giá trị mới của một trạng thái trong tất cả các trạng thái.
+		\State $\Delta \leftarrow 0$ \%\% Tính độ khác biệt giữa hàm giá trị cũ và giá trị mới. 
+		Độ lớn của $\Delta$ được xác định là độ khác biệt lớn nhất giữa giá trị cũ và giá trị mới của một trạng thái
 		\For{$s \in \mathcal{S}$} \%\% Với mỗi trạng thái
 		\State $v \leftarrow V(s)$ \%\% Lưu giá trị hiện tại của trạng thái $s$
 		\State $V(s) \leftarrow \max_{a}\sum_{s' \in \mathcal{S}}\mathcal{P}_{ss'}^{a}\left[\mathcal{R}_{s}^{a} + \gamma V(s')\right]$ \%\% Duyệt và chọn ra giá trị hành động lớn nhất làm giá trị mới của trạng thái $s$
 		\State $\Delta \leftarrow \max(\Delta,|v - V(s)|)$
 		\EndFor
-		\Until $\Delta < \theta$ (Một lượng đủ nhỏ)
+		\Until $\Delta < \theta$
 	\end{algorithmic}
 \end{algorithm}
 
-\textbf{Ví dụ: Bài toán di chuyển trên lưới $4 \times 4$} Hệ thống có thể thực hiện 4 hành động: lên, xuống, qua trái, qua phải. Vị trí đích là góc trái trên của lưới. Hệ thống sẽ dừng nếu di chuyển ra ngoài lưới. Mỗi hành động của hệ thống đều nhận được kiểm thưởng là -1. Và nhận được điểm thưởng +7 khi hệ thống về đích. Mục tiêu của hệ thống là tìm được đường về vị trí đích.
-Giả sử có nhiễu trong quá trình hệ thống di chuyển: 70\% hệ thống sẽ di chuyển theo hướng trùng với hành động đã thực hiện, 30\% hệ thống sẽ di chuyển khác hướng với hành động thực hiện. Ví dụ nếu hệ thống thực hiện hành động đi lên thì 70\% hệ thống sẽ di chuyển đi lên, 10\% hệ thống di chuyển sang trái, 10\% hệ thống di chuyển sang phải, và 10\% hệ thống di chuyển xuống dưới. Hệ số $\gamma = 1$. Hình \ref{grid_problem} minh họa bài toán này.
+\textbf{Ví dụ: Bài toán di chuyển trên lưới $4 \times 4$}: hệ thống có thể thực hiện 4 hành động: lên trên, xuống dưới, qua trái, qua phải. 
+Vị trí đích là góc trái trên của lưới. 
+Hệ thống sẽ dừng nếu di chuyển ra ngoài lưới. 
+Mỗi hành động của hệ thống đều nhận được kiểm thưởng là -1. 
+Hệ thống nhận được điểm thưởng +7 khi hệ thống về đích. 
+Mục tiêu của hệ thống là tìm được đường về vị trí đích để có điểm thưởng cao nhất.
+Giả sử có nhiễu trong quá trình hệ thống di chuyển: khi thực hiện một hành động, hệ thống sẽ di chuyển theo hướng mong muốn với xác suất 70\%; hệ thống sẽ di chuyển theo các hướng còn lại với xác suất 10\% mỗi hướng.
+Ví dụ nếu hệ thống thực hiện hành động đi lên thì trong 70\% số lần thực hiện hành động này, hệ thống sẽ di chuyển đi lên; 10\% số lần thực hiện, hệ thống di chuyển sang trái, di chuyển sang phải 10\% và di chuyển xuống dưới 10\%. 
+Xét hệ số $\gamma = 1$. 
+Hình \ref{grid_problem} minh họa bài toán này.
 \begin{figure}
 	\centering
 	\includegraphics[width=60mm, height =60mm]{baitoan}
-	\caption[Bài toán di chuyển trên lưới]{Bài toán di chuyển trên lưới}
+	\caption[Bài toán di chuyển trên lưới]{Bài toán di chuyển trên lưới.
+	Mỗi ô lưới ứng với một trạng thái khác nhau.
+	Giá trị được ghi trên mỗi ô ứng với mã số của trạng thái đó.}
 	\label{grid_problem}
 \end{figure}
 
-Qua ví dụ \ref{fig:VI_process} minh họa quá trình tìm hàm giá trị trạng thái tối ưu bằng quá trình lặp giá trị, ta có thể thấy hàm giá trị trạng thái dần hội tụ về hàm giá trị $q_*$ thông qua những chính sách tương ứng của mỗi lần cập nhật.
+Ví dụ \ref{fig:VI_process} minh họa quá trình tìm hàm giá trị trạng thái tối ưu bằng quy trình lặp giá trị.
+Ta có thể thấy hàm giá trị trạng thái dần hội tụ về hàm giá trị $q_*$.
 \begin{figure*}[t!]
 	\centering
 	\begin{tabular}{c}
@@ -785,41 +810,49 @@ Qua ví dụ \ref{fig:VI_process} minh họa quá trình tìm hàm giá trị tr
 		\begin{subfigure}[t]{0.5\textwidth}
 			\centering
 			\includegraphics[height=45mm]{step_2}
-			\caption{Cập nhật hàm giá trị lần 1, và chính sách tham lam trên hàm giá trị hiện tại}
+			\caption{Cập nhật hàm giá trị 1 lần và chính sách tham lam trên hàm giá trị hiện tại}
 		\end{subfigure} \\~\\
 		\begin{subfigure}[t]{0.5\textwidth}
 			\centering
 			\includegraphics[height=45mm]{step_3}
-			\caption{Cập nhật hàm giá trị lần 2, và chính sách tham lam trên hàm giá trị hiện tại}
+			\caption{Cập nhật hàm giá trị 2 lần và chính sách tham lam trên hàm giá trị hiện tại}
 		\end{subfigure}%
 		~ 
 		\begin{subfigure}[t]{0.5\textwidth}
 			\centering
 			\includegraphics[height=45mm]{step_4}
-			\caption{Cập nhật hàm giá trị lần 3, và chính sách tham lam trên hàm giá trị hiện tại}
+			\caption{Cập nhật hàm giá trị 3 lần và chính sách tham lam trên hàm giá trị hiện tại}
 		\end{subfigure} \\~\\
 		\begin{subfigure}[t]{0.5\textwidth}
 			\centering
 			\includegraphics[height=45mm]{step_5}
-			\caption{Cập nhật hàm giá trị lần 4, và chính sách tham lam trên hàm giá trị hiện tại}
+			\caption{Cập nhật hàm giá trị 4 lần và chính sách tham lam trên hàm giá trị hiện tại}
 		\end{subfigure}%
 		~ 
 		\begin{subfigure}[t]{0.5\textwidth}
 			\centering
 			\includegraphics[height=45mm]{step_6}
-			\caption{Cập nhật hàm giá trị lần 5, và chính sách tham lam trên hàm giá trị hiện tại}
+			\caption{Cập nhật hàm giá trị 5 lần và chính sách tham lam trên hàm giá trị hiện tại}
 		\end{subfigure}
 	\end{tabular}
 	\caption[Minh họa quy trình lặp giá trị]{Quy trình cập nhật hàm giá trị trạng thái bằng phương pháp lặp giá trị}
 	\label{fig:VI_process}
 \end{figure*}
 
-Trong nhiều trường hợp việc sử dụng hàm giá trị hành động trở nên khả thi hơn hàm giá trị trạng thái. Thực vậy, với việc có được mô hình MDP của môi trường , hàm giá trị trạng thái là đủ để xác định chính sách tối ưu nhưng việc xác định này phải qua một bước trung gian thông qua ma trận chuyển trạng thái. Nói cách khác để xác định chính sách tối ưu trên hàm giá trị trạng thái, hệ thống phải xác định những trạng thái tiếp theo có thể đến thông qua ma trận chuyển trạng thái, sau đó chọn hành động mà giúp cho hệ thống có thể đến được trạng thái tiếp theo có giá trị lớn nhất. Tuy nhiên trong một số bài toán hệ thống không biết mô hình MDP của môi trường thì hàm giá trị trạng thái là không đủ để xác định chính sách tối ưu. Ngược lại, có được hàm giá trị hành động là đủ để xác định chính sách tối ưu trong cả hai trường hợp biết và không biết MDP. Mặc dù khi biết được mô hình MDP của môi trường, việc xác định chính sách tối ưu bằng hàm giá trị hành động được cho là tốn kém trong việc lưu trữ nhưng những phương pháp tìm chính sách tối ưu vẫn thường sử dụng loại hàm giá trị này do nó có thể sử dụng trong cả hai trường hợp. Trong phương pháp lặp giá trị, ta cũng có thể xác định hàm giá trị hành động tối ưu qua nhiều lần lặp. Phương trình \ref{eq:q_val_iteration} minh họa cách thức cập nhật ước lượng của hàm giá trị $q_*$
+Trong nhiều trường hợp, việc sử dụng hàm giá trị hành động sẽ tốt hơn là sử dụng hàm giá trị trạng thái. 
+Thực vậy, với việc có được mô hình MDP của môi trường, hàm giá trị trạng thái là đủ để xác định chính sách tối ưu nhưng việc xác định này phải qua một bước trung gian thông qua ma trận chuyển trạng thái. 
+Nói cách khác để xác định chính sách tối ưu trên hàm giá trị trạng thái, hệ thống phải xác định những trạng thái tiếp theo có thể đến thông qua ma trận chuyển trạng thái, sau đó chọn hành động mà giúp cho hệ thống có thể đến được trạng thái tiếp theo có giá trị lớn nhất. 
+Tuy nhiên trong một số bài toán hệ thống không biết ma trận xác suất chuyển trạng thái này thì hàm giá trị trạng thái là không đủ để xác định chính sách tối ưu. 
+Ngược lại, có được hàm giá trị hành động là đủ để xác định chính sách tối ưu dù ta có biết ma trận xác suất chuyển trạng thái hay không.
+Công thức (\ref{eq:q_val_iteration}) thể hiện cách thức cập nhật cho hàm giá trị hành động theo phương pháp lặp giá trị.
 \begin{align}
 q_{k+1}(s,a) = {} & \mathbb{E}\left[\mathit{R}_{t+1} + \gamma \max_{a'}q_{k}(\mathit{S}_{t+1},a') \mid \mathit{S}_{t} = s, \mathit{A}_t = a\right] \notag \\
-= {} & \sum_{s' \in \mathcal{S}}\mathcal{P}_{ss'}^{a}\left[\mathit{R}_{t+1} + \gamma \max_{a'}q_{k}(s',a')\right] \label{eq:q_val_iteration}
+= {} & \sum_{s' \in \mathcal{S}}\mathcal{P}_{ss'}^{a}\left[\mathit{R}_{t+1} + \gamma \max_{a'}q_{k}(s',a')\right] \notag \\
+= {} & \mathcal{R}_{s}^{a} + \gamma \sum_{s' \in \mathcal{S}}\mathcal{P}_{ss'}^{a} \max_{a'}q_{k}(s',a') 
+\label{eq:q_val_iteration}
 \end{align}
-với $s \in \mathcal{S}, a \in \mathcal{A}(s)$. Thuật toán \ref{alg_qval_iteration} minh họa các bước thực hiện lặp giá trị cho hàm hành động.
+với $s \in \mathcal{S}, a \in \mathcal{A}(s)$. 
+Thuật toán \ref{alg_qval_iteration} minh họa các bước thực hiện lặp giá trị cho hàm giá trị hành động.
 
 \begin{algorithm}
 	\newalgname{Thuật toán}
@@ -831,19 +864,19 @@ với $s \in \mathcal{S}, a \in \mathcal{A}(s)$. Thuật toán \ref{alg_qval_ite
 		\algnewcommand\algorithmicoperation{\textbf{Thao tác:}}
 		\algnewcommand\Operation{\item[\algorithmicoperation]}
 		
-		\Require
-		\Ensure Hàm giá trị $Q$ xấp xỉ hàm giá trị tối ưu $q_{*}$
+		\Require sai số chập nhận được $\theta$
+		\Ensure hàm giá trị $Q$ xấp xỉ hàm giá trị tối ưu $q_{*}$
 		
 		\Operation
-		\State Khởi tạo ngẫu nhiên $Q(s,a)$ cho tất cả các cặp trạng thái $s$ và hành động $a$ với $s$ không phải trạng thái kết thúc. Nếu $s$ là trạng thái kết thúc, $Q(s,a) = 0$
+		\State Khởi tạo ngẫu nhiên $Q(s,a)$ cho tất cả các cặp trạng thái $s$ và hành động $a$
 		\Repeat
-		\State $\Delta \leftarrow 0$ \%\% Tính độ khác biệt giữa hàm giá trị cũ và giá trị mới. Độ lớn của $\Delta$ được xác định là độ khác biệt lớn nhất giữa giá trị cũ và giá trị mới của một trạng thái trong tất cả các trạng thái.
+		\State $\Delta \leftarrow 0$ \%\% Tính độ khác biệt giữa hàm giá trị cũ và giá trị mới. Độ lớn của $\Delta$ được xác định là độ khác biệt lớn nhất giữa giá trị cũ và giá trị mới của một trạng thái
 		\For{$s \in \mathcal{S}$} \%\% Với mỗi trạng thái
 		\State $q \leftarrow Q(s,a)$ \%\% Lưu giá trị hiện tại của cặp trạng thái, hành động $(s,a)$
 		\State $Q(s,a) \leftarrow \sum_{s' \in \mathcal{S}}\mathcal{P}_{ss'}^{a}\left[\mathcal{R}_{s}^{a} + \gamma \max_{a'}Q(s',a')\right]$ \%\% Thực hiện cập nhật
 		\State $\Delta \leftarrow \max(\Delta,|q - Q(s,a)|)$
 		\EndFor
-		\Until $\Delta < \theta$ (Một lượng đủ nhỏ)
+		\Until $\Delta < \theta$
 	\end{algorithmic}
 \end{algorithm}
 
