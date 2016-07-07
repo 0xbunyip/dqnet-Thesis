@@ -274,7 +274,7 @@ q_{\pi}(s,a) = {} & \mathcal{R}_{s}^{a} + \gamma \sum_{s' \in \mathcal{S}}^{}\ma
 	\end{scope}		
 	\end{tikzpicture}		
 	\caption[Đồ thị minh họa quan hệ giữa những hàm giá trị]{Đồ thị minh họa quan hệ giữa hàm giá trị trạng thái và hàm giá trị hành động.
-	Node tròn rỗng ứng với trạng thái và node tròn tô đậm ứng với hành động tại trạng thái đó.
+	Node tròn rỗng ứng với trạng thái và node tròn tô đậm ứng với hành động tại trạng thái ở node phía trên.
 	Với hình (a), giá trị trạng thái $s$ là $v_{\pi}(s)$.
 	Tại trạng thái này, hệ thống có thể thực hiện \textbf{một trong số} các hành động ở ngay bên dưới.
 	Xác suất chọn hành động này được thể hiện qua chính sách $\pi$.
@@ -376,6 +376,7 @@ Phương trình này cũng cho thấy giá trị của một trạng thái phả
 	
 	\end{tikzpicture}
 	\caption[Đồ thị minh họa phương trình Bellman cho hàm giá trị]{Đồ thị minh họa phương trình Bellman cho (a) $v_{\pi}$ và (b) $q_{\pi}$.
+	Việc cập nhật được thực hiện bằng cách lấy giá trị của các node ở dưới để cập nhật giá trị của các node ở trên.
 	}
 	\label{backup_diagram}
 \end{figure}
@@ -391,6 +392,13 @@ Thực hiện một hành động $a$ ở trạng thái $s$, trạng thái tiế
 Trong mỗi trạng thái $s'$ lại có nhiều hành động $a'$ khác nhau có thể thực hiện. 
 Phương trình (\ref{bell_action}) sẽ trung bình tất cả các trường hợp có thể đó lại theo xác suất mà chúng được thực hiện. 
 Hay nói cách khác, phương trình (\ref{bell_action}) cho thấy giá trị của một hành động $a$ tại trạng thái $s$, $q_{\pi}(a,s)$ được xác định bằng kỳ vọng điểm thưởng tức thì cộng với giá trị hành động tại trạng thái kế tiếp.
+
+Nếu sử dụng các ma trận xác suất và ma trận điểm thưởng của MDP, phương trình (\ref{bell_state}) và (\ref{bell_action}) trở thành:
+\begin{align}
+	v_{\pi}(s) &= \sum_{a \in \mathcal{A}}^{}\pi(a \mid s) \left( \mathcal{R}_{s}^{a} + \gamma \sum_{s' \in \mathcal{S}}^{}\mathcal{P}_{ss'}^{a}v_{\pi}(s') \right) \label{eq:bellman_mdp_state}\\
+	q_{\pi}(s, a) &= \mathcal{R}_{s}^{a} + \gamma \sum_{s' \in \mathcal{S}}^{}\mathcal{P}_{ss'}^{a} \sum_{a' \in \mathcal{A}}^{}\pi(a' \mid s') q_{\pi}(s', a') \label{eq:bellman_mdp_action}
+\end{align}
+Một cách hiểu khác đơn giản hơn là ta thế hai phương trình (\ref{eq:relation_value_action}) và (\ref{eq:relation_action_value}) qua lại lẫn nhau.
 
 \subsection{Chính sách tối ưu và hàm giá trị tối ưu}
 Để giải bài toán học tăng cường, chúng ta cần tìm một chính sách sao cho hệ thống có thể đạt được nhiều điểm thưởng nhất có thể. 
@@ -548,11 +556,18 @@ Hình \ref{fig:bellman_optimal_function}b minh họa cách thức xác định g
 \end{figure}
 
 \subsection{Phương pháp lặp chính sách}
-Trong các bài toán học tăng cường, mục tiêu chính của ta là tìm được chính sách tối ưu $\pi_{*}$ nhằm giúp cho hệ thông giải quyết bài toán tốt nhất có thể. Do đó ta cần có một quy trình để tìm ra chính sách tối ưu. Quy trình lặp chính sách là một trong hai quy trình thường được áp dụng để tìm kiếm chính sách này. Hình \ref{fig:policy_iteration} minh họa quy trình này được chia thành hai giai đoạn:
+Trong các bài toán học tăng cường, mục tiêu chính của ta là tìm được chính sách tối ưu $\pi_{*}$ nhằm giúp cho hệ thống tìm được nhiều điểm thưởng nhất có thể. 
+Do đó ta cần có một quy trình để tìm ra chính sách tối ưu. 
+Quy trình lặp chính sách là một trong hai quy trình thường được áp dụng để tìm kiếm chính sách này. 
+Ban đầu, ta chọn một chính sách $\pi_0$ bất kỳ để khởi đầu.
+Quy trình lặp chính sách thực hiện việc cải thiện dần dần chính sách này.
+Tại lần lặp thứ $k$, ta sẽ có được chính sách đã cải thiện là $\pi_k$.
+Cụ thể hơn, việc cải thiện được thực hiện bằng cách lặp lại xen kẽ hai giai đoạn:
 \begin{itemize}
-	\item \textbf{Đánh giá chính sách}: Việc đánh giá một chính sách $\pi$ được thực hiện bằng cách xác định hàm giá trị trạng thái hoặc hàm giá trị hành động của dưới chính sách đó.
-	\item \textbf{Cải thiện chính sách}: Sau khi có được hàm giá trị của một chính sách $\pi$, chính sách cải thiện mới $\pi'$ được tạo ra bằng cách thực hiện tham lam trên hàm giá trị của chính sách $\pi$, tức là chỉ chọn thực hiện hành động có giá trị cao nhất dựa trên hàm giá trị hành động có được. 
+	\item \textbf{Đánh giá chính sách}: giai đoạn này thực hiện tính hàm giá trị trạng thái $v_{\pi_k}$ hoặc hàm giá trị hành động $q_{\pi_k}$ của chính sách $\pi_k$ hiện tại.
+	\item \textbf{Cải thiện chính sách}: giai đoạn này tạo ra chính sách mới $\pi_{k+1}$ tốt hơn chính sách cũ dựa vào hàm giá trị vừa tính được ở giai đoạn trên.
 \end{itemize}
+
 \begin{figure}
 	\centering
 	\begin{tikzpicture}[node distance=5.5cm,>=stealth',bend angle=45,auto]
@@ -573,25 +588,46 @@ Trong các bài toán học tăng cường, mục tiêu chính của ta là tìm
 	
 	\end{scope}			
 	\end{tikzpicture}
-	\caption[Quy trình tìm chính sách tối ưu bằng phương pháp lặp chính sách]{Quy trình tìm chính chính sách tối ưu bằng phương pháp lặp chính sách}
+	\caption[Quy trình tìm chính sách tối ưu bằng phương pháp lặp chính sách]{Quy trình tìm chính sách tối ưu bằng phương pháp lặp chính sách.
+	Quy trình này lặp lại xen kẽ hai giai đoạn: đánh giá chính sách và cải thiện chính sách.}
 	\label{fig:policy_iteration}
 \end{figure}
-Một chính sách $\pi_{1}$ được cải thiện từ chính sách $\pi_{0}$ dựa trên hàm giá trị trạng thái $v_{\pi_{0}}$. Khi có được chính sách $\pi_{1}$ ta có thể tính được hàm giá trị $v_{\pi_{1}}$ qua đó tiếp tục cải thiện để có được chính sách $\pi_{2}$. Quá trình này diễn ra cho đến khi đạt được chính sách tối ưu.
+
+Một chính sách $\pi_{1}$ được cải thiện từ chính sách $\pi_{0}$ dựa trên hàm giá trị trạng thái $v_{\pi_{0}}$. 
+Khi có được chính sách $\pi_{1}$ ta có thể tính được hàm giá trị $v_{\pi_{1}}$, qua đó tiếp tục cải thiện để có được chính sách $\pi_{2}$. 
+Quá trình này diễn ra cho đến khi đạt được chính sách tối ưu:
 $$\pi_{0} \xrightarrow{\text{Đánh giá}} v_{\pi_{0}} \xrightarrow{\text{Cải thiện}} \pi_{1} \xrightarrow{\text{Đánh giá}} v_{\pi_{1}} \xrightarrow{\text{Cải thiện}} \pi_{2} \cdots \xrightarrow{\text{Cải thiện}} \pi_{*} \xrightarrow{\text{Đánh giá}} v_{\pi_{*}}$$
 
-\subsubsection{Đánh giá chính sách bằng quy hoạch động (Dynamic Programming)}
-Quy hoạch động thường được dùng để giải quyết các bài toán tối ưu mà dữ liệu có tính thứ tự, ví dụ như dữ liệu chuỗi hay dữ liệu thời gian. Một bài toán tối ưu có thể được giải quyết bằng quy hoạch động cần có hai đặc điểm:
+Kỹ thuật hay được dùng để đánh giá chính sách đó là \textbf{quy hoạch động (Dynamic Programming)}.
+Còn kỹ thuật hay được dùng để cải thiện chính sách đó là \textbf{kỹ thuật tham lam (greedy)}.
+
+\subsubsection{Đánh giá chính sách bằng quy hoạch động}
+Quy hoạch động thường được dùng để giải quyết các bài toán tối ưu mà dữ liệu có tính thứ tự, ví dụ như dữ liệu chuỗi hay dữ liệu thời gian. 
+Một bài toán tối ưu có thể được giải quyết bằng quy hoạch động cần có hai đặc điểm:
 \begin{itemize}
-	\item Quy tặc tối ưu (Principle of Optimality): các bài toán có thể phân rã thành các bài toán con, và kết quả của bài toán con này đóng góp vào lời giải của bài toán gốc.
-	\item Các bài toán con chồng lấn lên nhau và lặp lại nhiều lần: nhằm tận dụng lại kết quả của những bài toán con đã tính toán trước đó.
+	\item Quy tắc tối ưu (Principle of Optimality): các bài toán có thể phân rã thành các bài toán con và kết quả của bài toán con này đóng góp vào lời giải của bài toán gốc.
+	\item Các bài toán con chồng lấn lên nhau và lặp lại nhiều lần: nếu không có đặc điểm này thì ta phải giải riêng lẻ từng bài toán con; lúc này thuật toán quy hoạch động sẽ không khác gì thuật toán vét cạn.
+	Với đặc điểm này, ta có thể tận dụng lại kết quả của những bài toán con đã tính toán trước đó để giảm độ phức tạp tính toán.
 \end{itemize}
 
-Trong nhiều bài toán học tăng cường, kỹ thuật quy hoạch động được dùng để tìm chính sách tối ưu hoặc tối ưu hàm giá trị. Để có thể áp dụng kỹ thuật quy hoạch động, những bài toán này cũng cần phải thỏa yêu cầu là hệ thống có kiến thức đầy đủ về môi trường hay cách khác môi trường có mô hình MDP.
-Quy hoạch động xác định hàm giá trị của một chính sách bằng cách cập nhật hàm giá trị được khởi tạo bất kỳ ban đầu qua nhiều vòng lặp, dựa vào phương trình Bellman. Ý tưởng của cách xác định này như sau: Ban đầu khởi tạo hàm giá trị $v_0$ bất kỳ cho tất cả các trạng thái, trừ trạng thái kết thúc được luôn có giá trị là 0. Tiến hành cập nhật hàm giá trị mới $v_1$ cho chính sách dựa trên hàm giá trị $v_0$ theo phương trình \ref{eq:DP_Value_Update}. Tương tự cập nhật hàm giá trị mới $v_2$ dựa trên $v_1$. Quá trình lặp cho đến khi độ khác biệt giữa hàm giá trị sau và giá trị trước đó nhỏ hơn một lượng cho trước. Quy trình cập nhật được minh họa trong hình \ref{fig:Update_Value_DP}, trong đó giá trị mới $v_{k+1}$ của trạng thái $s$ được xác định dựa trên giá trị kỳ vọng điểm thưởng nhận được theo chính sách $\pi$, và giá trị hiện tại $v_{k}$ của các trạng thái $s'$ kế tiếp trạng thái $s$. Tổng thể của việc đánh giá chính sách bằng quy hoạch động được trình bày ở thuật toán \ref{alg_DP}
+Kỹ thuật quy hoạch động hay được dùng để đánh giá chính sách. 
+Lý do là giai đoạn đánh giá chính sách của các bài toán học tăng cường thoả mang đủ hai yếu tố vừa nêu ở trên.
+Để có thể áp dụng kỹ thuật quy hoạch động, ta cần biết đầy đủ thông tin của môi trường dưới dạng một MDP (tức là biết ma trận xác suất chuyển trạng thái và ma trận điểm thưởng).
+Đầu tiên, ta khởi tạo một hàm giá trị trạng thái bất kỳ $v_0$.
+Quy hoạch động tính hàm giá trị thật sự bằng cách cập nhật dần dần hàm giá trị $v_0$ này dựa vào phương trình Bellman. 
+Tiến hành tính hàm giá trị mới $v_1$ dựa trên hàm giá trị $v_0$ theo phương trình (\ref{eq:DP_Value_Update}).
+Lưu ý rằng, phương trình này đơn thuần là phương trình Bellman (\ref{eq:bellman_mdp_state}) được viết lại dưới dạng cập nhật.
+Hàm giá trị $v_1$ này sẽ gần với hàm giá trị thật sự $v_\pi$ hơn là $v_0$ so với $v_\pi$.
+Tương tự tính hàm giá trị mới $v_2$ dựa trên $v_1$. 
+Quá trình lặp cho đến khi sự thay đổi các giá trị nhỏ hơn một giá trị định trước. 
+Thuật toán quy hoạch động được minh họa trong hình \ref{fig:Update_Value_DP}, trong đó giá trị mới $v_{k+1}$ của trạng thái $s$ được xác định dựa trên kỳ vọng giá trị điểm thưởng nhận được và giá trị hiện tại $v_{k}(s')$ (với $s'$ là trạng thái kế tiếp). 
+Tổng thể của việc đánh giá chính sách bằng quy hoạch động được trình bày ở thuật toán \ref{alg_DP}.
+Thực hiện tương tự nhưng sử dụng phương trình Bellman cho hàm giá trị hành động (\ref{eq:bellman_mdp_action}), ta có thể tính được hàm giá trị hành động của chính sách.
 \begin{equation}
-v_{k+1}(s) \leftarrow \sum_{a \in \mathcal{A}}^{}\pi(a \mid s)(\mathcal{R}_{s}^{a} + \gamma \sum_{s' \in \mathcal{S}}^{}\mathcal{P}_{ss'}^{a}v_{k}(s'))
+v_{k+1}(s) \leftarrow \sum_{a \in \mathcal{A}}^{}\pi(a \mid s) \left( \mathcal{R}_{s}^{a} + \gamma \sum_{s' \in \mathcal{S}}^{}\mathcal{P}_{ss'}^{a}v_{k}(s') \right)
 \label{eq:DP_Value_Update}
-\end{equation}		
+\end{equation}
+
 \begin{figure}
 	\centering
 	\begin{tikzpicture}[node distance=4.5cm,>=stealth',bend angle=45,auto]
@@ -626,13 +662,14 @@ v_{k+1}(s) \leftarrow \sum_{a \in \mathcal{A}}^{}\pi(a \mid s)(\mathcal{R}_{s}^{
 	\end{scope}
 	
 	\end{tikzpicture}
-	\caption[Cập nhật hàm giá trị bằng quy hoạch động]{Đồ thị minh họa cập nhật hàm giá trị bằng quy hoạch động}
+	\caption[Đánh giá chính sách bằng quy hoạch động]{Đồ thị thể hiện việc đánh giá chính sách thông qua việc tính hàm giá trị trạng thái.
+	Giá trị trạng thái $s$ ở lần cập nhật thứ $k+1$ sẽ được tính bằng cách thử mọi hành động $a$ để nhận được điểm thưởng $r$ và đến thử mọi trạng thái tiếp theo $s'$ để tính giá trị trạng thái tại đó ở lần cập nhật $k$.}
 	\label{fig:Update_Value_DP}
 \end{figure}
 
 \begin{algorithm}
 	\newalgname{Thuật toán}
-	\caption{Xác định hàm giá trị bằng quy hoạch động}
+	\caption{Đánh giá chính sách bằng quy hoạch động}
 	\label{alg_DP}
 	\begin{algorithmic}[1]
 		\renewcommand{\algorithmicrequire}{\textbf{Đầu vào:}}
@@ -640,50 +677,54 @@ v_{k+1}(s) \leftarrow \sum_{a \in \mathcal{A}}^{}\pi(a \mid s)(\mathcal{R}_{s}^{
 		\algnewcommand\algorithmicoperation{\textbf{Thao tác:}}
 		\algnewcommand\Operation{\item[\algorithmicoperation]}
 		
-		\Require Chính sách $\pi$ cần đánh giá
-		\Ensure Hàm giá trị $V$ xấp xỉ hàm giá trị $v_{\pi}$ của chính sách $\pi$
+		\Require chính sách $\pi$ cần đánh giá và sai số chấp nhận được $\theta$
+		\Ensure hàm giá trị $V$ xấp xỉ hàm giá trị $v_{\pi}$
 		
 		\Operation
-		\State Khởi tạo ngẫu nhiên $V(s)$ cho tất cả trạng thái $s$ không phải trạng thái kết thúc. Nếu $s$ là trạng thái kết thúc, $V(s) = 0$
+		\State Khởi tạo ngẫu nhiên $V(s)$ cho tất cả trạng thái
 		\Repeat
-		\State $\Delta \leftarrow 0$ \%\% Tính độ khác biệt giữa hàm giá trị cũ và giá trị mới. Độ lớn của $\Delta$ được xác định là độ khác biệt lớn nhất giữa giá trị cũ và giá trị mới của một trạng thái trong tất cả các trạng thái.
+		\State $\Delta \leftarrow 0$ \%\% Lưu độ khác biệt giữa hàm giá trị cũ và giá trị mới. Độ lớn của $\Delta$ được xác định là độ khác biệt lớn nhất giữa giá trị cũ và giá trị mới của một trạng thái
 		\For{$s \in \mathcal{S}$} \%\% Với mỗi trạng thái
 		\State $v \leftarrow  V(s)$ \%\% Lưu giá trị hiện tại của trạng thái $s$
-		\State $V(s) \leftarrow \sum_{a \in \mathcal{A}}^{}\pi(a \mid s)(\mathcal{R}_{s}^{a} + \gamma \sum_{s' \in \mathcal{S}}^{}\mathcal{P}_{ss'}^{a}V(s'))$ \%\% Tính giá trị mới cho trạng thái $s$ dựa trên giá trị hiện tại của các trạng thái $s'$ kế tiếp của trạng thái $s$, và giá trị kỳ vọng của các hành động tại trạng thái đó theo chính sách $\pi$.
+		\State $V(s) \leftarrow \sum_{a \in \mathcal{A}}^{}\pi(a \mid s)(\mathcal{R}_{s}^{a} + \gamma \sum_{s' \in \mathcal{S}}^{}\mathcal{P}_{ss'}^{a}V(s'))$ \%\% Tính giá trị mới cho trạng thái $s$ theo phương trình Bellman
 		\State $\Delta \leftarrow \max(\Delta, \left |v - V(s) \right |)$ \%\% Cập nhật giá trị mới cho $\Delta$
 		\EndFor
-		\Until $\Delta < \theta$ (Một lượng đủ nhỏ) 
+		\Until $\Delta < \theta$
 	\end{algorithmic}
 \end{algorithm}
 
-Mặc dù đã quy hoạch động đã được chứng minh là xấp xỉ tốt hay thậm chí là tìm được hàm giá trị trạng thái của chính sách $\pi$ \cite{gordon1995stable}, nhưng trong các bài toán học thực tế của học tăng cường đặc biệt là những bài toán lớn thì quy hoạch động trở nên không khả thi do chi phí tính toán cao, trong trường hơp xấu nhất chi phí tính toán thuộc $O(k^{n})$ với $k$ là số hành động và $n$ là số trạng thái.
+%Mặc dù đã quy hoạch động đã được chứng minh là xấp xỉ tốt hay thậm chí là tìm được hàm giá trị trạng thái của chính sách $\pi$ \cite{gordon1995stable}, nhưng trong các bài toán học thực tế của học tăng cường đặc biệt là những bài toán lớn thì quy hoạch động trở nên không khả thi do chi phí tính toán cao, trong trường hơp xấu nhất chi phí tính toán thuộc $O(k^{n})$ với $k$ là số hành động và $n$ là số trạng thái.
 
-\subsubsection{Cải thiện chính sách bằng phương pháp tham lam (greedy)}
-Mục tiêu chúng ta xác định hàm giá trị cho một chính sách là để tìm một chính sách tốt hơn chính sách hiện tại. Giả sử chúng ta có một chính sách $\pi$ cố định tức là với mỗi trạng thái $s$, chính sách này luôn chọn thực hiện một hành động cố định, $\pi(s) = a$. Và cũng đã xác định được một hàm giá trị $v_{\pi}$ cho một chính sách đó. Với một trạng thái $s$, câu hỏi đặt ra là chúng ta nên thay đổi một chính sách cố định khác chọn hành động $a' \neq \pi(s)$ không? Chúng ta biết giá trị của trạng thái $s$ theo chính sách hiện tại $\pi$, $v_{\pi}(s)$, tốt như thế nào nhưng liệu chính sách mới $\pi'$ có tốt hơn hay trở nên tệ đi? Theo \cite{sutton1998introduction}, ta có thể cải thiện một chính sách bằng cách chọn hành động có giá trị cao nhật tại mỗi trạng thái $s$. Chính xách mới $\pi'$ được xác định trong \ref{eq:update_policy}.
+\subsubsection{Cải thiện chính sách bằng kỹ thuật tham lam}
+Việc xác định hàm giá trị của một chính sách là để tìm một chính sách tốt hơn chính sách hiện tại. 
+Giả sử chúng ta có một chính sách $\pi$ đơn định tức là với mỗi trạng thái $s$, chính sách này luôn chọn thực hiện một hành động cố định $\pi(s) = a$. 
+Giả sử ta áp dụng kỹ thuật quy hoạch động và tính được hàm giá trị hành động $q_{\pi}$ cho chính sách này rồi. 
+Trong chính sách mới, với một trạng thái $s$, câu hỏi đặt ra là chúng ta có nên chọn hành động mới $a' \neq \pi(s) = a$ hay không? 
+Câu trả lời là nếu hành động $a'$ tại trạng thái $s$ có giá trị cao hơn hành động $a$ tại $s$, việc chọn hành động $a'$ sẽ tạo ra chính sách mới $\pi'$ tốt hơn chính sách cũ \cite{sutton1998introduction}. 
+Như vậy, chính sách mới $\pi'$ được xác định theo công thức (\ref{eq:update_policy}).
 %\begin{equation}
 %\label{eq:update_policy}
 %\pi'(s) = \underset{a \in \mathcal{A}}{\operatorname{argmax}}q_{\pi}(s,a)
 %\end{equation}
 \begin{equation}
 \label{eq:update_policy}
-\pi'(a|s)
-\left\{\begin{matrix}
-1 & \text{nếu }a = \underset{a \in A}{\operatorname{argmax}}q(s,a)\\ 
-0 & \text{ngược lại}
-\end{matrix}\right.
+\pi'(s) = \underset{a \in A}{\operatorname{argmax}} q(s,a)
 \end{equation}
-Ngoài ra, việc cải thiện chính sách bằng phương pháp tham lam này, ta đồng thời cũng cải thiện được hàm giá trị \cite{sutton1998introduction}.
 %\begin{align}
 %v_{\pi}(s) \leqslant {} & q_{\pi'}(s, \pi'(s)) = \mathbb{E}_{\pi'}\left[\mathit{R}_{t+1} + \gamma v_{\pi}(\mathit{S}_{t+1}) \mid \mathit{S}_t = s\right] \notag \\
 %\leqslant {} & \mathbb{E}_{\pi'}\left[\mathit{R}_{t+1} + \gamma q_{\pi}(\mathit{S}_{t+1}, \pi'(\mathit{S_{t+1}})) \mid \mathit{S}_t = s\right] \notag \\
 %\leqslant {} & \mathbb{E}_{\pi'}\left[\mathit{R}_{t+1} + \gamma \mathit{R}_{t+2} + \gamma^2 q_{\pi}(\mathit{S}_{t+2}, \pi'(\mathit{S}_{t+2})) \mid \mathit{S}_t = s\right] \notag \\
 %\leqslant {} & \mathbb{E}_{\pi'}\left[\mathit{R}_{t+1} + \gamma \mathit{R}_{t+2} + \dots \mid \mathit{S}_t = s\right] = v_{\pi'}(s) \label{eq:improve_value_function}
 %\end{align}
-Việc đánh giá và cải thiện chính sách qua nhiều vòng lặp sẽ hội tụ về chính sách tối ưu cũng như hàm giá trị tối ưu. Hình \ref{fig:policy_iteration_MDP} minh họa quá trình hội tụ của lặp chính sách.
+Hình \ref{fig:policy_iteration_MDP} minh họa quá trình hội tụ của quy trình lặp chính sách.
 \begin{figure}
 	\centering
 	\includegraphics[width=.8\textwidth]{policy_iteration}
-	\caption[Hội tụ của quy trình tìm kiếm chính sách tối ưu]{Ta có một chính sách $\pi$, đầu tiên ta thực hiện đánh giá chính sách $\pi$ để có được hàm giá trị theo chính sách này. Khi có được hàm giá trị, ta thực hiện cải thiện chính sách bằng cách lựu chọn tham lam hành động có giá trị lớn nhất dựa trên hàm giá trị đang có. Sau khi có được chính sách mới, ta tiếp tục đánh giá chính sách để có được hàm giá trị theo chính sách đó. Và tiếp tục cải thiện khi đã có được hàm giá trị. Quá trình này được lặp nhiều lần cho đến khi đạt được chính sách tối ưu cũng như hàm giá trị tối ưu.}
+	\caption[Hội tụ của quy trình tìm kiếm chính sách tối ưu]{Hình minh họa quá trình hội tụ của quy trình lặp chính sách.
+	Ta có một chính sách $\pi$, đầu tiên ta thực hiện đánh giá chính sách $\pi$ để có được hàm giá trị theo chính sách này. 
+	Khi có được hàm giá trị, ta thực hiện cải thiện chính sách bằng kỹ thuật tham lam. 
+	Sau khi có được chính sách mới, ta tiếp tục đánh giá chính sách để có được hàm giá trị của chính sách đó. 
+	Quá trình này được lặp nhiều lần cho đến khi ta đạt được chính sách tối ưu và hàm giá trị tối ưu.}
 	\label{fig:policy_iteration_MDP}	
 \end{figure}
 
@@ -1329,7 +1370,7 @@ Các thuật toán ``on-policy'' không thể thực hiện việc cập nhật 
 
 Vậy ta nên chọn chính sách nào để tương tác với môi trường trong thuật toán ``Q-learning''?
 Rõ ràng là nếu chính sách này không gặp những trạng thái hoặc không thực hiện một số hành động thì ``Q-learning'' không thể cập nhật giá trị cho các trạng thái và hành động này được.
-Về mặt lý thuyết, thuật toán ``Q-learning'' luôn hội tụ đến hàm giá trị tối ưu nếu như mọi cặp \textit{trạng thái - hành động} luôn được thăm \cite{sutton1998introduction}.
+Về mặt lý thuyết, thuật toán ``Q-learning'' luôn hội tụ đến hàm giá trị tối ưu nếu như \textit{mọi cặp trạng thái - hành động} luôn được thăm \cite{sutton1998introduction}.
 Trong thực tế, một trong những chính sách thường được sử dụng đó là ``$\epsilon$-greedy''.
 Lúc này, ta chỉ việc chọn hành động tham lam theo hàm giá trị hành động đang được cập nhật của ``Q-learning'' hoặc chọn hành động ngẫu nhiên với một xác suất nhỏ.
 
