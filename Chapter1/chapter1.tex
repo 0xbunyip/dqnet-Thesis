@@ -109,10 +109,12 @@ Thay vì chia mô hình học ra thành nhiều phần, hướng tiếp cận n�
 Hướng tiếp cận này giúp đơn giản hoá các vấn đề gặp phải trong những hướng tiếp cận cũ và cải thiện kết quả bài toán.
 Cụ thể hơn, nhờ việc áp dụng học sâu, các đặc trưng cần thiết đều được tự động học mà không cần con người tốn sức thiết kế bằng tay.
 Ngoài ra, việc xây dựng một mô hình ``end-to-end'' giúp cho quá trình rút trích đặc trưng được gắn liền với việc xây dựng chiến thuật chơi; điều này giúp cho mô hình có khả năng học được những đặc trưng hữu ích cho chiến thuật chơi đó - điều mà các kỹ thuật cũ không thể thực hiện được vì các cách thiết kế đặc trưng đã được cố định trước.
-Trong khoá luận này, chúng em thực hiện cài đặt lại mô hình được đề xuất bởi \cite{mnihdqn2015}.
-Cùng với đó, chúng em cũng cài đặt thêm một mô hình cải tiến của \cite{mnihdqn2015} được đề xuất trong bài báo \cite{van2015deep}.
-Mô hình cải tiến này giải quyết một vấn đề cụ thể của mô hình gốc và giúp cải thiện đáng kể kết quả của bài toán tự động chơi game.
-Ngoài ra, về mặt cài đặt, chúng em thực hiện cài đặt tính toán song song trên GPU (Graphics Processing Unit) để tăng tốc huấn luyện.
+Trong khoá luận này, chúng em tìm hiểu và cài đặt lại mô hình được đề xuất bởi \cite{mnihdqn2015}.
+Cùng với đó, chúng em cũng tìm hiểu và cài đặt thêm một mô hình cải tiến của \cite{mnihdqn2015} được đề xuất trong bài báo \cite{van2015deep}.
+Mô hình của \cite{mnihdqn2015} gặp phải vấn đề đánh giá quá cao giá trị của các hành động trong game.
+Điều này làm cho khả năng chơi của hệ thống bị ảnh hưởng đáng kể (vì hệ thống chọn lựa hành động không tối ưu).
+Mô hình cải tiến của \cite{van2015deep} giải quyết vấn đề đánh giá quá cao này và giúp cải thiện đáng kể kết quả của bài toán tự động chơi game.
+Ngoài ra, về mặt cài đặt, chúng em thực hiện cài đặt tính toán song song trên GPU (Graphics Processing Unit) để tăng tốc quá trình huấn luyện.
 
 \medskip
 Phần còn lại của khoá luận được trình bày như sau:

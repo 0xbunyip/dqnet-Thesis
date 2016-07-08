@@ -25,11 +25,10 @@
 \begin{quote}
 \textit{Chương này trình bày hướng tiếp cận kết hợp học tăng cường với học sâu và mô hình ``Deep Q-Network'' \cite{mnihdqn2015} - đây là một mô hình cụ thể của hướng tiếp cận này mà khoá luận tìm hiểu.
 Hướng tiếp cận này giúp cho các thuật toán học tăng cường được trình bày trong chương 2 có thể áp dụng vào những bài toán thực tế với số lượng trạng thái rất lớn.
-Ngoài ra, mô hình học sâu cũng tự động học đặc trưng nên ta không cần phải tốn sức thiết kế đặc trưng bằng tay.
-Mô hình ``Deep Q-Network'' được chúng em tìm hiểu vì mô hình này được thiết kế phù hợp với bài toán tự động chơi game và đạt được kết quả cao.
-Đầu tiên, chúng em giới thiệu về học sâu và một mô hình cụ thể của học sâu là mạng nơ-ron tích chập.
-Tiếp đó, chúng em trình bày cách kết hợp học tăng cường với học sâu và một mô hình cụ thể của hướng tiếp cận này là ``Deep Q-Network''.
-Cuối cùng, chúng em trình bày về một số khó khăn của bài toán tự động chơi game và các kỹ thuật mà nhóm đã tìm hiểu để giải quyết những khó khăn này.}
+Bài toán tự động chơi game mà chúng em tìm hiểu trong khoá luận này cũng thuộc nhóm những bài toán có số lượng trạng thái rất lớn.
+Nội dung trình bày gồm hai phần.
+Ở phần đầu tiên, chúng em giới thiệu về học sâu và cách kết hợp học tăng cường với học sâu để giải bài toán có số lượng trạng thái lớn.
+Ở phần thứ hai, để áp dụng hướng tiếp cận này vào bài toán tự động chơi game, chúng em trình bày một mô hình cụ thể được chúng em sử dụng là ``Deep Q-Network''; cùng với đó, một số vấn đề của mô hình này và các kỹ thuật mà nhóm đã tìm hiểu để giải quyết những vấn đề này cũng được trình bày.}
 \end{quote}
 
 %-----------------------------------------------------------------------------
@@ -82,8 +81,7 @@ Cuối cùng, chúng em trình bày về một số khó khăn của bài toán 
 		\centering
 		\includegraphics[width=\textwidth]{deep_learning_example}
 		\label{fig_dl_Example}
-		\caption[Hình mô phỏng cách hoạt động của mô hình học sâu]{Hình được chỉnh sửa từ \cite{Goodfellow-et-al-2016-Book}. 
-		Hình mô phỏng cách hoạt động của mô hình học sâu cho bài toán nhận diện đối tượng trong ảnh.
+		\caption[Hình mô phỏng cách hoạt động của mô hình học sâu]{Hình mô phỏng cách hoạt động của mô hình học sâu cho bài toán nhận diện đối tượng trong ảnh (hình được chỉnh sửa từ \cite{Goodfellow-et-al-2016-Book}).
 		Dữ liệu đầu vào là hình ảnh RGB chứa đối tượng cần xác định. Tầng đầu tiên của mô hình là tầng input tiếp nhận thông tin này dưới dạng ma trấn số. 
 		Các tầng tiếp theo ngoại trừ tầng cuối cùng được gọi là tầng ẩn ``hidden layer'' vì đặc trưng học được tại đây con người không quan sát được. 
 		Các tầng ẩn học các đặc trưng ngày càng trừu tượng dựa vào đặc trưng ở tầng phía trước. 
@@ -187,7 +185,7 @@ Cuối cùng, chúng em trình bày về một số khó khăn của bài toán 
 	Do có khả năng học đặc trưng tự động, ta có thể thiết kế một công cụ xấp xỉ hàm ``đa năng'': vừa học đặc trưng từ hình ảnh, vừa xấp xỉ hàm mong muốn từ những hình ảnh đó.
 
 %-----------------------------------------------------------------------------
-\subsection{Sử dụng mạng nơ-ron để xấp xỉ hàm}
+\subsection{Sử dụng mạng nơ-ron tích chập để xấp xỉ hàm}
 	Việc sử dụng mạng nơ-ron tích chập (CNN) để xấp xỉ hàm giá trị hành động mang lại ba lợi ích quan trọng:
 	\begin{itemize}
 		\item CNN có khả năng học được những đặc trưng phức tạp từ dữ liệu thô.
@@ -320,7 +318,7 @@ Cuối cùng, chúng em trình bày về một số khó khăn của bài toán 
 		\theta_{t+1} = \theta_t - \alpha \left[ R + \gamma \max_{a}\hat{q}(S', a;\theta_t) - \hat{q}(S,A;\theta_t) \right] \nabla_{\theta_t} \hat{q}(S, A;\theta_t)	
 	\end{equation}
 	
-	Mã giả của thuật toán ``Q-learning'' với xấp xỉ hàm được trình bày ở bảng \ref{alg_FA_Q_learning}.
+	Mã giả của thuật toán ``Q-learning'' với xấp xỉ hàm được trình bày ở thuật toán \ref{alg_FA_Q_learning}.
 	\begin{algorithm}
 		\newalgname{Thuật toán}
 		\caption{``Q-learning'' kết hợp với xấp xỉ hàm}
@@ -392,7 +390,7 @@ Cuối cùng, chúng em trình bày về một số khó khăn của bài toán 
 	Đặc điểm của thuật toán ``Q-learning'' khi kết hợp với xấp xỉ hàm đó là thuật toán không chắc sẽ hội tụ \cite{sutton1998introduction}.
 	Hội tụ ở đây ý chỉ sau một số bước cập nhật hữu hạn, giá trị hành động của trạng thái sẽ hội tụ về giá trị nhất định.
 	Do đặc điểm này, nếu ta huấn luyện mạng nơ-ron bằng thuật toán SGD thông thường thì nhiều khả năng ``Q-learning'' sẽ không hội tụ dẫn đến chính sách tương ứng sẽ không được tốt.
-	Để giải quyết vấn đề này, chúng em áp dụng hai kỹ thuật giúp tăng tính ổn định và khả năng hội tụ: kỹ thuật ``Experience replay'' \cite{lin1993reinforcement} và kỹ thuật cố định ``Q-target'' \cite{mnih2013playing}.
+	Để giải quyết vấn đề này, chúng em áp dụng hai kỹ thuật giúp tăng tính ổn định và khả năng hội tụ: kỹ thuật ``Experience replay'' và kỹ thuật cố định ``Q-target'' \cite{mnih2013playing}.
 	
 \subsubsection*{``Experience replay''}
 	Thuật toán ``Q-learning'' kết hợp với xấp xỉ hàm cho phép ta học ``online'': sau mỗi bước tương tác với môi trường và nhận được dữ liệu mới, ta có thể cập nhật ngay bộ trọng số của CNN.
@@ -403,7 +401,7 @@ Cuối cùng, chúng em trình bày về một số khó khăn của bài toán 
 	Khi chính sách thay đổi sang ``luôn qua phải'' thì tất cả các mẫu dữ liệu mới sẽ lấy từ phân bố ``qua phải''.
 	Khi các mẫu dữ liệu có tương quan lớn và phân bố dữ liệu thay đổi nhanh thì ``Q-learning'' sẽ khó hội tụ \cite{mnihdqn2015}.
 	
-	Kỹ thuật ``experience replay'' \cite{lin1993reinforcement} giải quyết vấn đề này bằng cách lưu trữ lại một tập các mẫu dữ liệu nhận được gần đây nhất.
+	Kỹ thuật ``experience replay'' giải quyết vấn đề này bằng cách lưu trữ lại một tập các mẫu dữ liệu nhận được gần đây nhất.
 	Sau đó, mỗi lần muốn cập nhật bộ trọng số, ta chỉ việc lấy ngẫu nhiên một ``mini-batch'' từ tập dữ liệu này để học.
 	Ý tưởng của kỹ thuật này giống như việc ta ``gợi nhớ'' lại các kinh nghiệm đã có từ trước đó và học lại từ chúng.
 	Cách làm này cũng mang tính ``củng cố'' lại những kinh nghiệm mà hệ thống học được trong quá khứ.

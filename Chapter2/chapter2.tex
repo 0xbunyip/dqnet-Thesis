@@ -7,9 +7,10 @@
 \begin{quote}
 	\textit{Chương này trình bày những kiến thức nền tảng của học tăng cường. 
 	Trong phần đầu tiên, chúng em trình bày định nghĩa của các thành phần cơ bản trong học tăng cường. 
-	Tiếp đó, mô hình ``Markov Decision Processes'' được giới thiệu; mô hình này dùng để mô hình hoá các bài toán học tăng cường khác nhau về chung một ``framework'' cố định.
-	Từ đó, ta có thể giải các bài toán học tăng cường bằng cách giải bài toán trên mô hình này.
-	Cuối cùng, chúng em trình bày thuật toán ``Q-learning'' - thuật toán học tăng cường được chúng em sử dụng trong bài toán tự động chơi game.}
+	Tiếp đó, mô hình ``Markov Decision Processes'' được giới thiệu; mô hình này dùng để mô hình hoá lại bài toán học tăng cường một cách hình thức.
+	Việc phân tích mô hình này sẽ giúp ta xây dựng được các thuật toán để giải bài toán học tăng cường.
+	Tuy nhiên, các thuật toán này chỉ có thể giải được những bài toán ``lý thuyết'' (những bài toán mà ta biết được cách thức hoạt động của môi trường xung quanh).
+	Vì vậy, ở phần cuối cùng, chúng em trình bày thuật toán ``Q-learning'' - một cải tiến của thuật toán xây dựng được ở trên; thuật toán ``Q-learning'' vẫn có thể sử dụng được trong trường hợp ta không biết cách hoạt động của môi trường xung quanh.}
 \end{quote}
 
 \section{Các thành phần cơ bản của học tăng cường}
@@ -864,7 +865,7 @@ Thuật toán \ref{alg_qval_iteration} minh họa các bước thực hiện l�
 		\algnewcommand\algorithmicoperation{\textbf{Thao tác:}}
 		\algnewcommand\Operation{\item[\algorithmicoperation]}
 		
-		\Require sai số chập nhận được $\theta$
+		\Require sai số chấp nhận được $\theta$
 		\Ensure hàm giá trị $Q$ xấp xỉ hàm giá trị tối ưu $q_{*}$
 		
 		\Operation

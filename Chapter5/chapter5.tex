@@ -19,13 +19,6 @@
 	Các kết quả thực nghiệm cho thấy hệ thống có khả năng chơi và đạt được điểm số cao nhưng việc thực nghiệm chỉ mới trên ba game khác nhau; số lượng game thực nghiệm còn nhỏ nên vẫn chưa thể rút ra kết luận chặt chẽ cho hướng tiếp cận này.
 	Lý do chúng em không thực nghiệm trên nhiều game hơn là vì thời gian huấn luyện quá lâu (hơn hai ngày huấn luyện liên tục cho mỗi game và mỗi thuật toán).
 	Đây cũng là một nhược điểm lớn của hướng tiếp cận kết hợp học tăng cường với học sâu.
-	
-	Trong quá trình thực nghiệm, chúng em cũng đã thử nghiệm sơ bộ kỹ thuật học chuyển tiếp (Transfer learning).
-	Ý tưởng của kỹ thuật này là sử dụng thông tin của một mô hình cũ đã học để làm giá trị khởi tạo cho mô hình mới.
-	Cụ thể hơn, chúng em thử nghiệm kỹ thuật này bằng cách sử dụng bộ trọng số của CNN đã được huấn luyện xong của một game để huấn luyện game khác.
-	Tuy nhiên, hiệu quả của kỹ thuật này lại không rõ ràng: trong hai game được huấn luyện thử với kỹ thuật học chuyển tiếp thì có một game tốt hơn hẳn và một game kém hơn hẳn khi không dùng học chuyển tiếp.
-	Mặc dù vậy, số lượng game thử nghiệm cũng còn ít nên hiệu quả của kỹ thuật học chuyển tiếp cần phải được thử nghiệm thêm.
-
 	Hướng phát triển tiếp theo của đề tài có thể tập trung vào việc tăng tốc độ huấn luyện của mô hình bằng những cách khác.
 	Cụ thể hơn, chúng em xác định có hai hướng chính để cải thiện tốc độ huấn luyện của hướng tiếp cận này:
 	\begin{itemize}
@@ -34,6 +27,11 @@
 		Khi mạng nơ-ron xấp xỉ hàm càng nhanh thì tốc độ chung của toàn mô hình càng được cải thiện.
 		Còn nếu mạng nơ-ron xấp xỉ hàm chính xác hơn thì ta có thể giảm số frame ảnh huấn luyện.
 		Khi đó, ta có thể thử nhiều game hơn trong cùng một khoảng thời gian.
+		Trong quá trình thực nghiệm, chúng em cũng đã thử nghiệm sơ bộ một kỹ thuật giúp tăng tốc việc huấn luyện mạng nơ-ron đó là kỹ thuật học chuyển tiếp (Transfer learning).
+		Ý tưởng của kỹ thuật này là sử dụng thông tin của một mô hình cũ đã học để làm giá trị khởi tạo cho mô hình mới.
+		Cụ thể hơn, chúng em thử nghiệm kỹ thuật này bằng cách sử dụng bộ trọng số của CNN đã được huấn luyện xong của một game để huấn luyện game khác; việc sử dụng bộ trọng số đã huấn luyện của game khác là để có được một giá trị khởi tạo ``tốt'' cho CNN giúp cho quá trình huấn luyện hội tụ sớm hơn.
+		Tuy nhiên, hiệu quả của kỹ thuật này lại không rõ ràng: trong hai game được huấn luyện thử với kỹ thuật học chuyển tiếp thì có một game tốt hơn hẳn và một game kém hơn hẳn khi không dùng học chuyển tiếp.
+		Mặc dù vậy, số lượng game thử nghiệm cũng còn ít nên hiệu quả của kỹ thuật học chuyển tiếp cần phải được thử nghiệm thêm.
 		\item \textbf{Cải thiện thuật toán học tăng cường}: thử nghiệm các thuật toán khác của học tăng cường (như thuật toán ``Expected Sarsa'', ``Policy Gradient'', ...) để tìm chính sách tốt hơn.
 		Các thuật toán khác của học tăng cường có thể tìm được những chính sách tốt hơn thuật toán ``Q-learning'' trong bài toán tự động chơi game.
 		Ngoài ra, việc thử nghiệm các thuật toán khác cũng giúp ta hiểu hơn về ảnh hưởng của mạng nơ-ron tích chập đến các thuật toán học tăng cường.
